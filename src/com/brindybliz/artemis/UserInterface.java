@@ -6,19 +6,16 @@ import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 
 import net.dhleong.acl.enums.ShipSystem;
-import net.dhleong.acl.iface.ArtemisNetworkInterface;
+import net.dhleong.acl.protocol.core.eng.EngSetCoolantPacket;
 import net.dhleong.acl.protocol.core.eng.EngSetEnergyPacket;
-import net.dhleong.acl.world.SystemManager;
 
 public class UserInterface extends JFrame implements KeyListener{
 
 	private static final long serialVersionUID = 1L;
-	private ArtemisNetworkInterface server;
-	private SystemManager systemManager;
+	private WorldAwareRobustProxyListener worldAwareRobustProxyListener;
 	
-	public UserInterface(ArtemisNetworkInterface server, SystemManager systemManager) {
-		this.server = server;
-		this.systemManager = systemManager;
+	public UserInterface(WorldAwareRobustProxyListener worldAwareRobustProxyListener) {
+		this.worldAwareRobustProxyListener = worldAwareRobustProxyListener;
 		setTitle("Artemis Client");
         setSize(300, 200);
         setLocationRelativeTo(null);
@@ -69,12 +66,22 @@ public class UserInterface extends JFrame implements KeyListener{
 	
 	private void handleKey(KeyEvent e, int targetKey, ShipSystem shipSystem, boolean postive) {
 		if (e.getKeyCode() == targetKey) {
-			this.server.send(new EngSetEnergyPacket(shipSystem, this.getSystemEnergyAllocated(shipSystem) + (postive ? 20 : -20)));
+			if (e.isShiftDown()) {
+				this.worldAwareRobustProxyListener.getServer().send(new EngSetCoolantPacket(shipSystem, this.getSystemCoolantAllocated(shipSystem) + (postive ? 1 : -1)));
+			}
+			else {
+				this.worldAwareRobustProxyListener.getServer().send(new EngSetEnergyPacket(shipSystem, this.getSystemEnergyAllocated(shipSystem) + (postive ? 30 : -30)));
+			}
+			
 		}
 	}
 	
 	private int getSystemEnergyAllocated(ShipSystem system) {
-		return (int)(this.systemManager.getPlayerShip(0).getSystemEnergy(system) * 300);
+		return (int)(this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0).getSystemEnergy(system) * 300);
+	}
+	
+	private int getSystemCoolantAllocated(ShipSystem system) {
+		return (int)(this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0).getSystemCoolant(system));
 	}
 
 	@Override
