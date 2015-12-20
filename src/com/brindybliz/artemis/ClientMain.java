@@ -14,7 +14,9 @@ public class ClientMain {
 
     public ClientMain(String host, int port) throws IOException {
     	WorldAwareRobustProxyListener worldAwareRobustProxyListener = new WorldAwareRobustProxyListener(host, port, port);
+    	EngineeringConsoleManager engineeringConsoleManager = new RealEngineeringConsoleManager(worldAwareRobustProxyListener);
+//    	EngineeringConsoleManager engineeringConsoleManager = new FakeEngineeringConsoleManager();
         
-        new UserInterface(worldAwareRobustProxyListener).setVisible(true);;
+        new UserInterfaceFrame(engineeringConsoleManager).setVisible(true);
     }
 }
