@@ -1,9 +1,10 @@
-package com.brindybliz.artemis;
+package com.brindyblitz.artemis.engconsole;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.brindybliz.artemis.NotifyingSystemManager.SystemManagerChangeListener;
+import com.brindyblitz.artemis.protocol.WorldAwareRobustProxyListener;
+import com.brindyblitz.artemis.protocol.NotifyingSystemManager.SystemManagerChangeListener;
 
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.protocol.core.eng.EngSetCoolantPacket;

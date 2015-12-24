@@ -1,4 +1,4 @@
-package com.brindybliz.artemis;
+package com.brindyblitz.artemis.protocol;
 
 public class WorldAwareRobustProxyListener extends RobustProxyListener {
 

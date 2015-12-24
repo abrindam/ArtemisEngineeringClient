@@ -1,7 +1,9 @@
-package com.brindybliz.artemis;
+package com.brindyblitz.artemis.engconsole.ui;
 
 import java.util.Arrays;
 import java.util.List;
+
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 
 import net.dhleong.acl.enums.ShipSystem;
 

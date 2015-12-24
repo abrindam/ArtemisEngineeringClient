@@ -1,6 +1,7 @@
-package com.brindybliz.artemis;
+package com.brindyblitz.artemis.engconsole.ui;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -9,9 +10,10 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-import com.brindybliz.artemis.EngineeringConsoleManager.EngineeringConsoleChangeListener;
-import com.brindybliz.artemis.SystemStatusRenderer.Interval;
-import com.brindybliz.artemis.SystemStatusRenderer.IntervalType;
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.EngineeringConsoleChangeListener;
+import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer.Interval;
+import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer.IntervalType;
 
 import net.dhleong.acl.enums.ShipSystem;
 
@@ -23,16 +25,18 @@ public class SystemSlider extends JPanel implements KeyListener {
 	private ShipSystem system;
 	private int increaseKey;
 	private int decreaseKey;
+	private String label;
 
-	public SystemSlider(ShipSystem system, int increaseKey, int decreaseKey, EngineeringConsoleManager engineeringConsoleManager) {
+	public SystemSlider(ShipSystem system, String label, int increaseKey, int decreaseKey, EngineeringConsoleManager engineeringConsoleManager) {
 		this.system = system;
+		this.label = label;
 		this.increaseKey = increaseKey;
 		this.decreaseKey = decreaseKey;
 		this.engineeringConsoleManager = engineeringConsoleManager;
 		this.systemStatusRenderer = new SystemStatusRenderer(engineeringConsoleManager);
 		
 		this.setSize(100, 300);
-		this.setBackground(Color.WHITE);
+		this.setBackground(new Color(0, 0, 0, 0));
 		
 		this.engineeringConsoleManager.addChangeListener(new EngineeringConsoleChangeListener() {
 			
@@ -47,19 +51,33 @@ public class SystemSlider extends JPanel implements KeyListener {
 	public void paint(Graphics g) {
 		super.paint(g);
 		drawSlider((Graphics2D) g);
-		
+		drawLabel((Graphics2D) g);
 	}
 	
+	private static final int SLIDER_LEFT = 50;
+	
 	private void drawSlider(Graphics2D g) {
+		
+		g.setColor(Color.WHITE);
+		g.fillRect(SLIDER_LEFT, 0, 50, 300);
 		
 		List<Interval> intervals = systemStatusRenderer.getSystemStatusAsIntervals(system);
 		for (Interval interval: intervals) {
 			g.setColor(this.getIntervalColor(interval.type));
-			g.fillRect(0, 300 - interval.end, 100, interval.end - interval.start);
+			g.fillRect(SLIDER_LEFT, 300 - interval.end, 50, interval.end - interval.start);
 		}
 		
 		g.setColor(Color.GREEN);
-		g.fillRect(0,  200 - 2, 100, 4);
+		g.fillRect(SLIDER_LEFT,  200 - 2, 50, 4);
+	}
+	
+	private void drawLabel(Graphics2D g) {
+		g.rotate(-Math.PI/2);
+		g.setColor(Color.WHITE);
+		g.setFont(new Font("Arial", Font.PLAIN, 16)); 
+		g.drawString(this.label.toUpperCase(), -300, 40);
+		g.rotate(Math.PI/2);
+		
 	}
 	
 	private Color getIntervalColor(IntervalType type) {

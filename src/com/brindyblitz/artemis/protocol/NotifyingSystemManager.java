@@ -1,4 +1,4 @@
-package com.brindybliz.artemis;
+package com.brindyblitz.artemis.protocol;
 
 import java.util.ArrayList;
 import java.util.List;

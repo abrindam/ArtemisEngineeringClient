@@ -1,4 +1,4 @@
-package com.brindybliz.artemis;
+package com.brindyblitz.artemis.protocol;
 
 import java.io.IOException;
 import java.net.ServerSocket;

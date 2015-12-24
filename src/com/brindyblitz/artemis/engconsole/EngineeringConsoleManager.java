@@ -1,4 +1,4 @@
-package com.brindybliz.artemis;
+package com.brindyblitz.artemis.engconsole;
 
 import net.dhleong.acl.enums.ShipSystem;
 
