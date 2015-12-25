@@ -18,7 +18,7 @@ public class UserInterfaceFrame extends JFrame implements KeyListener{
 	
 	public UserInterfaceFrame(EngineeringConsoleManager engineeringConsoleManager) {
 		this.engineeringConsoleManager = engineeringConsoleManager;
-		setTitle("Artemis Client");
+		setTitle("Artemis: Engineering Console (Client)");
         setSize(1024, 768);
         getContentPane().setBackground(Color.BLACK);
         setLayout(null);
