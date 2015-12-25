@@ -12,7 +12,7 @@ These instruction assume you are using Eclipse. They are tested on Eclipse Mars 
 
 First, check out this repository into your Eclipse workspace.
 
-Next, install dependencies. You need to download the [Artemis Client Library v2.6.0](https://github.com/rjwut/ArtClientLib/releases). You may also want to install the source code as well so you can look at it while developing. You should place all dependencies in the`lib/` folder inside the repository. You may need to create this folder.
+Next, install dependencies. You need to download the [Artemis Client Library v2.6.0](https://github.com/rjwut/ArtClientLib/releases). You may also want to install the source code as well so you can look at it while developing. You should place all dependencies in the `lib/` folder inside the repository. You may need to create this folder.
 
 If you are on Mac or Linux, the follow commands should do the trick:
 
