@@ -23,18 +23,29 @@ public class SystemSlider extends JPanel implements KeyListener {
     private EngineeringConsoleManager engineeringConsoleManager;
     private SystemStatusRenderer systemStatusRenderer;
     private ShipSystem system;
-    private int increaseKey;
-    private int decreaseKey;
+    private int increaseKey, decreaseKey;
     private String label;
 
+    private static final Font
+            LABEL_FONT = new Font("Arial", Font.PLAIN, 16),
+            SHORTCUT_FONT = new Font("Courier New", Font.BOLD | Font.ITALIC, 20);
+    private static Color INCREASE_FONT_COLOR = Color.WHITE, DECREASE_FONT_COLOR = Color.WHITE;
+
     private static final int
-            SLIDER_MAX_PCT = 3,
-            SLIDER_WIDTH = 50,
+            WIDGET_WIDTH = 100,
+            SLIDER_WIDTH = WIDGET_WIDTH / 2,
+            SLIDER_LEFT = SLIDER_WIDTH,
+
             SLIDER_HEIGHT = 300,
+            WIDGET_HEIGHT = SLIDER_HEIGHT + 2 * SHORTCUT_FONT.getSize(),
+            SLIDER_TOP = SHORTCUT_FONT.getSize(),
+            SLIDER_BOTTOM = SLIDER_TOP + SLIDER_HEIGHT,
+
+    SLIDER_MAX_PCT = 3,
             NOTCH_HEIGHT_FOR_100_PCTS = 4,
             NOTCH_HEIGHT_FOR_MINOR_PCTS = 2,
             NOTCH_PRECISION_LEVELS_PER_100_PCT = 4;
-    private static final Color[] NOTCH_COLORS = new Color[] { Color.GREEN, new Color(255, 180, 0), Color.RED };
+    private static final Color[] NOTCH_COLORS = new Color[]{Color.GREEN, new Color(255, 180, 0), Color.RED};
 
     public SystemSlider(ShipSystem system, String label, int increaseKey, int decreaseKey, EngineeringConsoleManager engineeringConsoleManager) {
         this.system = system;
@@ -44,7 +55,7 @@ public class SystemSlider extends JPanel implements KeyListener {
         this.engineeringConsoleManager = engineeringConsoleManager;
         this.systemStatusRenderer = new SystemStatusRenderer(engineeringConsoleManager);
 
-        this.setSize(2 * SLIDER_WIDTH, SLIDER_HEIGHT);
+        this.setSize(WIDGET_WIDTH, WIDGET_HEIGHT);
         this.setBackground(new Color(0, 0, 0, 0));
 
         this.engineeringConsoleManager.addChangeListener(new EngineeringConsoleChangeListener() {
@@ -59,20 +70,24 @@ public class SystemSlider extends JPanel implements KeyListener {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        drawSlider((Graphics2D) g);
-        drawLabel((Graphics2D) g);
+
+        Graphics2D gfx = (Graphics2D) g;
+        drawSlider(gfx);
+        drawLabel(gfx);
+        drawShortcuts(gfx);
     }
 
-    private static final int SLIDER_LEFT = SLIDER_WIDTH;
 
     private void drawSlider(Graphics2D g) {
+        /* Draw background */
         g.setColor(Color.WHITE);
-        g.fillRect(SLIDER_LEFT, 0, SLIDER_WIDTH, SLIDER_HEIGHT);
+        g.fillRect(SLIDER_LEFT, SLIDER_TOP, SLIDER_WIDTH, SLIDER_HEIGHT);
 
+        /* Draw intervals */
         List<Interval> intervals = systemStatusRenderer.getSystemStatusAsIntervals(system);
         for (Interval interval : intervals) {
             g.setColor(this.getIntervalColor(interval.type));
-            g.fillRect(SLIDER_LEFT, SLIDER_HEIGHT - interval.end, SLIDER_WIDTH, interval.end - interval.start);
+            g.fillRect(SLIDER_LEFT, SLIDER_BOTTOM - interval.end, SLIDER_WIDTH, interval.end - interval.start); // TODO: TESTME
         }
 
 		/* Draw level indicator marks */
@@ -88,7 +103,7 @@ public class SystemSlider extends JPanel implements KeyListener {
     }
 
     private static int percentToY(float percent) {
-        return (int) (SLIDER_HEIGHT - (SLIDER_HEIGHT * (percent / (float) SLIDER_MAX_PCT)));
+        return (int) (SLIDER_BOTTOM - (SLIDER_HEIGHT * (percent / (float) SLIDER_MAX_PCT)));
     }
 
     private void drawNotchAndSubdivide(Graphics2D g, int start_y, int max_level, int level) {
@@ -110,10 +125,23 @@ public class SystemSlider extends JPanel implements KeyListener {
     private void drawLabel(Graphics2D g) {
         g.rotate(-Math.PI / 2);
         g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.PLAIN, 16));
-        g.drawString(this.label.toUpperCase(), -SLIDER_HEIGHT, 40);
+        g.setFont(LABEL_FONT);
+        g.drawString(this.label.toUpperCase(),
+                -SLIDER_BOTTOM + (SLIDER_HEIGHT / 2) - g.getFontMetrics().stringWidth(this.label.toUpperCase()) / 2,
+                SLIDER_WIDTH - (LABEL_FONT.getSize() - 6));
         g.rotate(Math.PI / 2);
+    }
 
+    private void drawShortcuts(Graphics2D g) {
+        g.setFont(SHORTCUT_FONT);
+
+        g.setColor(INCREASE_FONT_COLOR);
+        String increase = ("" + (char) this.increaseKey).toUpperCase();
+        g.drawString(increase, SLIDER_WIDTH * 1.5f - g.getFontMetrics().stringWidth(increase) / 2f, SHORTCUT_FONT.getSize() - 5);
+
+        g.setColor(DECREASE_FONT_COLOR);
+        String decrease = ("" + (char) this.decreaseKey).toUpperCase();
+        g.drawString(decrease, SLIDER_WIDTH * 1.5f - g.getFontMetrics().stringWidth(decrease) / 2f, SLIDER_BOTTOM + SHORTCUT_FONT.getSize() - 2);
     }
 
     private Color getIntervalColor(IntervalType type) {
@@ -150,6 +178,4 @@ public class SystemSlider extends JPanel implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
     }
-
-
 }
