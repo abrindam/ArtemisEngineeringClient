@@ -29,7 +29,7 @@ public class UserInterfaceFrame extends JFrame implements KeyListener{
         this.addSlider(ShipSystem.BEAMS, "Primary Beam", KeyEvent.VK_Q, KeyEvent.VK_A);
         this.addSlider(ShipSystem.TORPEDOES, "Torpedoes", KeyEvent.VK_W, KeyEvent.VK_S);
         this.addSlider(ShipSystem.SENSORS, "Sensors", KeyEvent.VK_E, KeyEvent.VK_D);
-        this.addSlider(ShipSystem.MANEUVERING, "Manuver", KeyEvent.VK_R, KeyEvent.VK_F);
+        this.addSlider(ShipSystem.MANEUVERING, "Maneuver", KeyEvent.VK_R, KeyEvent.VK_F);
         this.addSlider(ShipSystem.IMPULSE, "Impulse", KeyEvent.VK_T, KeyEvent.VK_G);
         this.addSlider(ShipSystem.WARP_JUMP_DRIVE, "Warp", KeyEvent.VK_Y, KeyEvent.VK_H);
         this.addSlider(ShipSystem.FORE_SHIELDS, "Front Shield", KeyEvent.VK_U, KeyEvent.VK_J);
