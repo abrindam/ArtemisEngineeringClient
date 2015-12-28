@@ -101,6 +101,10 @@ public class SystemSlider extends JPanel implements KeyListener {
         g.setColor(Color.BLACK);
         g.fillRect(SLIDER_LEFT + POWER_WIDTH, SLIDER_TOP, BAR_GAP_WIDTH, SLIDER_HEIGHT);
 
+        /* Gray out coolant section below 100% power allocation */
+        g.setColor(Color.DARK_GRAY);
+        g.fillRect(SLIDER_LEFT + POWER_WIDTH + BAR_GAP_WIDTH, percentToY(1f), COOLANT_WIDTH, (int)(SLIDER_HEIGHT / (Artemis.MAX_ENERGY_ALLOCATION_PERCENT / 100f)));
+
 		/* Draw level indicator marks */
 		for (int i = 1; i <= SLIDER_MAX_PCT; i++) {
             Color color = NOTCH_COLORS[i - 1];
