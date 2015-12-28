@@ -15,45 +15,45 @@ public class UserInterfaceFrame extends JFrame implements KeyListener{
 	private static final long serialVersionUID = 1L;
 	private EngineeringConsoleManager engineeringConsoleManager;
 	private int numSliders = 0;
-	
+
 	public UserInterfaceFrame(EngineeringConsoleManager engineeringConsoleManager) {
 		this.engineeringConsoleManager = engineeringConsoleManager;
 		setTitle("Artemis: Engineering Console (Client)");
-        setSize(1024, 768);
-        getContentPane().setBackground(Color.BLACK);
-        setLayout(null);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.addKeyListener(this);
-        
-        this.addSlider(ShipSystem.BEAMS, "Primary Beam", KeyEvent.VK_Q, KeyEvent.VK_A);
-        this.addSlider(ShipSystem.TORPEDOES, "Torpedoes", KeyEvent.VK_W, KeyEvent.VK_S);
-        this.addSlider(ShipSystem.SENSORS, "Sensors", KeyEvent.VK_E, KeyEvent.VK_D);
-        this.addSlider(ShipSystem.MANEUVERING, "Maneuver", KeyEvent.VK_R, KeyEvent.VK_F);
-        this.addSlider(ShipSystem.IMPULSE, "Impulse", KeyEvent.VK_T, KeyEvent.VK_G);
-        this.addSlider(ShipSystem.WARP_JUMP_DRIVE, "Warp", KeyEvent.VK_Y, KeyEvent.VK_H);
-        this.addSlider(ShipSystem.FORE_SHIELDS, "Front Shield", KeyEvent.VK_U, KeyEvent.VK_J);
-        this.addSlider(ShipSystem.AFT_SHIELDS, "Rear Shield", KeyEvent.VK_I, KeyEvent.VK_K);
-        
+		setSize(1024, 768);
+		getContentPane().setBackground(Color.BLACK);
+		setLayout(null);
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.addKeyListener(this);
+
+		this.addSlider(ShipSystem.BEAMS, "Primary Beam", KeyEvent.VK_Q, KeyEvent.VK_A);
+		this.addSlider(ShipSystem.TORPEDOES, "Torpedoes", KeyEvent.VK_W, KeyEvent.VK_S);
+		this.addSlider(ShipSystem.SENSORS, "Sensors", KeyEvent.VK_E, KeyEvent.VK_D);
+		this.addSlider(ShipSystem.MANEUVERING, "Maneuver", KeyEvent.VK_R, KeyEvent.VK_F);
+		this.addSlider(ShipSystem.IMPULSE, "Impulse", KeyEvent.VK_T, KeyEvent.VK_G);
+		this.addSlider(ShipSystem.WARP_JUMP_DRIVE, "Warp", KeyEvent.VK_Y, KeyEvent.VK_H);
+		this.addSlider(ShipSystem.FORE_SHIELDS, "Front Shield", KeyEvent.VK_U, KeyEvent.VK_J);
+		this.addSlider(ShipSystem.AFT_SHIELDS, "Rear Shield", KeyEvent.VK_I, KeyEvent.VK_K);
+
 	}
-	
+
 	private void addSlider(ShipSystem system, String label, int increaseKey, int decreaseKey) {
 		SystemSlider slider = new SystemSlider(system, label, increaseKey, decreaseKey, this.engineeringConsoleManager);
 		this.add(slider).setLocation(this.numSliders * 125 + 25, 200);
 		this.addKeyListener(slider);
 		this.numSliders ++;
 	}
-	
+
 
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {				
-		
+
 		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 			System.out.println("\n\n\n\n\n\n\n\n");
 			System.out.println("Beams: " + this.engineeringConsoleManager.getSystemEnergyAllocated(ShipSystem.BEAMS) + "%");
@@ -65,14 +65,14 @@ public class UserInterfaceFrame extends JFrame implements KeyListener{
 			System.out.println("Front Shields: " + this.engineeringConsoleManager.getSystemEnergyAllocated(ShipSystem.FORE_SHIELDS) + "%");
 			System.out.println("Rear Shields: " + this.engineeringConsoleManager.getSystemEnergyAllocated(ShipSystem.AFT_SHIELDS) + "%");
 		}
-		
+
 	}	
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 
 }
