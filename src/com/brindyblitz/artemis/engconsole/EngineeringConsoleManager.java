@@ -8,6 +8,8 @@ public interface EngineeringConsoleManager {
 
 	int getSystemCoolantAllocated(ShipSystem system);
 
+	int getTotalCoolantRemaining();
+
 	void incrementSystemEnergyAllocated(ShipSystem system, int amount);
 
 	void incrementSystemCoolantAllocated(ShipSystem system, int amount);
@@ -17,5 +19,6 @@ public interface EngineeringConsoleManager {
 	public static interface EngineeringConsoleChangeListener {
 		public void onChange();
 	}
+
 
 }

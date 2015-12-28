@@ -41,7 +41,14 @@ public class RealEngineeringConsoleManager implements EngineeringConsoleManager 
 		if (this.worldAwareRobustProxyListener.getServer() == null) {
 			return 0;
 		}
-		return (int)(this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0).getSystemCoolant(system));
+		return this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0).getSystemCoolant(system);
+	}
+	
+	public int getTotalCoolantRemaining() {
+		if (this.worldAwareRobustProxyListener.getServer() == null) {
+			return 0;
+		}
+		return this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0).getAvailableCoolant();
 	}
 	
 	@Override
@@ -57,7 +64,7 @@ public class RealEngineeringConsoleManager implements EngineeringConsoleManager 
 		if (this.worldAwareRobustProxyListener.getServer() == null) {
 			return;
 		}
-		this.worldAwareRobustProxyListener.getServer().send(new EngSetCoolantPacket(system, this.getSystemCoolantAllocated(system) + amount));
+		this.worldAwareRobustProxyListener.getServer().send(new EngSetCoolantPacket(system, Math.max(0, this.getSystemCoolantAllocated(system) + Math.min(amount, getTotalCoolantRemaining()))));
 	}
 	
 	public void addChangeListener(EngineeringConsoleChangeListener listener) {
