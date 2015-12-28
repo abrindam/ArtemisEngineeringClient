@@ -1,5 +1,7 @@
 package com.brindyblitz.artemis.engconsole;
 
+import java.util.Arrays;
+
 import com.brindyblitz.artemis.protocol.NotifyingSystemManager.SystemManagerChangeListener;
 import com.brindyblitz.artemis.protocol.WorldAwareRobustProxyListener;
 
@@ -38,11 +40,13 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		return this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0).getSystemCoolant(system);
 	}
 	
+	@Override
 	public int getTotalCoolantRemaining() {
 		if (this.worldAwareRobustProxyListener.getServer() == null) {
 			return 0;
 		}
-		return this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0).getAvailableCoolant();
+		final int totalCoolantUsed = Arrays.stream(ShipSystem.values()).mapToInt(system -> this.getSystemCoolantAllocated(system)).sum();
+		return this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0).getAvailableCoolant() - totalCoolantUsed;
 	}
 	
 	@Override
