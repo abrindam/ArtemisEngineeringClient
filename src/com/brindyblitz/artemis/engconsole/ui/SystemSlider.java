@@ -16,6 +16,7 @@ import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer.Interval;
 import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer.IntervalType;
 
 import net.dhleong.acl.enums.ShipSystem;
+import net.dhleong.acl.world.Artemis;
 
 public class SystemSlider extends JPanel implements KeyListener {
 
@@ -36,7 +37,7 @@ public class SystemSlider extends JPanel implements KeyListener {
 		SLIDER_WIDTH = WIDGET_WIDTH / 2,
 		SLIDER_LEFT = SLIDER_WIDTH,
 	
-		SLIDER_HEIGHT = 300,
+		SLIDER_HEIGHT = Artemis.MAX_ENERGY_ALLOCATION_PERCENT,
 		WIDGET_HEIGHT = SLIDER_HEIGHT + 2 * SHORTCUT_FONT.getSize(),
 		SLIDER_TOP = SHORTCUT_FONT.getSize(),
 		SLIDER_BOTTOM = SLIDER_TOP + SLIDER_HEIGHT,
@@ -44,7 +45,7 @@ public class SystemSlider extends JPanel implements KeyListener {
 		SLIDER_MAX_PCT = 3,
 		NOTCH_HEIGHT_FOR_100_PCTS = 4,
 		NOTCH_HEIGHT_FOR_MINOR_PCTS = 2,
-		NOTCH_PRECISION_LEVELS_PER_100_PCT = 3;
+		NOTCH_PRECISION_LEVELS_PER_100_PCT = Artemis.MAX_ENERGY_ALLOCATION_PERCENT / 100;
 	private static final Color[] NOTCH_COLORS = new Color[]{Color.GREEN, new Color(255, 180, 0), Color.RED};
 
 	public SystemSlider(ShipSystem system, String label, int increaseKey, int decreaseKey, EngineeringConsoleManager engineeringConsoleManager) {
