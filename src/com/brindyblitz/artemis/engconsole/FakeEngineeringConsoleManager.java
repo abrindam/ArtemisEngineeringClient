@@ -34,15 +34,15 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	}
 
 	@Override
-	public void incrementSystemEnergyAllocated(ShipSystem system, int amount) {
-		energyAllocated.put(system, getSystemEnergyAllocated(system) + amount);
-		fireChange();
+	protected void updateSystemEnergyAllocated(ShipSystem system, int amount) {
+		energyAllocated.put(system, amount);
+		fireChange();		
 	}
-
+	
 	@Override
-	public void incrementSystemCoolantAllocated(ShipSystem system, int amount) {
-		coolantAllocated.put(system, Math.max(0, getSystemCoolantAllocated(system) + Math.min(amount, getTotalCoolantRemaining())));
+	protected void updateSystemCoolantAllocated(ShipSystem system, int amount) {
+		coolantAllocated.put(system, amount);
 		fireChange();
+		
 	}
-
 }
