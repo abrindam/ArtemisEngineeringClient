@@ -8,6 +8,10 @@ public interface EngineeringConsoleManager {
 	int getSystemEnergyAllocated(ShipSystem system);
 
 	int getSystemCoolantAllocated(ShipSystem system);
+	
+	int getSystemHeat(ShipSystem system);
+	
+	int getSystemHealth(ShipSystem system);
 
 	int getTotalCoolantRemaining();
 

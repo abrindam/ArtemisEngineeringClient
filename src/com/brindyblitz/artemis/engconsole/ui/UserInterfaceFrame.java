@@ -44,6 +44,8 @@ public class UserInterfaceFrame extends JFrame implements KeyListener{
 		SystemSlider slider = new SystemSlider(system, label, increaseKey, decreaseKey, this.engineeringConsoleManager);
 		this.add(slider).setLocation(this.numSliders * 125 + 25, 200);
 		this.addKeyListener(slider);
+		SystemHeatSlider systemHeatSlider = new SystemHeatSlider(system, this.engineeringConsoleManager);
+		this.add(systemHeatSlider).setLocation(this.numSliders * 125 + 25, 150);
 		this.numSliders ++;
 	}
 

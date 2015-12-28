@@ -41,6 +41,22 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	}
 	
 	@Override
+	public int getSystemHeat(ShipSystem system) {
+		if (this.worldAwareRobustProxyListener.getServer() == null) {
+			return 0;
+		}
+		return (int) (this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0).getSystemHeat(system) * 100);
+	}
+	
+	@Override
+	public int getSystemHealth(ShipSystem system) {
+		if (this.worldAwareRobustProxyListener.getServer() == null) {
+			return 0;
+		}
+		return (int) (this.worldAwareRobustProxyListener.getSystemManager().getHealthOfSystem(system) * 100);
+	}
+	
+	@Override
 	public int getTotalCoolantRemaining() {
 		if (this.worldAwareRobustProxyListener.getServer() == null) {
 			return 0;
