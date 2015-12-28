@@ -33,6 +33,8 @@ public class SystemSlider extends JPanel implements KeyListener {
 	private static Color INCREASE_FONT_COLOR = Color.WHITE, DECREASE_FONT_COLOR = Color.WHITE;
 
 	private static final int
+		ENERGY_INCREMENT = 25,
+	
 		WIDGET_WIDTH = 100,
 		SLIDER_WIDTH = WIDGET_WIDTH / 2,
 		SLIDER_LEFT = SLIDER_WIDTH,
@@ -46,7 +48,7 @@ public class SystemSlider extends JPanel implements KeyListener {
 		NOTCH_HEIGHT_FOR_100_PCTS = 4,
 		NOTCH_HEIGHT_FOR_MINOR_PCTS = 2,
 		NOTCH_PRECISION_LEVELS_PER_100_PCT = Artemis.MAX_ENERGY_ALLOCATION_PERCENT / 100;
-	private static final Color[] NOTCH_COLORS = new Color[]{Color.GREEN, new Color(255, 180, 0), Color.RED};
+	private static final Color[] NOTCH_COLORS = new Color[]{Color.GREEN, new Color(255, 180, 0), Color.RED}; 
 
 	public SystemSlider(ShipSystem system, String label, int increaseKey, int decreaseKey, EngineeringConsoleManager engineeringConsoleManager) {
 		this.system = system;
@@ -163,7 +165,7 @@ public class SystemSlider extends JPanel implements KeyListener {
 			if (e.isShiftDown()) {
 				this.engineeringConsoleManager.incrementSystemCoolantAllocated(this.system, (e.getKeyCode() == this.increaseKey ? 1 : -1));
 			} else {
-				this.engineeringConsoleManager.incrementSystemEnergyAllocated(this.system, (e.getKeyCode() == this.increaseKey ? 30 : -30));
+				this.engineeringConsoleManager.incrementSystemEnergyAllocated(this.system, (e.getKeyCode() == this.increaseKey ? ENERGY_INCREMENT : -ENERGY_INCREMENT));
 			}
 			this.repaint();
 		}
