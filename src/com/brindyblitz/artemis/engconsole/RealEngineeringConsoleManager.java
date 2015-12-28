@@ -46,7 +46,16 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 			return 0;
 		}
 		final int totalCoolantUsed = Arrays.stream(ShipSystem.values()).mapToInt(system -> this.getSystemCoolantAllocated(system)).sum();
-		return this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0).getAvailableCoolant() - totalCoolantUsed;
+		return getTotalShipCoolant() - totalCoolantUsed;
+	}
+
+	@Override
+	public int getTotalShipCoolant() {
+		if (this.worldAwareRobustProxyListener.getServer() == null) {
+			return 0;
+		}
+
+		return this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0).getAvailableCoolant();
 	}
 	
 	@Override

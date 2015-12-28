@@ -3,6 +3,7 @@ package com.brindyblitz.artemis.engconsole;
 import net.dhleong.acl.enums.ShipSystem;
 
 public interface EngineeringConsoleManager {
+	int getTotalShipCoolant();
 
 	int getSystemEnergyAllocated(ShipSystem system);
 
@@ -23,6 +24,4 @@ public interface EngineeringConsoleManager {
 	void resetEnergy();
 
 	void resetCoolant();
-
-
 }

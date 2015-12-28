@@ -45,4 +45,9 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		fireChange();
 		
 	}
+
+	@Override
+	public int getTotalShipCoolant() {
+		return MAX_COOLANT;
+	}
 }
