@@ -66,7 +66,7 @@ public class SystemStatusRenderer {
 		}
 	}
 	
-	private int getCooledEnergyThreshold(int coolant) {
+	public static int getCooledEnergyThreshold(int coolant) {
 		return  (int) (Math.sqrt(0.65 * coolant + 1) * 100);
 	}
 

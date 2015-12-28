@@ -41,6 +41,7 @@ public class SystemSlider extends JPanel implements KeyListener {
 
         POWER_WIDTH = (int) (2f * (float)SLIDER_WIDTH / 3f),
         BAR_GAP_WIDTH = 2,
+        COOLANT_LEFT = SLIDER_LEFT + POWER_WIDTH + BAR_GAP_WIDTH,
         COOLANT_WIDTH = SLIDER_WIDTH - (POWER_WIDTH + BAR_GAP_WIDTH),
 
 		SLIDER_HEIGHT = Artemis.MAX_ENERGY_ALLOCATION_PERCENT,
@@ -97,24 +98,41 @@ public class SystemSlider extends JPanel implements KeyListener {
 			g.fillRect(SLIDER_LEFT, SLIDER_BOTTOM - interval.end, POWER_WIDTH, interval.end - interval.start);
 		}
 
+        /* Draw power level indicator marks */
+        for (int i = 1; i <= SLIDER_MAX_PCT; i++) {
+            Color color = NOTCH_COLORS[i - 1];
+            g.setColor(color);
+            int y = percentToY(i);
+            g.fillRect(SLIDER_LEFT, y, POWER_WIDTH, NOTCH_HEIGHT_FOR_100_PCTS);
+            g.setColor(Color.BLACK);
+            g.drawRect(SLIDER_LEFT, y, POWER_WIDTH, NOTCH_HEIGHT_FOR_100_PCTS);
+            drawNotchAndSubdivide(g, color, percentToY(i - 0.5f), (int) ((float) SLIDER_HEIGHT / (float) SLIDER_MAX_PCT), NOTCH_PRECISION_LEVELS_PER_100_PCT - 1, 0);
+        }
+
         /* Draw divider */
         g.setColor(Color.BLACK);
         g.fillRect(SLIDER_LEFT + POWER_WIDTH, SLIDER_TOP, BAR_GAP_WIDTH, SLIDER_HEIGHT);
 
-        /* Gray out coolant section below 100% power allocation */
+        /* Gray out coolant section below 100% power allocation and above full coolant allocation */
         g.setColor(Color.DARK_GRAY);
-        g.fillRect(SLIDER_LEFT + POWER_WIDTH + BAR_GAP_WIDTH, percentToY(1f), COOLANT_WIDTH, (int)(SLIDER_HEIGHT / (Artemis.MAX_ENERGY_ALLOCATION_PERCENT / 100f)));
+        g.fillRect(COOLANT_LEFT, percentToY(1f), COOLANT_WIDTH, (int) (SLIDER_HEIGHT / (Artemis.MAX_ENERGY_ALLOCATION_PERCENT / 100f)));
+        int coolant_full_y = percentToY(SystemStatusRenderer.getCooledEnergyThreshold(Artemis.MAX_COOLANT_PER_SYSTEM) / 100f);
+        g.fillRect(COOLANT_LEFT, SLIDER_TOP, COOLANT_WIDTH, coolant_full_y - SLIDER_TOP);
 
-		/* Draw level indicator marks */
-		for (int i = 1; i <= SLIDER_MAX_PCT; i++) {
-            Color color = NOTCH_COLORS[i - 1];
-            g.setColor(color);
-            int y = percentToY(i);
-			g.fillRect(SLIDER_LEFT, y, POWER_WIDTH, NOTCH_HEIGHT_FOR_100_PCTS);
+        /* Fill coolant bar */
+        g.setColor(Color.BLUE);
+        int coolant_start_y = percentToY(SystemStatusRenderer.getCooledEnergyThreshold(this.engineeringConsoleManager.getSystemCoolantAllocated(this.system)) / 100f);
+        g.fillRect(COOLANT_LEFT, coolant_start_y, COOLANT_WIDTH, percentToY(1f) - coolant_start_y);
+
+        /* Draw coolant level indicator marks */
+        for (int i = 1; i <= Artemis.MAX_COOLANT_PER_SYSTEM; i++) {
+            int coolant_notch_y = percentToY(SystemStatusRenderer.getCooledEnergyThreshold(i) / 100f);
+
+            g.setColor(Color.CYAN);
+            g.fillRect(COOLANT_LEFT, coolant_notch_y, COOLANT_WIDTH, NOTCH_HEIGHT_FOR_MINOR_PCTS);
             g.setColor(Color.BLACK);
-            g.drawRect(SLIDER_LEFT, y, POWER_WIDTH, NOTCH_HEIGHT_FOR_100_PCTS);
-            drawNotchAndSubdivide(g, color, percentToY(i - 0.5f), (int) ((float) SLIDER_HEIGHT / (float) SLIDER_MAX_PCT), NOTCH_PRECISION_LEVELS_PER_100_PCT - 1, 0);
-		}
+            g.drawRect(COOLANT_LEFT, coolant_notch_y, COOLANT_WIDTH, NOTCH_HEIGHT_FOR_MINOR_PCTS);
+        }
 	}
 
 	private static int percentToY(float percent) {
@@ -155,6 +173,8 @@ public class SystemSlider extends JPanel implements KeyListener {
 		String decrease = ("" + (char) this.decreaseKey).toUpperCase();
 		g.drawString(decrease, SLIDER_WIDTH * 1.5f - g.getFontMetrics().stringWidth(decrease) / 2f, SLIDER_BOTTOM + SHORTCUT_FONT.getSize() - 2);
 	}
+
+    // TODO: method to fill a rectangle with a color then draw black borders around it
 
 	private Color getIntervalColor(IntervalType type) {
 		switch (type) {
