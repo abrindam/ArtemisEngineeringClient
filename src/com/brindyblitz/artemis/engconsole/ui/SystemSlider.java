@@ -38,17 +38,21 @@ public class SystemSlider extends JPanel implements KeyListener {
 		WIDGET_WIDTH = 100,
 		SLIDER_WIDTH = WIDGET_WIDTH / 2,
 		SLIDER_LEFT = SLIDER_WIDTH,
-	
+
+        POWER_WIDTH = (int) (2f * (float)SLIDER_WIDTH / 3f),
+        BAR_GAP_WIDTH = 2,
+        COOLANT_WIDTH = SLIDER_WIDTH - (POWER_WIDTH + BAR_GAP_WIDTH),
+
 		SLIDER_HEIGHT = Artemis.MAX_ENERGY_ALLOCATION_PERCENT,
 		WIDGET_HEIGHT = SLIDER_HEIGHT + 2 * SHORTCUT_FONT.getSize(),
 		SLIDER_TOP = SHORTCUT_FONT.getSize(),
 		SLIDER_BOTTOM = SLIDER_TOP + SLIDER_HEIGHT,
-	
+
 		SLIDER_MAX_PCT = 3,
 		NOTCH_HEIGHT_FOR_100_PCTS = 4,
 		NOTCH_HEIGHT_FOR_MINOR_PCTS = 2,
 		NOTCH_PRECISION_LEVELS_PER_100_PCT = Artemis.MAX_ENERGY_ALLOCATION_PERCENT / 100;
-	private static final Color[] NOTCH_COLORS = new Color[]{Color.GREEN, new Color(255, 180, 0), Color.RED}; 
+	private static final Color[] NOTCH_COLORS = new Color[]{Color.GREEN, new Color(255, 180, 0), Color.RED};
 
 	public SystemSlider(ShipSystem system, String label, int increaseKey, int decreaseKey, EngineeringConsoleManager engineeringConsoleManager) {
 		this.system = system;
@@ -90,17 +94,21 @@ public class SystemSlider extends JPanel implements KeyListener {
 		List<Interval> intervals = systemStatusRenderer.getSystemStatusAsIntervals(system);
 		for (Interval interval : intervals) {
 			g.setColor(this.getIntervalColor(interval.type));
-			g.fillRect(SLIDER_LEFT, SLIDER_BOTTOM - interval.end, SLIDER_WIDTH, interval.end - interval.start); // TODO: TESTME
+			g.fillRect(SLIDER_LEFT, SLIDER_BOTTOM - interval.end, POWER_WIDTH, interval.end - interval.start);
 		}
+
+        /* Draw divider */
+        g.setColor(Color.BLACK);
+        g.fillRect(SLIDER_LEFT + POWER_WIDTH, SLIDER_TOP, BAR_GAP_WIDTH, SLIDER_HEIGHT);
 
 		/* Draw level indicator marks */
 		for (int i = 1; i <= SLIDER_MAX_PCT; i++) {
             Color color = NOTCH_COLORS[i - 1];
             g.setColor(color);
             int y = percentToY(i);
-			g.fillRect(SLIDER_LEFT, y, SLIDER_WIDTH, NOTCH_HEIGHT_FOR_100_PCTS);
+			g.fillRect(SLIDER_LEFT, y, POWER_WIDTH, NOTCH_HEIGHT_FOR_100_PCTS);
             g.setColor(Color.BLACK);
-            g.drawRect(SLIDER_LEFT, y, SLIDER_WIDTH, NOTCH_HEIGHT_FOR_100_PCTS);
+            g.drawRect(SLIDER_LEFT, y, POWER_WIDTH, NOTCH_HEIGHT_FOR_100_PCTS);
             drawNotchAndSubdivide(g, color, percentToY(i - 0.5f), (int) ((float) SLIDER_HEIGHT / (float) SLIDER_MAX_PCT), NOTCH_PRECISION_LEVELS_PER_100_PCT - 1, 0);
 		}
 	}
@@ -110,11 +118,11 @@ public class SystemSlider extends JPanel implements KeyListener {
 	}
 
 	private void drawNotchAndSubdivide(Graphics2D g, Color c, int section_middle_y, int level_height, int max_level, int level) {
-        int x = SLIDER_LEFT, y = section_middle_y, width = SLIDER_WIDTH / (level + 1);
+        int x = SLIDER_LEFT, width = POWER_WIDTH / (level + 2);
         g.setColor(c);
-        g.fillRect(x, y, width, NOTCH_HEIGHT_FOR_MINOR_PCTS);
+        g.fillRect(x, section_middle_y, width, NOTCH_HEIGHT_FOR_MINOR_PCTS);
         g.setColor(Color.BLACK);
-        g.drawRect(x, y, width, NOTCH_HEIGHT_FOR_MINOR_PCTS);
+        g.drawRect(x, section_middle_y, width, NOTCH_HEIGHT_FOR_MINOR_PCTS);
 
         if (level < max_level) {
             drawNotchAndSubdivide(g, c, (int)(section_middle_y - level_height / 4), level_height / 2, max_level, level + 1);
