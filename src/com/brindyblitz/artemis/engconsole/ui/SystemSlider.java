@@ -44,7 +44,7 @@ public class SystemSlider extends JPanel implements KeyListener {
 		SLIDER_MAX_PCT = 3,
 		NOTCH_HEIGHT_FOR_100_PCTS = 4,
 		NOTCH_HEIGHT_FOR_MINOR_PCTS = 2,
-		NOTCH_PRECISION_LEVELS_PER_100_PCT = 4;
+		NOTCH_PRECISION_LEVELS_PER_100_PCT = 3;
 	private static final Color[] NOTCH_COLORS = new Color[]{Color.GREEN, new Color(255, 180, 0), Color.RED};
 
 	public SystemSlider(ShipSystem system, String label, int increaseKey, int decreaseKey, EngineeringConsoleManager engineeringConsoleManager) {
@@ -60,11 +60,11 @@ public class SystemSlider extends JPanel implements KeyListener {
 
 		this.engineeringConsoleManager.addChangeListener(new EngineeringConsoleChangeListener() {
 
-			@Override
-			public void onChange() {
-				SystemSlider.this.repaint();
-			}
-		});
+            @Override
+            public void onChange() {
+                SystemSlider.this.repaint();
+            }
+        });
 	}
 
 	@Override
@@ -92,13 +92,13 @@ public class SystemSlider extends JPanel implements KeyListener {
 
 		/* Draw level indicator marks */
 		for (int i = 1; i <= SLIDER_MAX_PCT; i++) {
-			g.setColor(NOTCH_COLORS[i - 1]);
-
-			g.fillRect(SLIDER_LEFT,                                                                     // Draw 100%
-					percentToY(i),
-					SLIDER_WIDTH,
-					NOTCH_HEIGHT_FOR_100_PCTS);
-			drawNotchAndSubdivide(g, percentToY(i - 1), NOTCH_PRECISION_LEVELS_PER_100_PCT - 1, 0);     // Subdivide
+            Color color = NOTCH_COLORS[i - 1];
+            g.setColor(color);
+            int y = percentToY(i);
+			g.fillRect(SLIDER_LEFT, y, SLIDER_WIDTH, NOTCH_HEIGHT_FOR_100_PCTS);
+            g.setColor(Color.BLACK);
+            g.drawRect(SLIDER_LEFT, y, SLIDER_WIDTH, NOTCH_HEIGHT_FOR_100_PCTS);
+            drawNotchAndSubdivide(g, color, percentToY(i - 0.5f), (int) ((float) SLIDER_HEIGHT / (float) SLIDER_MAX_PCT), NOTCH_PRECISION_LEVELS_PER_100_PCT - 1, 0);
 		}
 	}
 
@@ -106,20 +106,17 @@ public class SystemSlider extends JPanel implements KeyListener {
 		return (int) (SLIDER_BOTTOM - (SLIDER_HEIGHT * (percent / (float) SLIDER_MAX_PCT)));
 	}
 
-	private void drawNotchAndSubdivide(Graphics2D g, int start_y, int max_level, int level) {
-		float slider_section_height = (float) SLIDER_HEIGHT / (float) SLIDER_MAX_PCT;
-		int dividers = (int) Math.pow(2, level);
-		float height = slider_section_height / dividers;
-		for (int i = 1; i < dividers; i++) {
-			g.fillRect(SLIDER_LEFT,
-					(int) (start_y - i * height),
-					SLIDER_WIDTH / (level + 1),
-					NOTCH_HEIGHT_FOR_MINOR_PCTS);
-		}
+	private void drawNotchAndSubdivide(Graphics2D g, Color c, int section_middle_y, int level_height, int max_level, int level) {
+        int x = SLIDER_LEFT, y = section_middle_y, width = SLIDER_WIDTH / (level + 1);
+        g.setColor(c);
+        g.fillRect(x, y, width, NOTCH_HEIGHT_FOR_MINOR_PCTS);
+        g.setColor(Color.BLACK);
+        g.drawRect(x, y, width, NOTCH_HEIGHT_FOR_MINOR_PCTS);
 
-		if (level < max_level) {
-			drawNotchAndSubdivide(g, start_y, max_level, ++level);
-		}
+        if (level < max_level) {
+            drawNotchAndSubdivide(g, c, (int)(section_middle_y - level_height / 4), level_height / 2, max_level, level + 1);
+            drawNotchAndSubdivide(g, c, (int)(section_middle_y + level_height / 4), level_height / 2, max_level, level + 1);
+        }
 	}
 
 	private void drawLabel(Graphics2D g) {
