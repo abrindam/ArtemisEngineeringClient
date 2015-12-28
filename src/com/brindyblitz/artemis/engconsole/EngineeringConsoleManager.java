@@ -20,5 +20,9 @@ public interface EngineeringConsoleManager {
 		public void onChange();
 	}
 
+	void resetEnergy();
+
+	void resetCoolant();
+
 
 }

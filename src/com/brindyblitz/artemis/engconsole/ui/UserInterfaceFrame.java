@@ -15,6 +15,7 @@ public class UserInterfaceFrame extends JFrame implements KeyListener{
 	private static final long serialVersionUID = 1L;
 	private EngineeringConsoleManager engineeringConsoleManager;
 	private int numSliders = 0;
+	private long lastResetEnergy;
 
 	public UserInterfaceFrame(EngineeringConsoleManager engineeringConsoleManager) {
 		this.engineeringConsoleManager = engineeringConsoleManager;
@@ -56,7 +57,7 @@ public class UserInterfaceFrame extends JFrame implements KeyListener{
 	@Override
 	public void keyPressed(KeyEvent e) {				
 
-		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+		if (e.getKeyCode() == KeyEvent.VK_BACK_SLASH) {
 			System.out.println("\n\n\n\n\n\n\n\n");
 			System.out.println("Beams: " + this.engineeringConsoleManager.getSystemEnergyAllocated(ShipSystem.BEAMS) + "%");
 			System.out.println("Torpedoes: " + this.engineeringConsoleManager.getSystemEnergyAllocated(ShipSystem.TORPEDOES) + "%");
@@ -66,6 +67,16 @@ public class UserInterfaceFrame extends JFrame implements KeyListener{
 			System.out.println("Warp: " + this.engineeringConsoleManager.getSystemEnergyAllocated(ShipSystem.WARP_JUMP_DRIVE) + "%");
 			System.out.println("Front Shields: " + this.engineeringConsoleManager.getSystemEnergyAllocated(ShipSystem.FORE_SHIELDS) + "%");
 			System.out.println("Rear Shields: " + this.engineeringConsoleManager.getSystemEnergyAllocated(ShipSystem.AFT_SHIELDS) + "%");
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+			this.engineeringConsoleManager.resetEnergy();
+			if (this.lastResetEnergy > System.currentTimeMillis() - 2000) {
+				this.engineeringConsoleManager.resetCoolant();
+			}
+			this.lastResetEnergy = System.currentTimeMillis();
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			this.engineeringConsoleManager.resetCoolant();
 		}
 
 	}	

@@ -34,5 +34,19 @@ public abstract class BaseEngineeringConsoleManager implements EngineeringConsol
 	}
 	
 	protected abstract void updateSystemCoolantAllocated(ShipSystem system, int amount);
+	
+	@Override
+	public void resetEnergy() {
+		for (ShipSystem system: ShipSystem.values()) {
+			updateSystemEnergyAllocated(system, 100);
+		}
+	}
+	
+	@Override
+	public void resetCoolant() {
+		for (ShipSystem system: ShipSystem.values()) {
+			updateSystemCoolantAllocated(system, 0);
+		}
+	}
 
 }
