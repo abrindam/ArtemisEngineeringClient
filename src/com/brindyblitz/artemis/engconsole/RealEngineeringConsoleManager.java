@@ -46,18 +46,28 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	}
 	
 	@Override
-	protected void updateSystemCoolantAllocated(ShipSystem system, int amount) {
+	public void incrementSystemEnergyAllocated(ShipSystem system, int amount) {
 		if (this.worldAwareRobustProxyListener.getServer() == null) {
 			return;
 		}
-		this.worldAwareRobustProxyListener.getServer().send(new EngSetEnergyPacket(system, amount));		
+		super.incrementSystemEnergyAllocated(system, amount);
+	}
+	
+	@Override
+	public void incrementSystemCoolantAllocated(ShipSystem system, int amount) {
+		if (this.worldAwareRobustProxyListener.getServer() == null) {
+			return;
+		}
+		super.incrementSystemCoolantAllocated(system, amount);
 	}
 	
 	@Override
 	protected void updateSystemEnergyAllocated(ShipSystem system, int amount) {
-		if (this.worldAwareRobustProxyListener.getServer() == null) {
-			return;
-		}
-		this.worldAwareRobustProxyListener.getServer().send(new EngSetCoolantPacket(system, 0));		
+		this.worldAwareRobustProxyListener.getServer().send(new EngSetEnergyPacket(system, amount));		
+	}
+	
+	@Override
+	protected void updateSystemCoolantAllocated(ShipSystem system, int amount) {
+		this.worldAwareRobustProxyListener.getServer().send(new EngSetCoolantPacket(system, amount));		
 	}
 }
