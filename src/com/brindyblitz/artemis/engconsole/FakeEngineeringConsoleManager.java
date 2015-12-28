@@ -5,7 +5,7 @@ import java.util.Map;
 
 import net.dhleong.acl.enums.ShipSystem;
 
-public class FakeEngineeringConsoleManager implements EngineeringConsoleManager {
+public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager {
 
 	private static final int MAX_COOLANT = 8;
 	private Map<ShipSystem, Integer> energyAllocated = new HashMap<>();
@@ -36,17 +36,13 @@ public class FakeEngineeringConsoleManager implements EngineeringConsoleManager 
 	@Override
 	public void incrementSystemEnergyAllocated(ShipSystem system, int amount) {
 		energyAllocated.put(system, getSystemEnergyAllocated(system) + amount);
-
+		fireChange();
 	}
 
 	@Override
 	public void incrementSystemCoolantAllocated(ShipSystem system, int amount) {
 		coolantAllocated.put(system, Math.max(0, getSystemCoolantAllocated(system) + Math.min(amount, getTotalCoolantRemaining())));
-	}
-
-	@Override
-	public void addChangeListener(EngineeringConsoleChangeListener listener) {
-		//do nothing
+		fireChange();
 	}
 
 }

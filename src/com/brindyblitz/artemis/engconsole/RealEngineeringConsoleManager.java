@@ -1,18 +1,14 @@
 package com.brindyblitz.artemis.engconsole;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.brindyblitz.artemis.protocol.WorldAwareRobustProxyListener;
 import com.brindyblitz.artemis.protocol.NotifyingSystemManager.SystemManagerChangeListener;
+import com.brindyblitz.artemis.protocol.WorldAwareRobustProxyListener;
 
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.protocol.core.eng.EngSetCoolantPacket;
 import net.dhleong.acl.protocol.core.eng.EngSetEnergyPacket;
 
-public class RealEngineeringConsoleManager implements EngineeringConsoleManager {
+public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager {
 
-	private List<EngineeringConsoleChangeListener> listeners = new ArrayList<>();
 	private WorldAwareRobustProxyListener worldAwareRobustProxyListener;
 
 	public RealEngineeringConsoleManager(WorldAwareRobustProxyListener worldAwareRobustProxyListener) {
@@ -21,9 +17,7 @@ public class RealEngineeringConsoleManager implements EngineeringConsoleManager 
 			
 			@Override
 			public void onChange() {
-				for (EngineeringConsoleChangeListener listener: listeners) {
-					listener.onChange();
-				}
+				RealEngineeringConsoleManager.this.fireChange();
 			}
 		});
 	}
@@ -65,9 +59,5 @@ public class RealEngineeringConsoleManager implements EngineeringConsoleManager 
 			return;
 		}
 		this.worldAwareRobustProxyListener.getServer().send(new EngSetCoolantPacket(system, Math.max(0, this.getSystemCoolantAllocated(system) + Math.min(amount, getTotalCoolantRemaining()))));
-	}
-	
-	public void addChangeListener(EngineeringConsoleChangeListener listener) {
-		this.listeners.add(listener);
 	}
 }

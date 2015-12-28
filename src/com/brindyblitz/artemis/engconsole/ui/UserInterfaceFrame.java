@@ -34,6 +34,8 @@ public class UserInterfaceFrame extends JFrame implements KeyListener{
 		this.addSlider(ShipSystem.WARP_JUMP_DRIVE, "Warp", KeyEvent.VK_Y, KeyEvent.VK_H);
 		this.addSlider(ShipSystem.FORE_SHIELDS, "Front Shield", KeyEvent.VK_U, KeyEvent.VK_J);
 		this.addSlider(ShipSystem.AFT_SHIELDS, "Rear Shield", KeyEvent.VK_I, KeyEvent.VK_K);
+		
+		this.add(new CoolantRemainingSlider(engineeringConsoleManager)).setLocation(50, 570);
 
 	}
 
