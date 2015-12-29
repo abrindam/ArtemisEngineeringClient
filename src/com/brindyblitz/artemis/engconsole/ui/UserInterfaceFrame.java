@@ -3,6 +3,7 @@ package com.brindyblitz.artemis.engconsole.ui;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.HashMap;
 
 import javax.swing.JFrame;
 
@@ -10,12 +11,18 @@ import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 
 import net.dhleong.acl.enums.ShipSystem;
 
+import static net.dhleong.acl.enums.ShipSystem.*;
+
 public class UserInterfaceFrame extends JFrame implements KeyListener{
 
 	private static final long serialVersionUID = 1L;
 	private EngineeringConsoleManager engineeringConsoleManager;
 	private int numSliders = 0;
 	private long lastResetEnergy;
+
+	private InputManager inputManager;
+
+    private static HashMap<ShipSystem, String> SYSTEM_NAME_MAP = new HashMap<ShipSystem, String>();
 
 	public UserInterfaceFrame(EngineeringConsoleManager engineeringConsoleManager) {
 		this.engineeringConsoleManager = engineeringConsoleManager;
@@ -25,23 +32,29 @@ public class UserInterfaceFrame extends JFrame implements KeyListener{
 		setLayout(null);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.addKeyListener(this);
 
-		this.addSlider(ShipSystem.BEAMS, "Primary Beam", KeyEvent.VK_Q, KeyEvent.VK_A);
-		this.addSlider(ShipSystem.TORPEDOES, "Torpedoes", KeyEvent.VK_W, KeyEvent.VK_S);
-		this.addSlider(ShipSystem.SENSORS, "Sensors", KeyEvent.VK_E, KeyEvent.VK_D);
-		this.addSlider(ShipSystem.MANEUVERING, "Maneuver", KeyEvent.VK_R, KeyEvent.VK_F);
-		this.addSlider(ShipSystem.IMPULSE, "Impulse", KeyEvent.VK_T, KeyEvent.VK_G);
-		this.addSlider(ShipSystem.WARP_JUMP_DRIVE, "Warp", KeyEvent.VK_Y, KeyEvent.VK_H);
-		this.addSlider(ShipSystem.FORE_SHIELDS, "Front Shield", KeyEvent.VK_U, KeyEvent.VK_J);
-		this.addSlider(ShipSystem.AFT_SHIELDS, "Rear Shield", KeyEvent.VK_I, KeyEvent.VK_K);
+        SYSTEM_NAME_MAP.put(BEAMS, "Primary Beam");
+        SYSTEM_NAME_MAP.put(TORPEDOES, "Torpedoes");
+        SYSTEM_NAME_MAP.put(SENSORS, "Sensors");
+        SYSTEM_NAME_MAP.put(MANEUVERING, "Maneuver");
+        SYSTEM_NAME_MAP.put(IMPULSE, "Impulse");
+        SYSTEM_NAME_MAP.put(WARP_JUMP_DRIVE, "Warp");
+        SYSTEM_NAME_MAP.put(FORE_SHIELDS, "Front Shield");
+        SYSTEM_NAME_MAP.put(AFT_SHIELDS, "Rear Shield");
+
+        this.inputManager = new InputManager();
+        this.addKeyListener(this);
+
+        for (ShipSystem system : ShipSystem.values()) {
+            InputMapping mapping = this.inputManager.mappings.get(system);
+            this.addSlider(mapping.system, SYSTEM_NAME_MAP.get(mapping.system), mapping);
+        }
 		
 		this.add(new CoolantRemainingSlider(engineeringConsoleManager)).setLocation(50, 570);
-
 	}
 
-	private void addSlider(ShipSystem system, String label, int increaseKey, int decreaseKey) {
-		SystemSlider slider = new SystemSlider(system, label, increaseKey, decreaseKey, this.engineeringConsoleManager);
+	private void addSlider(ShipSystem system, String label, InputMapping mapping) {
+		SystemSlider slider = new SystemSlider(system, label, mapping, this.engineeringConsoleManager);
 		this.add(slider).setLocation(this.numSliders * 125 + 25, 200);
 		this.addKeyListener(slider);
 		SystemHeatSlider systemHeatSlider = new SystemHeatSlider(system, this.engineeringConsoleManager);
@@ -49,26 +62,19 @@ public class UserInterfaceFrame extends JFrame implements KeyListener{
 		this.numSliders ++;
 	}
 
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
 	@Override
 	public void keyPressed(KeyEvent e) {				
 
 		if (e.getKeyCode() == KeyEvent.VK_BACK_SLASH) {
 			System.out.println("\n\n\n\n\n\n\n\n");
-			System.out.println("Beams: " + this.engineeringConsoleManager.getSystemEnergyAllocated(ShipSystem.BEAMS) + "%");
-			System.out.println("Torpedoes: " + this.engineeringConsoleManager.getSystemEnergyAllocated(ShipSystem.TORPEDOES) + "%");
-			System.out.println("Sensors: " + this.engineeringConsoleManager.getSystemEnergyAllocated(ShipSystem.SENSORS) + "%");
-			System.out.println("Manuvering: " + this.engineeringConsoleManager.getSystemEnergyAllocated(ShipSystem.MANEUVERING) + "%");
-			System.out.println("Impulse: " + this.engineeringConsoleManager.getSystemEnergyAllocated(ShipSystem.IMPULSE) + "%");
-			System.out.println("Warp: " + this.engineeringConsoleManager.getSystemEnergyAllocated(ShipSystem.WARP_JUMP_DRIVE) + "%");
-			System.out.println("Front Shields: " + this.engineeringConsoleManager.getSystemEnergyAllocated(ShipSystem.FORE_SHIELDS) + "%");
-			System.out.println("Rear Shields: " + this.engineeringConsoleManager.getSystemEnergyAllocated(ShipSystem.AFT_SHIELDS) + "%");
+			System.out.println("Beams: " + this.engineeringConsoleManager.getSystemEnergyAllocated(BEAMS) + "%");
+			System.out.println("Torpedoes: " + this.engineeringConsoleManager.getSystemEnergyAllocated(TORPEDOES) + "%");
+			System.out.println("Sensors: " + this.engineeringConsoleManager.getSystemEnergyAllocated(SENSORS) + "%");
+			System.out.println("Manuvering: " + this.engineeringConsoleManager.getSystemEnergyAllocated(MANEUVERING) + "%");
+			System.out.println("Impulse: " + this.engineeringConsoleManager.getSystemEnergyAllocated(IMPULSE) + "%");
+			System.out.println("Warp: " + this.engineeringConsoleManager.getSystemEnergyAllocated(WARP_JUMP_DRIVE) + "%");
+			System.out.println("Front Shields: " + this.engineeringConsoleManager.getSystemEnergyAllocated(FORE_SHIELDS) + "%");
+			System.out.println("Rear Shields: " + this.engineeringConsoleManager.getSystemEnergyAllocated(AFT_SHIELDS) + "%");
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 			this.engineeringConsoleManager.resetEnergy();
@@ -81,13 +87,11 @@ public class UserInterfaceFrame extends JFrame implements KeyListener{
 			this.engineeringConsoleManager.resetCoolant();
 		}
 
-	}	
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
+    @Override
+    public void keyTyped(KeyEvent e) {}
 
+	@Override
+	public void keyReleased(KeyEvent e) {}
 }

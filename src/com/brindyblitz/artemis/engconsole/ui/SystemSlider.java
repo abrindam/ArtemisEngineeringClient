@@ -24,8 +24,8 @@ public class SystemSlider extends JPanel implements KeyListener {
 	private EngineeringConsoleManager engineeringConsoleManager;
 	private SystemStatusRenderer systemStatusRenderer;
 	private ShipSystem system;
-	private int increaseKey, decreaseKey;
 	private String label;
+	private InputMapping inputMapping;
 
 	private static final Font
 		LABEL_FONT = new Font("Arial", Font.PLAIN, 16),
@@ -34,7 +34,7 @@ public class SystemSlider extends JPanel implements KeyListener {
 
 	private static final int
 		ENERGY_INCREMENT = 25,
-	
+
 		WIDGET_WIDTH = 100,
 		SLIDER_WIDTH = WIDGET_WIDTH / 2,
 		SLIDER_LEFT = SLIDER_WIDTH,
@@ -49,17 +49,18 @@ public class SystemSlider extends JPanel implements KeyListener {
 		SLIDER_TOP = SHORTCUT_FONT.getSize(),
 		SLIDER_BOTTOM = SLIDER_TOP + SLIDER_HEIGHT,
 
-		SLIDER_MAX_PCT = 3,
+		SLIDER_MAX_PCT = Artemis.MAX_ENERGY_ALLOCATION_PERCENT / 100,
 		NOTCH_HEIGHT_FOR_100_PCTS = 4,
 		NOTCH_HEIGHT_FOR_MINOR_PCTS = 2,
-		NOTCH_PRECISION_LEVELS_PER_100_PCT = Artemis.MAX_ENERGY_ALLOCATION_PERCENT / 100;
+		NOTCH_PRECISION_LEVELS_PER_100_PCT = Artemis.MAX_ENERGY_ALLOCATION_PERCENT / 100,
+
+        SHORTCUT_MAX_LENGTH = 4;
 	private static final Color[] NOTCH_COLORS = new Color[]{Color.GREEN, new Color(255, 180, 0), Color.RED};
 
-	public SystemSlider(ShipSystem system, String label, int increaseKey, int decreaseKey, EngineeringConsoleManager engineeringConsoleManager) {
+	public SystemSlider(ShipSystem system, String label, InputMapping input_mapping, EngineeringConsoleManager engineeringConsoleManager) {
 		this.system = system;
 		this.label = label;
-		this.increaseKey = increaseKey;
-		this.decreaseKey = decreaseKey;
+		this.inputMapping = input_mapping;
 		this.engineeringConsoleManager = engineeringConsoleManager;
 		this.systemStatusRenderer = new SystemStatusRenderer(engineeringConsoleManager);
 
@@ -85,7 +86,6 @@ public class SystemSlider extends JPanel implements KeyListener {
 		drawShortcuts(gfx);
 	}
 
-
 	private void drawSlider(Graphics2D g) {
 		/* Draw background */
 		g.setColor(Color.WHITE);
@@ -103,9 +103,7 @@ public class SystemSlider extends JPanel implements KeyListener {
             Color color = NOTCH_COLORS[i - 1];
             g.setColor(color);
             int y = percentToY(i);
-            g.fillRect(SLIDER_LEFT, y, POWER_WIDTH, NOTCH_HEIGHT_FOR_100_PCTS);
-            g.setColor(Color.BLACK);
-            g.drawRect(SLIDER_LEFT, y, POWER_WIDTH, NOTCH_HEIGHT_FOR_100_PCTS);
+			drawAndFillRect(g, SLIDER_LEFT, y, POWER_WIDTH, NOTCH_HEIGHT_FOR_100_PCTS, color, Color.BLACK);
             drawNotchAndSubdivide(g, color, percentToY(i - 0.5f), (int) ((float) SLIDER_HEIGHT / (float) SLIDER_MAX_PCT), NOTCH_PRECISION_LEVELS_PER_100_PCT - 1, 0);
         }
 
@@ -128,10 +126,7 @@ public class SystemSlider extends JPanel implements KeyListener {
         for (int i = 1; i <= Artemis.MAX_COOLANT_PER_SYSTEM; i++) {
             int coolant_notch_y = percentToY(SystemStatusRenderer.getCooledEnergyThreshold(i) / 100f);
 
-            g.setColor(Color.CYAN);
-            g.fillRect(COOLANT_LEFT, coolant_notch_y, COOLANT_WIDTH, NOTCH_HEIGHT_FOR_MINOR_PCTS);
-            g.setColor(Color.BLACK);
-            g.drawRect(COOLANT_LEFT, coolant_notch_y, COOLANT_WIDTH, NOTCH_HEIGHT_FOR_MINOR_PCTS);
+			drawAndFillRect(g, COOLANT_LEFT, coolant_notch_y, COOLANT_WIDTH, NOTCH_HEIGHT_FOR_MINOR_PCTS, Color.CYAN, Color.BLACK);
         }
 	}
 
@@ -141,10 +136,7 @@ public class SystemSlider extends JPanel implements KeyListener {
 
 	private void drawNotchAndSubdivide(Graphics2D g, Color c, int section_middle_y, int level_height, int max_level, int level) {
         int x = SLIDER_LEFT, width = POWER_WIDTH / (level + 2);
-        g.setColor(c);
-        g.fillRect(x, section_middle_y, width, NOTCH_HEIGHT_FOR_MINOR_PCTS);
-        g.setColor(Color.BLACK);
-        g.drawRect(x, section_middle_y, width, NOTCH_HEIGHT_FOR_MINOR_PCTS);
+		drawAndFillRect(g, x, section_middle_y, width, NOTCH_HEIGHT_FOR_MINOR_PCTS, c, Color.BLACK);
 
         if (level < max_level) {
             drawNotchAndSubdivide(g, c, (int)(section_middle_y - level_height / 4), level_height / 2, max_level, level + 1);
@@ -166,15 +158,24 @@ public class SystemSlider extends JPanel implements KeyListener {
 		g.setFont(SHORTCUT_FONT);
 
 		g.setColor(INCREASE_FONT_COLOR);
-		String increase = ("" + (char) this.increaseKey).toUpperCase();
-		g.drawString(increase, SLIDER_WIDTH * 1.5f - g.getFontMetrics().stringWidth(increase) / 2f, SHORTCUT_FONT.getSize() - 5);
+		String increase = (this.inputMapping.increaseKeyStr).toUpperCase().substring(0, Math.min(SHORTCUT_MAX_LENGTH, this.inputMapping.increaseKeyStr.length()));
+		g.drawString(increase,
+                     SLIDER_WIDTH * 1.5f - g.getFontMetrics().stringWidth(increase) / 2f,
+                     SHORTCUT_FONT.getSize() - 5);
 
 		g.setColor(DECREASE_FONT_COLOR);
-		String decrease = ("" + (char) this.decreaseKey).toUpperCase();
-		g.drawString(decrease, SLIDER_WIDTH * 1.5f - g.getFontMetrics().stringWidth(decrease) / 2f, SLIDER_BOTTOM + SHORTCUT_FONT.getSize() - 2);
+        String decrease = (this.inputMapping.decreaseKeyStr).toUpperCase().substring(0, Math.min(SHORTCUT_MAX_LENGTH, this.inputMapping.decreaseKeyStr.length()));
+		g.drawString(decrease,
+                     SLIDER_WIDTH * 1.5f - g.getFontMetrics().stringWidth(decrease) / 2f,
+                     SLIDER_BOTTOM + SHORTCUT_FONT.getSize() - 2);
 	}
 
-    // TODO: method to fill a rectangle with a color then draw black borders around it
+	private static void drawAndFillRect(Graphics2D g, int x, int y, int width, int height, Color fill, Color border) {
+		g.setColor(fill);
+		g.fillRect(x, y, width, height);
+		g.setColor(border);
+		g.drawRect(x, y, width, height);
+	}
 
 	private Color getIntervalColor(IntervalType type) {
 		switch (type) {
@@ -192,22 +193,19 @@ public class SystemSlider extends JPanel implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-
-		if (e.getKeyCode() == this.increaseKey || e.getKeyCode() == this.decreaseKey) {
+		if (e.getKeyCode() == this.inputMapping.increaseKey || e.getKeyCode() == this.inputMapping.decreaseKey) {
 			if (e.isShiftDown()) {
-				this.engineeringConsoleManager.incrementSystemCoolantAllocated(this.system, (e.getKeyCode() == this.increaseKey ? 1 : -1));
+				this.engineeringConsoleManager.incrementSystemCoolantAllocated(this.system, (e.getKeyCode() == this.inputMapping.increaseKey ? 1 : -1));
 			} else {
-				this.engineeringConsoleManager.incrementSystemEnergyAllocated(this.system, (e.getKeyCode() == this.increaseKey ? ENERGY_INCREMENT : -ENERGY_INCREMENT));
+				this.engineeringConsoleManager.incrementSystemEnergyAllocated(this.system, (e.getKeyCode() == this.inputMapping.increaseKey ? ENERGY_INCREMENT : -ENERGY_INCREMENT));
 			}
 			this.repaint();
 		}
 	}
 
 	@Override
-	public void keyTyped(KeyEvent e) {
-	}
+	public void keyTyped(KeyEvent e) {}
 
 	@Override
-	public void keyReleased(KeyEvent e) {
-	}
+	public void keyReleased(KeyEvent e) {}
 }
