@@ -16,7 +16,7 @@ public class InputMapping {
         String[] split = definition.split(" ");
 
         try {
-            this.system = ShipSystem.valueOf(split[0]);
+            this.system = ShipSystem.valueOf(split[0].toUpperCase());
             this.increaseKey = keyStringToKeyCode(split[1]);
             this.increaseKeyStr = split[1].toUpperCase();
             this.decreaseKey = keyStringToKeyCode(split[2]);

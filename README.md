@@ -4,8 +4,35 @@ This is a Java client for [Artemis Space Bridge Simulator](http://artemis.eochu.
 
 More information on specific functionality will be available as development progresses.
 
-## Default keybindings
-Customizable keybindings are forthcoming.  In the meantime, default keybindings can be found in `UserInterfaceFrame.java`.  If `Shift` is pressed, they affect **coolant** allocation, otherwise they affect **power** allocation.  They are currently:
+## Keybindings
+
+### Power vs. Coolant
+If `Shift` is pressed, allocation keys affect **coolant** allocation, otherwise they affect **power** allocation.
+
+### Custom Keybindings
+Define custom keybindings in the file `input.cfg` at the root of the repository.  Each line defines a binding, and the format for each line is `<system enum name> <positive key> <negative key>` (each componnet is separated by one space).  Duplicate bindings are not allowed.  Order and capitalization are irrelevant.
+
+Valid system names are:
+
+- BEAMS
+- TORPEDOES
+- SENSORS
+- MANEUVERING
+- IMPULSE
+- WARP_JUMP_DRIVE
+- FORE_SHIELDS
+- AFT_SHIELDS
+
+Keys must match a `VK_` key constant in [java.awt.KeyEvent](https://docs.oracle.com/javase/8/docs/api/java/awt/event/KeyEvent.html), without the `VK_` prefix.  Example of some custom keybindings:
+
+	WARP_JUMP_DRIVE 1 F5
+	beams BACK_slash braceright
+	FORE_Shields H comMA
+
+This hasn't been tested on a keyboard using a character set other than the Western Latin standard.
+
+### Defaults
+For each input that does not have a custom key binding specified in `input.cfg`, the following defaults are used:
 
 	  SYSTEM		INCREASE	DECREASE
 	  ----------------------------------
