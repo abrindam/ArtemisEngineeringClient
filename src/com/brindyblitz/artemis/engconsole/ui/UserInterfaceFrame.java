@@ -20,6 +20,13 @@ public class UserInterfaceFrame extends JFrame implements KeyListener{
 	private int numSliders = 0;
 	private long lastResetEnergy;
 
+	private static final int
+            SLIDER_OFFSET_MULTIPLIER = 125,
+            SLIDER_OFFSET_ADDITIONAL = 25,
+            MAIN_SLIDER_Y = 200,
+            HEAT_SLIDER_Y = 150,
+            HEALTH_SLIDER_Y = 120;
+
 	private InputManager inputManager;
 
     private static HashMap<ShipSystem, String> SYSTEM_NAME_MAP = new HashMap<ShipSystem, String>();
@@ -55,10 +62,15 @@ public class UserInterfaceFrame extends JFrame implements KeyListener{
 
 	private void addSlider(ShipSystem system, String label, InputMapping mapping) {
 		SystemSlider slider = new SystemSlider(system, label, mapping, this.engineeringConsoleManager);
-		this.add(slider).setLocation(this.numSliders * 125 + 25, 200);
+		this.add(slider).setLocation(this.numSliders * SLIDER_OFFSET_MULTIPLIER + SLIDER_OFFSET_ADDITIONAL, MAIN_SLIDER_Y);
 		this.addKeyListener(slider);
+
 		SystemHeatSlider systemHeatSlider = new SystemHeatSlider(system, this.engineeringConsoleManager);
-		this.add(systemHeatSlider).setLocation(this.numSliders * 125 + 25, 150);
+		this.add(systemHeatSlider).setLocation(this.numSliders * SLIDER_OFFSET_MULTIPLIER + SLIDER_OFFSET_ADDITIONAL, HEAT_SLIDER_Y);
+
+        SystemHealthSlider systemHealthSlider = new SystemHealthSlider(system, this.engineeringConsoleManager);
+        this.add(systemHealthSlider).setLocation(this.numSliders * SLIDER_OFFSET_MULTIPLIER + SLIDER_OFFSET_ADDITIONAL, HEALTH_SLIDER_Y);
+
 		this.numSliders ++;
 	}
 
