@@ -18,9 +18,9 @@ public class InputMapping {
         try {
             this.system = ShipSystem.valueOf(split[0]);
             this.increaseKey = keyStringToKeyCode(split[1]);
-            this.increaseKeyStr = split[1];
+            this.increaseKeyStr = split[1].toUpperCase();
             this.decreaseKey = keyStringToKeyCode(split[2]);
-            this.decreaseKeyStr = split[2];
+            this.decreaseKeyStr = split[2].toUpperCase();
         } catch (IndexOutOfBoundsException e) {
             throw new RuntimeException("Unable to process key binding line: '" + definition + "'. The format is <system> <increase key> <decrease key> e.g. 'BEAMS W F3'.");
         }
