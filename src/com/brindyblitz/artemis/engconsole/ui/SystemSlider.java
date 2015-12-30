@@ -27,6 +27,11 @@ public class SystemSlider extends JPanel implements KeyListener {
 	private String label;
 	private InputMapping inputMapping;
 
+	private static final Color
+            SLIDER_BACKGROUND = Color.BLACK,
+            DIVIDER = Color.LIGHT_GRAY,
+            NOT_APPLICABLE = Color.DARK_GRAY;
+
 	private static final Font
 		LABEL_FONT = new Font("Arial", Font.PLAIN, 16),
 		SHORTCUT_FONT = new Font("Courier New", Font.BOLD | Font.ITALIC, 20);
@@ -40,7 +45,7 @@ public class SystemSlider extends JPanel implements KeyListener {
 		SLIDER_LEFT = SLIDER_WIDTH,
 
         POWER_WIDTH = (int) (2f * (float)SLIDER_WIDTH / 3f),
-        BAR_GAP_WIDTH = 2,
+        BAR_GAP_WIDTH = 1,
         COOLANT_LEFT = SLIDER_LEFT + POWER_WIDTH + BAR_GAP_WIDTH,
         COOLANT_WIDTH = SLIDER_WIDTH - (POWER_WIDTH + BAR_GAP_WIDTH),
 
@@ -55,6 +60,7 @@ public class SystemSlider extends JPanel implements KeyListener {
 		NOTCH_PRECISION_LEVELS_PER_100_PCT = Artemis.MAX_ENERGY_ALLOCATION_PERCENT / 100,
 
         SHORTCUT_MAX_LENGTH = 4;
+
 	private static final Color[] NOTCH_COLORS = new Color[]{Color.GREEN, new Color(255, 180, 0), Color.RED};
 
 	public SystemSlider(ShipSystem system, String label, InputMapping input_mapping, EngineeringConsoleManager engineeringConsoleManager) {
@@ -88,7 +94,7 @@ public class SystemSlider extends JPanel implements KeyListener {
 
 	private void drawSlider(Graphics2D g) {
 		/* Draw background */
-		g.setColor(Color.WHITE);
+		g.setColor(SLIDER_BACKGROUND);
 		g.fillRect(SLIDER_LEFT, SLIDER_TOP, SLIDER_WIDTH, SLIDER_HEIGHT);
 
 		/* Draw intervals */
@@ -103,16 +109,19 @@ public class SystemSlider extends JPanel implements KeyListener {
             Color color = NOTCH_COLORS[i - 1];
             g.setColor(color);
             int y = percentToY(i);
-			drawAndFillRect(g, SLIDER_LEFT, y, POWER_WIDTH, NOTCH_HEIGHT_FOR_100_PCTS, color, Color.BLACK);
+			drawAndFillRect(g, SLIDER_LEFT, y, POWER_WIDTH - 1, NOTCH_HEIGHT_FOR_100_PCTS, color, Color.BLACK);
             drawNotchAndSubdivide(g, color, percentToY(i - 0.5f), (int) ((float) SLIDER_HEIGHT / (float) SLIDER_MAX_PCT), NOTCH_PRECISION_LEVELS_PER_100_PCT - 1, 0);
         }
 
-        /* Draw divider */
-        g.setColor(Color.BLACK);
-        g.fillRect(SLIDER_LEFT + POWER_WIDTH, SLIDER_TOP, BAR_GAP_WIDTH, SLIDER_HEIGHT);
+        /* Draw coolant level indicator marks */
+        for (int i = 1; i <= Artemis.MAX_COOLANT_PER_SYSTEM; i++) {
+            int coolant_notch_y = percentToY(SystemStatusRenderer.getCooledEnergyThreshold(i) / 100f);
+
+            drawAndFillRect(g, COOLANT_LEFT, coolant_notch_y, COOLANT_WIDTH + 1, NOTCH_HEIGHT_FOR_MINOR_PCTS, Color.CYAN, Color.BLACK);
+        }
 
         /* Gray out coolant section below 100% power allocation and above full coolant allocation */
-        g.setColor(Color.DARK_GRAY);
+        g.setColor(NOT_APPLICABLE);
         g.fillRect(COOLANT_LEFT, percentToY(1f), COOLANT_WIDTH, (int) (SLIDER_HEIGHT / (Artemis.MAX_ENERGY_ALLOCATION_PERCENT / 100f)));
         int coolant_full_y = percentToY(SystemStatusRenderer.getCooledEnergyThreshold(Artemis.MAX_COOLANT_PER_SYSTEM) / 100f);
         g.fillRect(COOLANT_LEFT, SLIDER_TOP, COOLANT_WIDTH, coolant_full_y - SLIDER_TOP);
@@ -122,12 +131,13 @@ public class SystemSlider extends JPanel implements KeyListener {
         int coolant_start_y = percentToY(SystemStatusRenderer.getCooledEnergyThreshold(this.engineeringConsoleManager.getSystemCoolantAllocated(this.system)) / 100f);
         g.fillRect(COOLANT_LEFT, coolant_start_y, COOLANT_WIDTH, percentToY(1f) - coolant_start_y);
 
-        /* Draw coolant level indicator marks */
-        for (int i = 1; i <= Artemis.MAX_COOLANT_PER_SYSTEM; i++) {
-            int coolant_notch_y = percentToY(SystemStatusRenderer.getCooledEnergyThreshold(i) / 100f);
+        /* Draw divider */
+        g.setColor(DIVIDER);
+        g.fillRect(SLIDER_LEFT + POWER_WIDTH - 1, SLIDER_TOP, BAR_GAP_WIDTH + 1, SLIDER_HEIGHT);
 
-			drawAndFillRect(g, COOLANT_LEFT, coolant_notch_y, COOLANT_WIDTH, NOTCH_HEIGHT_FOR_MINOR_PCTS, Color.CYAN, Color.BLACK);
-        }
+        /* Draw border */
+        g.setColor(Color.BLUE);
+        g.drawRect(SLIDER_LEFT, SLIDER_TOP, SLIDER_WIDTH, SLIDER_HEIGHT);
 	}
 
 	private static int percentToY(float percent) {

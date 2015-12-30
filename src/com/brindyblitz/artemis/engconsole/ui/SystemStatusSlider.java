@@ -99,8 +99,8 @@ public abstract class SystemStatusSlider extends JPanel {
         // g.setColor(Color.WHITE);
         g.setColor(getStatusColor());
 
-        // String status_pct_str = "" + getStatusPctInt() + "%";    // This won't pad zeroes
-        String status_pct_str = String.format("%03d%%", getStatusPctInt());
+        String status_pct_str = "" + getStatusPctInt() + "%";    // This won't pad zeroes
+        // String status_pct_str = String.format("%03d%%", getStatusPctInt());
 
         // g.getFontMetrics().getStringBounds() produces unreliable height values for some reason
         FontRenderContext frc = g.getFontRenderContext();
