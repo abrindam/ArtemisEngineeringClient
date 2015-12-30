@@ -19,8 +19,8 @@ public class SystemHeatSlider extends SystemStatusSlider {
     }
 
     @Override
-    protected float getStatusScaleFactor() {
-        return this.engineeringConsoleManager.getSystemHeat(this.system) / 100f;
+    protected int getStatusPctInt() {
+        return this.engineeringConsoleManager.getSystemHeat(this.system);
     }
 
     @Override

@@ -10,7 +10,7 @@ public class InputManager {
     private static final String CONFIGURATION_FILE_PATH = new File(System.getProperty("user.dir"), "input.cfg").getPath();
     public HashMap<ShipSystem, InputMapping> mappings = new HashMap<ShipSystem, InputMapping>();
 
-    private static final boolean DBG_PRINT_MAPPINGS = true;
+    private static final boolean DBG_PRINT_MAPPINGS = false;
 
     public InputManager() {
         loadConfigurationFile();

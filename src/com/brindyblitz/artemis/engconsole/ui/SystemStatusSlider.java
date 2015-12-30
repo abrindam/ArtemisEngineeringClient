@@ -4,25 +4,27 @@ import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.EngineeringConsoleChangeListener;
 import net.dhleong.acl.enums.ShipSystem;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 public abstract class SystemStatusSlider extends JPanel {
     private static final long serialVersionUID = 1L;
 
-    private static final int
+    protected static final int
             WIDGET_HEIGHT = 20,
             WIDGET_WIDTH = 100,
             SLIDER_WIDTH = WIDGET_WIDTH / 2,
-            SLIDER_TOP = 0, // 20,
+            SLIDER_TOP = 0,
             SLIDER_LEFT = SLIDER_WIDTH,
-            SLIDER_HEIGHT = WIDGET_HEIGHT - SLIDER_TOP;
+            SLIDER_HEIGHT = WIDGET_HEIGHT - SLIDER_TOP,
+            SLIDER_BOTTOM = SLIDER_TOP + SLIDER_HEIGHT;
 
     private static Point statusImageDimensions = new Point(16, 16);
+
+    protected Font statusFont = new Font("Courier New", Font.BOLD, 14);
 
     protected EngineeringConsoleManager engineeringConsoleManager;
 
@@ -51,18 +53,17 @@ public abstract class SystemStatusSlider extends JPanel {
 
         Graphics2D gfx = (Graphics2D) g;
         drawSlider(gfx);
+        drawStatusPctStr(gfx);
     }
 
     private void drawSlider(Graphics2D g) {
         g.setColor(Color.WHITE);
         g.fillRect(SLIDER_LEFT, SLIDER_TOP, SLIDER_WIDTH, SLIDER_HEIGHT);
 
-        float statusScaleFactor = getStatusScaleFactor();
-
-        int fill_width = (int)(SLIDER_WIDTH * statusScaleFactor),
+        int fill_width = (int)(SLIDER_WIDTH * getStatusScaleFactor()),
                 fill_right = SLIDER_LEFT + fill_width;
 
-        g.setColor(Color.getHSBColor(getEmptyHue() - (getEmptyHue() - getFullHue()) * statusScaleFactor, 1, 1));
+        g.setColor(getStatusColor());
         g.fillRect(SLIDER_LEFT, SLIDER_TOP, fill_width, SLIDER_HEIGHT);
 
         int image_left = SLIDER_LEFT + SLIDER_WIDTH / 2 - statusImageDimensions.x / 2,
@@ -93,7 +94,33 @@ public abstract class SystemStatusSlider extends JPanel {
         }
     }
 
-    protected abstract float getStatusScaleFactor();
+    private void drawStatusPctStr(Graphics2D g) {
+        g.setFont(statusFont);
+        // g.setColor(Color.WHITE);
+        g.setColor(getStatusColor());
+
+        // String status_pct_str = "" + getStatusPctInt() + "%";    // This won't pad zeroes
+        String status_pct_str = String.format("%03d%%", getStatusPctInt());
+
+        // g.getFontMetrics().getStringBounds() produces unreliable height values for some reason
+        FontRenderContext frc = g.getFontRenderContext();
+        GlyphVector gv = g.getFont().createGlyphVector(frc, status_pct_str);
+        Rectangle font_size = gv.getPixelBounds(null, 0, 0);
+
+        // This should be dividing font height by 2f, not 4f, but for some reason everything is twice as tall as I expect.  SLIDER_HEIGHT is 20 but it's rendering as 40.  It makes no sense, but this works for now.
+        g.drawString(status_pct_str, SLIDER_LEFT - (int) font_size.getWidth(), (int) (SLIDER_BOTTOM - SLIDER_HEIGHT / 2f + font_size.getHeight() / 4f));
+    }
+
+    private float getStatusScaleFactor() {
+        return getStatusPctInt() / 100f;
+    }
+
+    private Color getStatusColor() {
+        float factor = getStatusScaleFactor();
+        return factor == 0f ? Color.GRAY : Color.getHSBColor(getEmptyHue() - (getEmptyHue() - getFullHue()) * getStatusScaleFactor(), 1, 1);
+    }
+
+    protected abstract int getStatusPctInt();
     protected abstract void loadIcons();
     protected abstract BufferedImage getStatusImageWithColor();
     protected abstract BufferedImage getStatusImageWhite();

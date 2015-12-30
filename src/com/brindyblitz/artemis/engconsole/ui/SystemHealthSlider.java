@@ -19,8 +19,8 @@ public class SystemHealthSlider extends SystemStatusSlider {
     }
 
     @Override
-    protected float getStatusScaleFactor() {
-        return this.engineeringConsoleManager.getSystemHealth(this.system) / 100f;
+    protected int getStatusPctInt() {
+        return this.engineeringConsoleManager.getSystemHealth(this.system);
     }
 
     @Override
