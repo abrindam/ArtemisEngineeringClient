@@ -63,6 +63,14 @@ Inside the root of the project, run the following commands (Mac/Linux; on Window
     curl -OL https://github.com/rjwut/ArtClientLib/releases/download/v2.6.0/artclientlib-2.6.0.jar
     curl -L https://github.com/rjwut/ArtClientLib/archive/v2.6.0.tar.gz | tar -xzvf -
 
+##### WIP Dependencies
+
+Some of these may not be necessary.
+
+1. [Guava](https://code.google.com/p/guava-libraries/)
+1. [Ardor3D](https://github.com/Renanse/Ardor3D)
+1. [JOGL](http://jogamp.org/jogl/www/) (missing dependencies for test code around this GitHub Repo: https://github.com/sgothel/jogl-demos/blob/master/src/demos/util/IntList.java)
+
 #### Eclipse
 
 These instruction assume you are using Eclipse Mars (4.5.1).
@@ -89,3 +97,50 @@ These instructions assume you are using IntelliJ IDEA 14.1.4.
 	- You should now be able to navigate directly to the ArtClientLib source code from within your source files and see no compilation errors in the `ArtClientLib` directory.
 1. In the project window's tree, right click on `lib` and select `Mark Directory As -> Excluded`.  This will cause any compilation errors in ArtClientLib to go away (you only need that directory for code navigation, not compilation).
 	- If you do wish to actually compile (or run the tests) for ArtClientLib, you'll probably have to do something like this: select the `+` at the top of the UI (to add a new library), select `Java`, and select `ArtemisEngineeringClient/lib/ArtClientLib-2.6.0/junitlib/junit-4.11.jar`.  Do the same for `hamcrest-core-1.3.jar` as well.
+	
+
+### 3D DAMCON Models
+WIP...
+
+#### Creating OBJ models JOGL will like
+1. Open the relevant model files up in DelEd (free old game model editing tool)
+1. Export them as OBJ files.
+1. Open in Blender.
+1. Export as OBJ (again).
+1. Copy OBJ and MTL file to `art/models` directory.
+1. ...
+
+#### Misc.
+- http://www.java-gaming.org/index.php?topic=27429.0
+- http://www.java-gaming.org/index.php?topic=27061.0
+- https://github.com/Danny02/DarwinsBox/tree/master/Geometrie/src/main/java/darwin/geometrie/io
+
+#### Picking Code Links
+- https://www.opengl.org/archives/resources/faq/technical/selection.htm
+- http://www.java-tips.org/other-api-tips-100035/112-jogl/1674-another-picking-example-in-jogl.html
+- http://stackoverflow.com/questions/4485821/jogl-picking-example
+
+#### JOGL Links
+- http://forum.jogamp.org/Loading-and-drawing-obj-models-td2708428.html
+- http://forum.jogamp.org/Any-3d-model-loader-for-jogl-td4031409.html
+- http://stackoverflow.com/questions/3686942/3ds-with-jogl?rq=1 (JoglUtils)
+- http://stackoverflow.com/questions/3691935/load-a-obj-file-with-java3d-and-use-it-in-jogl
+- https://jogamp.org/wiki/index.php/Setting_up_a_JogAmp_project_in_your_favorite_IDE
+- https://jogamp.org/wiki/index.php/Downloading_and_installing_JOGL
+- https://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing#JOGL_in_Swing
+- http://jogamp.org/jogl/doc/HowToBuild.html
+- https://jogamp.org/wiki/index.php/Jogl_Tutorial
+- https://github.com/elect86/jogl-samples/tree/master/jogl-samples/src/helloTriangle
+
+#### Ardor3D
+- https://github.com/Renanse/Ardor3D
+- https://github.com/Renanse/Ardor3D/blob/master/ardor3d-extras/src/main/java/com/ardor3d/extension/model/obj/ObjImporter.java
+- https://github.com/Renanse/Ardor3D/blob/master/ardor3d-examples/src/main/java/com/ardor3d/example/ExampleBase.java
+- https://github.com/Renanse/Ardor3D/blob/master/ardor3d-examples/src/main/java/com/ardor3d/example/pipeline/SimpleObjExample.java
+
+#### LWJGL
+- http://wiki.lwjgl.org/index.php?title=Using_a_Resizeable_AWT_Frame_with_LWJGL
+- http://forum.lwjgl.org/index.php?topic=4275.0
+- https://github.com/OskarVeerhoek/YouTube-tutorials
+- https://www.youtube.com/watch?v=izKAvSV3qk0&list=PL19F2453814E0E315&index=24
+- https://github.com/OskarVeerhoek/YouTube-tutorials/blob/master/src/episode_24/ModelDemo.java
