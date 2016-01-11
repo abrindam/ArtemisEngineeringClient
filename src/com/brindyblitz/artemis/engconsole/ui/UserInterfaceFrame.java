@@ -1,42 +1,46 @@
 package com.brindyblitz.artemis.engconsole.ui;
 
-import java.awt.Color;
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
+import com.brindyblitz.artemis.engconsole.config.InputMapping;
+import net.dhleong.acl.enums.ShipSystem;
+
+import javax.media.j3d.Canvas3D;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
 
-import javax.swing.JFrame;
-
-import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
-import com.brindyblitz.artemis.engconsole.config.InputMapping;
-
-import net.dhleong.acl.enums.ShipSystem;
-
 import static net.dhleong.acl.enums.ShipSystem.*;
 
-public class UserInterfaceFrame extends JFrame implements KeyListener{
+public class UserInterfaceFrame extends JFrame implements KeyListener {
 
 	private static final long serialVersionUID = 1L;
 	private EngineeringConsoleManager engineeringConsoleManager;
 	private int numSliders = 0;
 	private long lastResetEnergy;
 
+    // TODO: constant cleanup!
 	private static final int
+            WINDOW_WIDTH = 1024,
+            WINDOW_HEIGHT = 768,
             SLIDER_OFFSET_MULTIPLIER = 125,
             SLIDER_OFFSET_ADDITIONAL = 25,
-            MAIN_SLIDER_Y = 200,
-            HEAT_SLIDER_Y = 150,
-            HEALTH_SLIDER_Y = 120;
+            DAMCON_Y = 10,
+            HEALTH_SLIDER_Y = 250,
+            HEAT_SLIDER_Y = HEALTH_SLIDER_Y + 30,
+            MAIN_SLIDER_Y = HEAT_SLIDER_Y + 50,
+            COOLANT_SLIDER_Y = MAIN_SLIDER_Y + 370;
 
 	private InputManager inputManager;
 	private PresetManager presetManager;
 
     private static HashMap<ShipSystem, String> SYSTEM_NAME_MAP = new HashMap<ShipSystem, String>();
 
-	public UserInterfaceFrame(EngineeringConsoleManager engineeringConsoleManager) {
+	public UserInterfaceFrame(EngineeringConsoleManager engineeringConsoleManager, Canvas3D damcon_canvas) {
 		this.engineeringConsoleManager = engineeringConsoleManager;
 		setTitle("Artemis: Engineering Console (Client)");
-		setSize(1024, 768);
+		setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 		getContentPane().setBackground(Color.BLACK);
 		setLayout(null);
 		setLocationRelativeTo(null);
@@ -60,7 +64,10 @@ public class UserInterfaceFrame extends JFrame implements KeyListener{
             this.addSlider(mapping.system, SYSTEM_NAME_MAP.get(mapping.system), mapping);
         }
 		
-		this.add(new CoolantRemainingSlider(engineeringConsoleManager)).setLocation(50, 570);
+		this.add(new CoolantRemainingSlider(engineeringConsoleManager)).setLocation(50, COOLANT_SLIDER_Y);
+
+        // TODO: there is still a separate window...
+        this.getContentPane().add(damcon_canvas).setLocation(10, DAMCON_Y);
 	}
 
 	private void addSlider(ShipSystem system, String label, InputMapping mapping) {

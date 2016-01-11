@@ -1,19 +1,14 @@
 package com.brindyblitz.artemis;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.FakeEngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.RealEngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.ui.UserInterfaceFrame;
+import com.brindyblitz.artemis.engconsole.ui.damcon.DamconCanvas;
 import com.brindyblitz.artemis.protocol.WorldAwareRobustProxyListener;
-import com.sun.j3d.loaders.IncorrectFormatException;
-import com.sun.j3d.loaders.ParsingErrorException;
-import com.sun.j3d.loaders.Scene;
-import com.sun.j3d.loaders.objectfile.ObjectFile;
-import com.sun.j3d.utils.universe.SimpleUniverse;
+
+import javax.media.j3d.Canvas3D;
+import java.io.IOException;
 
 public class ClientMain {
 	public static void main(String[] args) throws IOException {
@@ -49,28 +44,17 @@ public class ClientMain {
 
 	public ClientMain() {
 		EngineeringConsoleManager engineeringConsoleManager = new FakeEngineeringConsoleManager();
-		buildUIFrame(engineeringConsoleManager);
-		String OBJ_PATH = new File(System.getProperty("user.dir"), "art/models/obj-from-blender/artemis2.obj").getPath();
-		
-		SimpleUniverse universe = new SimpleUniverse();		
-		universe.getViewingPlatform().setNominalViewingTransform();
-		try {
-			Scene scene = new ObjectFile(ObjectFile.RESIZE).load(OBJ_PATH);
-			universe.addBranchGraph(scene.getSceneGroup());
-		} catch (FileNotFoundException | IncorrectFormatException | ParsingErrorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		buildUIFrame(engineeringConsoleManager, DamconCanvas.buildDamconCanvas());
 	}
 
 	public ClientMain(String host, int port) throws IOException {
 		WorldAwareRobustProxyListener worldAwareRobustProxyListener = new WorldAwareRobustProxyListener(host, port, port);
 		EngineeringConsoleManager engineeringConsoleManager = new RealEngineeringConsoleManager(worldAwareRobustProxyListener);
-		buildUIFrame(engineeringConsoleManager);
+		buildUIFrame(engineeringConsoleManager, DamconCanvas.buildDamconCanvas());
 	}
 
-	private static void buildUIFrame(EngineeringConsoleManager engineeringConsoleManager) {
-		new UserInterfaceFrame(engineeringConsoleManager).setVisible(true);
+	private static void buildUIFrame(EngineeringConsoleManager engineeringConsoleManager, Canvas3D damcon_canvas) {
+		new UserInterfaceFrame(engineeringConsoleManager, damcon_canvas).setVisible(true);
 	}
 
 	private static void printUsage() {
