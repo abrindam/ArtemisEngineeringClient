@@ -4,7 +4,7 @@ import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.FakeEngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.RealEngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.ui.UserInterfaceFrame;
-import com.brindyblitz.artemis.engconsole.ui.damcon.DamconCanvas;
+import com.brindyblitz.artemis.engconsole.ui.damcon.Damcon;
 import com.brindyblitz.artemis.protocol.WorldAwareRobustProxyListener;
 
 import javax.media.j3d.Canvas3D;
@@ -44,13 +44,13 @@ public class ClientMain {
 
 	public ClientMain() {
 		EngineeringConsoleManager engineeringConsoleManager = new FakeEngineeringConsoleManager();
-		buildUIFrame(engineeringConsoleManager, DamconCanvas.buildDamconCanvas());
+		buildUIFrame(engineeringConsoleManager, new Damcon().getCanvas());
 	}
 
 	public ClientMain(String host, int port) throws IOException {
 		WorldAwareRobustProxyListener worldAwareRobustProxyListener = new WorldAwareRobustProxyListener(host, port, port);
 		EngineeringConsoleManager engineeringConsoleManager = new RealEngineeringConsoleManager(worldAwareRobustProxyListener);
-		buildUIFrame(engineeringConsoleManager, DamconCanvas.buildDamconCanvas());
+		buildUIFrame(engineeringConsoleManager, new Damcon().getCanvas());
 	}
 
 	private static void buildUIFrame(EngineeringConsoleManager engineeringConsoleManager, Canvas3D damcon_canvas) {
