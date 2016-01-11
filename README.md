@@ -53,23 +53,7 @@ The entry point to the program is located in the `ClientMain.java` file.
 ### IDE Configuration
 
 #### Dependencies
-You need to download the [Artemis Client Library v2.6.0](https://github.com/rjwut/ArtClientLib/releases). You may also want to install the source code as well so you can look at it while developing. You should place all dependencies in the `lib/` folder inside the repository. You may need to create this folder.
-
-Inside the root of the project, run the following commands (Mac/Linux; on Windows, manually download and extract the Artemic Client Library):
-
-    cd <repository location, e.g. ~/workspace/ArtemisEngineeringClient>
-    mkdir lib
-    cd lib
-    curl -OL https://github.com/rjwut/ArtClientLib/releases/download/v2.6.0/artclientlib-2.6.0.jar
-    curl -L https://github.com/rjwut/ArtClientLib/archive/v2.6.0.tar.gz | tar -xzvf -
-
-##### WIP Dependencies
-
-Some of these may not be necessary.
-
-1. [Guava](https://code.google.com/p/guava-libraries/)
-1. [Ardor3D](https://github.com/Renanse/Ardor3D)
-1. [JOGL](http://jogamp.org/jogl/www/) (missing dependencies for test code around this GitHub Repo: https://github.com/sgothel/jogl-demos/blob/master/src/demos/util/IntList.java)
+Dependencies should be checked in, so you shouldn't have to download anything extra. This isn't the greatest thing to do, but we need a dependency management system before we can get rid of this.
 
 #### Eclipse
 
