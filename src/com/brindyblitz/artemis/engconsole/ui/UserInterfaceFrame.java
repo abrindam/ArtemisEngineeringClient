@@ -8,6 +8,7 @@ import java.util.HashMap;
 import javax.swing.JFrame;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
+import com.brindyblitz.artemis.engconsole.config.InputMapping;
 
 import net.dhleong.acl.enums.ShipSystem;
 
@@ -28,6 +29,7 @@ public class UserInterfaceFrame extends JFrame implements KeyListener{
             HEALTH_SLIDER_Y = 120;
 
 	private InputManager inputManager;
+	private PresetManager presetManager;
 
     private static HashMap<ShipSystem, String> SYSTEM_NAME_MAP = new HashMap<ShipSystem, String>();
 
@@ -50,6 +52,7 @@ public class UserInterfaceFrame extends JFrame implements KeyListener{
         SYSTEM_NAME_MAP.put(AFT_SHIELDS, "Rear Shield");
 
         this.inputManager = new InputManager();
+        this.presetManager = new PresetManager(engineeringConsoleManager);
         this.addKeyListener(this);
 
         for (ShipSystem system : ShipSystem.values()) {
@@ -97,6 +100,10 @@ public class UserInterfaceFrame extends JFrame implements KeyListener{
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			this.engineeringConsoleManager.resetCoolant();
+		}
+		else if (e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_9) {
+			int presetNumber = e.getKeyCode() - KeyEvent.VK_0;
+			this.presetManager.applyPreset(presetNumber);
 		}
 
 	}

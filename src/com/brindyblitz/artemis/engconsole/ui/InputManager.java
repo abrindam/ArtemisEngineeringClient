@@ -1,19 +1,21 @@
 package com.brindyblitz.artemis.engconsole.ui;
 
+import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.brindyblitz.artemis.engconsole.config.ConfigurationLoader;
+import com.brindyblitz.artemis.engconsole.config.InputMapping;
+
 import net.dhleong.acl.enums.ShipSystem;
 
-import java.awt.event.KeyEvent;
-import java.io.*;
-import java.util.HashMap;
-
 public class InputManager {
-    private static final String CONFIGURATION_FILE_PATH = new File(System.getProperty("user.dir"), "input.cfg").getPath();
-    public HashMap<ShipSystem, InputMapping> mappings = new HashMap<ShipSystem, InputMapping>();
+    public Map<ShipSystem, InputMapping> mappings = new HashMap<ShipSystem, InputMapping>();
 
     private static final boolean DBG_PRINT_MAPPINGS = false;
 
     public InputManager() {
-        loadConfigurationFile();
+        this.mappings = new ConfigurationLoader().getInputConfiguration();
 
         if (DBG_PRINT_MAPPINGS && mappings.size() > 0) {
             System.out.println("Custom key bindings loaded:");
@@ -23,20 +25,6 @@ public class InputManager {
         }
 
         fillEmptyMappingsWithDefaults();
-    }
-
-    private void loadConfigurationFile() {
-        try (BufferedReader br = new BufferedReader(new FileReader(CONFIGURATION_FILE_PATH))) {
-            for (String line; (line = br.readLine()) != null; ) {
-                InputMapping m = new InputMapping(line);
-                if (this.mappings.containsKey(m.system)) {
-                    throw new RuntimeException("Duplicate key mapping detected for system '" + m.system + "'.");
-                }
-                this.mappings.put(m.system, m);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to read configuration file at " + CONFIGURATION_FILE_PATH);
-        }
     }
 
     private void fillEmptyMappingsWithDefaults() {

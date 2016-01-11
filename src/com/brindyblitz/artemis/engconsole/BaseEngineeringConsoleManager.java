@@ -22,11 +22,22 @@ public abstract class BaseEngineeringConsoleManager implements EngineeringConsol
 	}
 	
 	@Override
+	public void setSystemEnergyAllocated(ShipSystem system, int amount) {
+		updateSystemEnergyAllocated(system, Math.min(Artemis.MAX_ENERGY_ALLOCATION_PERCENT, Math.max(0, amount)));
+	}
+	
+	@Override
 	public void incrementSystemEnergyAllocated(ShipSystem system, int amount) {
 		updateSystemEnergyAllocated(system, Math.min(Artemis.MAX_ENERGY_ALLOCATION_PERCENT, Math.max(0,this.getSystemEnergyAllocated(system) + amount)));
 	}
 	
 	protected abstract void updateSystemEnergyAllocated(ShipSystem system, int amount);
+	
+	@Override
+	public void setSystemCoolantAllocated(ShipSystem system, int amount) {
+		updateSystemCoolantAllocated(system, Math.max(0, Math.min(amount, getTotalShipCoolant())));
+		
+	}
 	
 	@Override
 	public void incrementSystemCoolantAllocated(ShipSystem system, int amount) {

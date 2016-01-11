@@ -1,4 +1,4 @@
-package com.brindyblitz.artemis.engconsole.ui;
+package com.brindyblitz.artemis.engconsole.config;
 
 import net.dhleong.acl.enums.ShipSystem;
 
@@ -10,19 +10,17 @@ public class InputMapping {
     public int increaseKey, decreaseKey;
     public String increaseKeyStr, decreaseKeyStr;
 
-    private static final int VK_PREFIX_LENGTH = 3;
-
-    public InputMapping(String definition) {
-        String[] split = definition.split(" ");
+    public InputMapping(String inputType, String keyDefintion) {
+        String[] split = keyDefintion.split(" ");
 
         try {
-            this.system = ShipSystem.valueOf(split[0].toUpperCase());
-            this.increaseKey = keyStringToKeyCode(split[1]);
-            this.increaseKeyStr = split[1].toUpperCase();
-            this.decreaseKey = keyStringToKeyCode(split[2]);
-            this.decreaseKeyStr = split[2].toUpperCase();
+            this.system = ShipSystem.valueOf(inputType.toUpperCase());
+            this.increaseKey = keyStringToKeyCode(split[0]);
+            this.increaseKeyStr = split[0].toUpperCase();
+            this.decreaseKey = keyStringToKeyCode(split[1]);
+            this.decreaseKeyStr = split[1].toUpperCase();
         } catch (IndexOutOfBoundsException e) {
-            throw new RuntimeException("Unable to process key binding line: '" + definition + "'. The format is <system> <increase key> <decrease key> e.g. 'BEAMS W F3'.");
+            throw new RuntimeException("Unable to process key binding line: '" + inputType + "=" + keyDefintion + "'. The format is <system>=<increase key> <decrease key> e.g. 'BEAMS W F3'.");
         }
     }
 

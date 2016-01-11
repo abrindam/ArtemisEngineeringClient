@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.EngineeringConsoleChangeListener;
+import com.brindyblitz.artemis.engconsole.config.InputMapping;
 import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer.Interval;
 import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer.IntervalType;
 

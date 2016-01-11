@@ -15,6 +15,10 @@ public interface EngineeringConsoleManager {
 
 	int getTotalCoolantRemaining();
 
+	void setSystemEnergyAllocated(ShipSystem system, int amount);
+
+	void setSystemCoolantAllocated(ShipSystem system, int amount);
+	
 	void incrementSystemEnergyAllocated(ShipSystem system, int amount);
 
 	void incrementSystemCoolantAllocated(ShipSystem system, int amount);

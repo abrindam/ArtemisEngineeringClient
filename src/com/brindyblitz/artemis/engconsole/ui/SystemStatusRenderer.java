@@ -20,7 +20,7 @@ public class SystemStatusRenderer {
 		int energy = engineeringConsoleManager.getSystemEnergyAllocated(system);
 		int coolant = engineeringConsoleManager.getSystemCoolantAllocated(system);
 		
-		int cooledEnergyThreshold = this.getCooledEnergyThreshold(coolant);
+		int cooledEnergyThreshold = SystemStatusRenderer.getCooledEnergyThreshold(coolant);
 		
 		if (energy == 100) {
 			if (cooledEnergyThreshold > 100) {
