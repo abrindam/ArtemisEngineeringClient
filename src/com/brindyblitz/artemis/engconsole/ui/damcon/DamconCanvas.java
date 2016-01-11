@@ -32,15 +32,15 @@ public abstract class DamconCanvas {
             e.printStackTrace();
         }
 
-        // TODO: the reason this creates a new window is explained here:
+        // TODO: This is a hack to get rid of the extra window. The reason this creates a new window is explained here:
         // http://download.java.net/media/java3d/javadoc/1.3.2/com/sun/j3d/utils/universe/Viewer.html
-        // JFrame unused_frame = universe.getViewer().getJFrame(0);
+        JFrame unused_frame = universe.getViewer().getJFrame(0);
+        unused_frame.setVisible(false);
 
         return universe.getCanvas();
-    }
 
-    public static Canvas3D buildDamconCanvas_WIP() {
-        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+        // This is an attempt to give the Viewer a canvas so it doesn't create its own window (it doesn't render properly)
+        /*GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
         Canvas3D canvas = new Canvas3D(config);
         Viewer viewer = new Viewer(canvas);
         ViewingPlatform viewingPlatform = new ViewingPlatform();
@@ -54,7 +54,7 @@ public abstract class DamconCanvas {
         } catch (FileNotFoundException | IncorrectFormatException | ParsingErrorException e) {
             e.printStackTrace();
         }
-        return canvas;
+        return canvas;*/
     }
 
     private static void wireframeifyScene(Scene scene) {
