@@ -1,6 +1,5 @@
 package com.brindyblitz.artemis.engconsole.ui.damcon;
 
-import com.jogamp.opengl.math.VectorUtil;
 import com.sun.j3d.loaders.IncorrectFormatException;
 import com.sun.j3d.loaders.ParsingErrorException;
 import com.sun.j3d.loaders.Scene;
@@ -10,8 +9,7 @@ import com.sun.j3d.utils.universe.ViewingPlatform;
 
 import javax.media.j3d.*;
 import javax.swing.*;
-import javax.vecmath.Color3f;
-import javax.vecmath.Vector3d;
+import javax.vecmath.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -26,7 +24,13 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private static final double
             ZOOM_FACTOR = 0.25d,
+            ROTATION_FACTOR = 0.01d,
+            MIN_PITCH_Y = 0.1d,
             MIN_ZOOM_RADIUS = 2d;
+    private static final Vector2d MAX_ROTATION_AMOUNT = new Vector2d(0.1, 0.1);
+
+    private Point lastMouseDragPosition = new Point();
+    private boolean rotating = false;
 
     public Damcon() {
         universe = new SimpleUniverse();
@@ -72,12 +76,6 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         // Camera preset
         ViewingPlatform vp = universe.getViewingPlatform();
         vp.setNominalViewingTransform();
-
-        // http://download.java.net/media/java3d/javadoc/1.3.2/com/sun/j3d/utils/behaviors/vp/OrbitBehavior.html
-        /*OrbitBehavior orbit = new OrbitBehavior(this.canvas, OrbitBehavior.PROPORTIONAL_ZOOM | OrbitBehavior.DISABLE_TRANSLATE);
-        orbit.setSchedulingBounds(new BoundingSphere(new Point3d(0d, 0d, 0d), Double.MAX_VALUE));
-        vp.setViewPlatformBehavior(orbit);
-        // vp.minRadius(... */
     }
 
     ////////
@@ -91,8 +89,6 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         return this.universe.getViewingPlatform().getViewPlatformTransform();
     }
 
-
-
     ///////////////
     // Wireframe //
     ///////////////
@@ -100,12 +96,11 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         Appearance wireframe = getWireframeAppearance();
 
         // TODO: This works for the Artemis OBJ model.  If the scene graph has multiple Shape3D nodes, this would need to be set on all of them.  Is that necessary or can we guarantee it won't be needed?
-
         Enumeration<Node> children = scene.getSceneGroup().getAllChildren();
         while (children.hasMoreElements()) {
             Node node = children.nextElement();
             if (node.getClass().equals(Shape3D.class)) {
-                Shape3D s3d = (Shape3D)node;
+                Shape3D s3d = (Shape3D) node;
                 s3d.setAppearance(wireframe);
             }
         }
@@ -140,32 +135,110 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {}
+    public void mousePressed(MouseEvent e) {
+    }
 
     @Override
-    public void mouseReleased(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {
+        rotating = false;
+    }
 
     @Override
-    public void mouseEntered(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {
+    }
 
     @Override
-    public void mouseExited(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {
+    }
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        // Note: an alternative is OrbitBehavior, but it won't really do what we want (we need axis-specific limits)
+        // http://download.java.net/media/java3d/javadoc/1.3.2/com/sun/j3d/utils/behaviors/vp/OrbitBehavior.html
+        // OrbitBehavior orbit = new OrbitBehavior(this.canvas, OrbitBehavior.PROPORTIONAL_ZOOM | OrbitBehavior.DISABLE_TRANSLATE);
+        // orbit.setSchedulingBounds(new BoundingSphere(new Point3d(0d, 0d, 0d), Double.MAX_VALUE));
+        // vp.setViewPlatformBehavior(orbit);
+        // vp.minRadius(...)
+
         if (SwingUtilities.isRightMouseButton(e)) {
-            // System.out.println("drag!");
-            // use lookAt()
+            if (!rotating) {
+                rotating = true;
+                lastMouseDragPosition = e.getPoint();
+            } else {
+                Point mouse_diff = new Point(lastMouseDragPosition.x - e.getPoint().x, lastMouseDragPosition.y - e.getPoint().y);
+                lastMouseDragPosition = e.getPoint();
+
+                Vector2d rotation_amount = new Vector2d(Math.min(ROTATION_FACTOR * mouse_diff.x, MAX_ROTATION_AMOUNT.x),
+                        Math.min(ROTATION_FACTOR * mouse_diff.y, MAX_ROTATION_AMOUNT.y));
+
+                // Get camera spatial data
+                TransformGroup camera = getCamera();
+                Transform3D xform = new Transform3D();  // copy camera's transform to xform
+                Vector3d cam_pos = new Vector3d();
+                camera.getTransform(xform);
+                xform.get(cam_pos);                     // copy camera's position to cam_pos
+
+                // Get unit vector representing camera's look/forward
+                // We know the camera is always looking at the origin so this math is simpler than the general case
+                Vector3d look = new Vector3d(-cam_pos.x, -cam_pos.y, -cam_pos.z);
+                look.normalize();
+
+                // Get right vector
+                Vector3d up = new Vector3d(0d, 1d, 0d);
+                Vector3d right = new Vector3d();
+                right.cross(look, up);
+                right.normalize();
+
+                // Apply pitch
+                AxisAngle4d pitch_aa = new AxisAngle4d();
+                pitch_aa.set(right, rotation_amount.y);
+                Transform3D pitch_xform = new Transform3D();
+                pitch_xform.set(pitch_aa);
+                Vector3d pitched_cam_pos = new Vector3d(cam_pos);
+                pitch_xform.transform(pitched_cam_pos);
+
+                // Calculate new up vector after pitch
+                Vector3d new_up = new Vector3d();
+                new_up.cross(pitched_cam_pos, right);
+                new_up.normalize();
+
+                // Ensure we don't get too close to looking directly up or down the Y axis
+                if (new_up.y < MIN_PITCH_Y) {
+                    new_up = new Vector3d(up);
+                    pitched_cam_pos = new Vector3d(cam_pos);
+                }
+
+                // Generate updated look vector
+                look = new Vector3d(pitched_cam_pos);
+                look.normalize();
+
+                // Apply yaw
+                AxisAngle4d yaw_aa = new AxisAngle4d();
+                yaw_aa.set(new_up, rotation_amount.x);
+                Transform3D yaw_xform = new Transform3D();
+                yaw_xform.set(yaw_aa);
+                Vector3d yawed_cam_pos = new Vector3d(pitched_cam_pos);
+                yaw_xform.transform(yawed_cam_pos);
+
+                // Using new camera position and new up vector, generate a new camera transformation pointing at the origin
+                xform.lookAt(new Point3d(yawed_cam_pos.x, yawed_cam_pos.y, yawed_cam_pos.z), new Point3d(0d, 0d, 0d), new_up);
+                xform.invert();             // Why do we have to invert this?!  Who knows?!
+                camera.setTransform(xform);
+
+                // TODO: make sure look is not colinear with up etc./set axis limits
+            }
         }
     }
 
     @Override
-    public void mouseMoved(MouseEvent e) {}
+    public void mouseMoved(MouseEvent e) {
+    }
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         double zoom_move_distance = ZOOM_FACTOR * e.getPreciseWheelRotation();
 
+        // Get camera spatial data
         TransformGroup camera = getCamera();
         Transform3D xform = new Transform3D();  // copy camera's transform to xform
         Vector3d cam_pos = new Vector3d();
