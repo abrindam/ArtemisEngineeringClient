@@ -4,6 +4,9 @@ This is a Java client for [Artemis Space Bridge Simulator](http://artemis.eochu.
 
 More information on specific functionality will be available as development progresses.
 
+## Persistent Custom Presets
+TODO: document me!
+
 ## Keybindings
 
 ### Power vs. Coolant
@@ -25,9 +28,19 @@ Valid system names are:
 
 Keys must match a `VK_` key constant in [java.awt.KeyEvent](https://docs.oracle.com/javase/8/docs/api/java/awt/event/KeyEvent.html), without the `VK_` prefix.  Example of some custom keybindings:
 
-	WARP_JUMP_DRIVE 1 F5
+	WARP_JUMP_DRIVE F6 F5
 	beams BACK_slash braceright
 	FORE_Shields H comMA
+
+Keys may not be one of the following reserved (i.e. not re-bindable) keys:
+	BACK_SLASH			(Debugging command)
+	SPACE				(Reset energy and coolant settings)
+	0-9					(Apply preset)
+
+Keys may conflict with a default binding (see defaults below) only if they also define an input for the system that the default binding belonged to.  Setting the same value as a default is okay.  For example:
+
+	TORPEDOES W A		(A is the default for Primary Beam decrease)
+	BEAMS F1 F2			(Because we've defined a new key for Primary Beam decrease, it's okay)
 
 This hasn't been tested on a keyboard using a character set other than the Western Latin standard.
 

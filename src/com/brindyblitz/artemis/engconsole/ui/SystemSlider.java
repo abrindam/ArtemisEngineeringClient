@@ -5,7 +5,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.List;
@@ -21,7 +20,7 @@ import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer.IntervalType;
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.world.Artemis;
 
-public class SystemSlider extends JPanel implements KeyListener, MouseWheelListener {
+public class SystemSlider extends JPanel implements MouseWheelListener {
 
 	private static final long serialVersionUID = 1L;
 	private EngineeringConsoleManager engineeringConsoleManager;
@@ -173,8 +172,8 @@ public class SystemSlider extends JPanel implements KeyListener, MouseWheelListe
 		g.setColor(Color.WHITE);
 		g.setFont(LABEL_FONT);
 		g.drawString(this.label.toUpperCase(),
-				-SLIDER_BOTTOM + (SLIDER_HEIGHT / 2) - g.getFontMetrics().stringWidth(this.label.toUpperCase()) / 2,
-				SLIDER_WIDTH - (LABEL_FONT.getSize() - 6));
+                -SLIDER_BOTTOM + (SLIDER_HEIGHT / 2) - g.getFontMetrics().stringWidth(this.label.toUpperCase()) / 2,
+                SLIDER_WIDTH - (LABEL_FONT.getSize() - 6));
 		g.rotate(Math.PI / 2);
 	}
 
@@ -215,11 +214,26 @@ public class SystemSlider extends JPanel implements KeyListener, MouseWheelListe
 		throw new RuntimeException("Unexpected Interval Type");
 	}
 
-	@Override
-	public void keyPressed(KeyEvent e) {
+    /***
+     * Only one Swing item seems to be able to receive keys at once probably due to the insane Java focus
+     * model (see https://docs.oracle.com/javase/7/docs/api/java/awt/doc-files/FocusSpec.html).
+     *
+     * As such, the UserInterfaceFrame redirects keys to relevant receivers that would normally implement
+     * KeyListener.
+     */
+	public void handleKeyPress(KeyEvent e) {
 		if (e.getKeyCode() == this.inputMapping.increaseKey || e.getKeyCode() == this.inputMapping.decreaseKey) {
             handleInput(e.getKeyCode() == this.inputMapping.increaseKey, e.isShiftDown());
 		}
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+        long t = System.currentTimeMillis();
+        if (t - this.lastScrollTime > SCROLL_TIMEOUT_MS) {
+            handleInput(e.getPreciseWheelRotation() < 0d, e.isShiftDown());
+            this.lastScrollTime = t;
+        }
 	}
 
     private void handleInput(boolean positive, boolean shift_down) {
@@ -230,19 +244,4 @@ public class SystemSlider extends JPanel implements KeyListener, MouseWheelListe
         }
         this.repaint();
     }
-
-	@Override
-	public void keyTyped(KeyEvent e) {}
-
-	@Override
-	public void keyReleased(KeyEvent e) {}
-
-	@Override
-	public void mouseWheelMoved(MouseWheelEvent e) {
-        long t = System.currentTimeMillis();
-        if (t - this.lastScrollTime > SCROLL_TIMEOUT_MS) {
-            handleInput(e.getPreciseWheelRotation() < 0d, e.isShiftDown());
-            this.lastScrollTime = t;
-        }
-	}
 }

@@ -9,13 +9,14 @@ import com.brindyblitz.artemis.engconsole.config.InputMapping;
 
 import net.dhleong.acl.enums.ShipSystem;
 
-public class InputManager {
-    public Map<ShipSystem, InputMapping> mappings = new HashMap<ShipSystem, InputMapping>();
+public abstract class InputManager {
+    public static Map<ShipSystem, InputMapping> mappings = new HashMap<ShipSystem, InputMapping>();
+    public static Map<ShipSystem, InputMapping> defaultMappings = new HashMap<ShipSystem, InputMapping>();
 
     private static final boolean DBG_PRINT_MAPPINGS = false;
 
-    public InputManager() {
-        this.mappings = new ConfigurationLoader().getInputConfiguration();
+    public static void init() {
+        mappings = new ConfigurationLoader().getInputConfiguration();
 
         if (DBG_PRINT_MAPPINGS && mappings.size() > 0) {
             System.out.println("Custom key bindings loaded:");
@@ -24,48 +25,78 @@ public class InputManager {
             }
         }
 
+        generateDefaultMappings();
         fillEmptyMappingsWithDefaults();
     }
 
-    private void fillEmptyMappingsWithDefaults() {
+    private static void generateDefaultMappings() {
         for (ShipSystem system : ShipSystem.values()) {
-            InputMapping mapping = this.mappings.get(system);
-            if (mapping == null) {
-                switch (system) {
-                    case BEAMS:
-                        mapping = new InputMapping(system, KeyEvent.VK_Q, KeyEvent.VK_A);
-                        break;
+            InputMapping default_mapping;
 
-                    case TORPEDOES:
-                        mapping = new InputMapping(system, KeyEvent.VK_W, KeyEvent.VK_S);
-                        break;
+            switch (system) {
+                case BEAMS:
+                    default_mapping = new InputMapping(system, KeyEvent.VK_Q, KeyEvent.VK_A);
+                    break;
 
-                    case SENSORS:
-                        mapping = new InputMapping(system, KeyEvent.VK_E, KeyEvent.VK_D);
-                        break;
+                case TORPEDOES:
+                    default_mapping = new InputMapping(system, KeyEvent.VK_W, KeyEvent.VK_S);
+                    break;
 
-                    case MANEUVERING:
-                        mapping = new InputMapping(system, KeyEvent.VK_R, KeyEvent.VK_F);
-                        break;
+                case SENSORS:
+                    default_mapping = new InputMapping(system, KeyEvent.VK_E, KeyEvent.VK_D);
+                    break;
 
-                    case IMPULSE:
-                        mapping = new InputMapping(system, KeyEvent.VK_T, KeyEvent.VK_G);
-                        break;
+                case MANEUVERING:
+                    default_mapping = new InputMapping(system, KeyEvent.VK_R, KeyEvent.VK_F);
+                    break;
 
-                    case WARP_JUMP_DRIVE:
-                        mapping = new InputMapping(system, KeyEvent.VK_Y, KeyEvent.VK_H);
-                        break;
+                case IMPULSE:
+                    default_mapping = new InputMapping(system, KeyEvent.VK_T, KeyEvent.VK_G);
+                    break;
 
-                    case FORE_SHIELDS:
-                        mapping = new InputMapping(system, KeyEvent.VK_U, KeyEvent.VK_J);
-                        break;
+                case WARP_JUMP_DRIVE:
+                    default_mapping = new InputMapping(system, KeyEvent.VK_Y, KeyEvent.VK_H);
+                    break;
 
-                    case AFT_SHIELDS:
-                        mapping = new InputMapping(system, KeyEvent.VK_I, KeyEvent.VK_K);
-                        break;
+                case FORE_SHIELDS:
+                    default_mapping = new InputMapping(system, KeyEvent.VK_U, KeyEvent.VK_J);
+                    break;
+
+                case AFT_SHIELDS:
+                    default_mapping = new InputMapping(system, KeyEvent.VK_I, KeyEvent.VK_K);
+                    break;
+
+                default:
+                    throw new RuntimeException("Invalid ship system: " + system + "!");
+            }
+
+            defaultMappings.put(system, default_mapping);
+        }
+    }
+
+    private static void fillEmptyMappingsWithDefaults() {
+        for (ShipSystem system : ShipSystem.values()) {
+            InputMapping custom = mappings.get(system);
+            InputMapping default_mapping = defaultMappings.get(system);
+
+            for (InputMapping existing : mappings.values()) {
+                if (default_mapping.increaseKey == existing.increaseKey || default_mapping.increaseKey == existing.decreaseKey) {
+                    if (custom != null) {
+                        continue;
+                    }
+
+                    throw new RuntimeException("Increase key already bound (" + default_mapping.increaseKeyStr + ") for system " + default_mapping.system);
+                } else if (default_mapping.increaseKey == existing.increaseKey || default_mapping.decreaseKey == existing.decreaseKey) {
+                    if (custom != null) {
+                        continue;
+                    }
+
+                    throw new RuntimeException("Decrease key already bound (" + default_mapping.decreaseKeyStr + ") for system " + default_mapping.system);
                 }
+            }
 
-                this.mappings.put(system, mapping);
+            if (custom == null) {
+                mappings.put(system, default_mapping);
             }
         }
     }

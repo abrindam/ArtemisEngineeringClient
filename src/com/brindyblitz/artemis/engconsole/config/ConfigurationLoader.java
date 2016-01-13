@@ -1,9 +1,11 @@
 package com.brindyblitz.artemis.engconsole.config;
 
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Key;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,6 +17,22 @@ public class ConfigurationLoader {
 
 	private static final String CONFIGURATION_FILE_PATH = new File(System.getProperty("user.dir"), "input.cfg").getPath();
 	private static final String PRESET_CONFIGURATION_FILE_PATH = new File(System.getProperty("user.dir"), "preset.cfg").getPath();
+
+    private static final int[] RESERVED_KEYS = new int[] {
+            KeyEvent.VK_BACK_SLASH,
+            KeyEvent.VK_SPACE,
+            KeyEvent.VK_ENTER,
+            KeyEvent.VK_0,
+            KeyEvent.VK_1,
+            KeyEvent.VK_2,
+            KeyEvent.VK_3,
+            KeyEvent.VK_4,
+            KeyEvent.VK_5,
+            KeyEvent.VK_6,
+            KeyEvent.VK_7,
+            KeyEvent.VK_8,
+            KeyEvent.VK_9,
+    };
 	
     public Map<ShipSystem, InputMapping> getInputConfiguration() {
     	
@@ -26,6 +44,23 @@ public class ConfigurationLoader {
             if (mappings.containsKey(m.system)) {
                 throw new RuntimeException("Duplicate key mapping detected for system '" + m.system + "'.");
             }
+
+            for (int reserved : RESERVED_KEYS) {
+                if (m.increaseKey == reserved) {
+                    throw new RuntimeException("Key mapping using reserved key (" + m.increaseKeyStr + ") detected for system " + m.system);
+                } else if (m.decreaseKey == reserved) {
+                    throw new RuntimeException("Key mapping using reserved key (" + m.decreaseKeyStr + ") detected for system " + m.system);
+                }
+            }
+
+			for (InputMapping existing : mappings.values()) {
+                if (m.increaseKey == existing.increaseKey || m.increaseKey == existing.decreaseKey) {
+                    throw new RuntimeException("Duplicate key mapping detected (" + m.increaseKeyStr + ")");
+                } else if (m.decreaseKey == existing.increaseKey || m.decreaseKey == existing.decreaseKey) {
+                    throw new RuntimeException("Duplicate key mapping detected (" + m.decreaseKeyStr + ")");
+                }
+            }
+
             mappings.put(m.system, m);
 		}
         

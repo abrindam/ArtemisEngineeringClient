@@ -2,7 +2,6 @@ package com.brindyblitz.artemis.engconsole.ui;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.config.InputMapping;
-import com.brindyblitz.artemis.engconsole.ui.damcon.Damcon;
 import net.dhleong.acl.enums.ShipSystem;
 
 import javax.media.j3d.Canvas3D;
@@ -10,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static net.dhleong.acl.enums.ShipSystem.*;
@@ -21,6 +21,7 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 	private int numSliders = 0;
 	private long lastResetEnergy;
 
+    private ArrayList<SystemSlider> sliders = new ArrayList<>();
 	private Canvas3D damconCanvas;
 
     // TODO: constant cleanup!
@@ -35,7 +36,6 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
             MAIN_SLIDER_Y = HEAT_SLIDER_Y + 50,
             COOLANT_SLIDER_Y = MAIN_SLIDER_Y + 370;
 
-	private InputManager inputManager;
 	private PresetManager presetManager;
 
     private static HashMap<ShipSystem, String> SYSTEM_NAME_MAP = new HashMap<ShipSystem, String>();
@@ -60,24 +60,25 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
         SYSTEM_NAME_MAP.put(FORE_SHIELDS, "Front Shield");
         SYSTEM_NAME_MAP.put(AFT_SHIELDS, "Rear Shield");
 
-        this.inputManager = new InputManager();
+        InputManager.init();
         this.presetManager = new PresetManager(engineeringConsoleManager);
         this.addKeyListener(this);
 
         for (ShipSystem system : ShipSystem.values()) {
-            InputMapping mapping = this.inputManager.mappings.get(system);
+            InputMapping mapping = InputManager.mappings.get(system);
             this.addSlider(mapping.system, SYSTEM_NAME_MAP.get(mapping.system), mapping);
         }
 		
 		this.add(new CoolantRemainingSlider(engineeringConsoleManager)).setLocation(50, COOLANT_SLIDER_Y);
 
         this.getContentPane().add(damconCanvas).setLocation(10, DAMCON_Y);
+
+        this.setFocusable(true);
 	}
 
 	private void addSlider(ShipSystem system, String label, InputMapping mapping) {
 		SystemSlider slider = new SystemSlider(system, label, mapping, this.engineeringConsoleManager);
 		this.add(slider).setLocation(this.numSliders * SLIDER_OFFSET_MULTIPLIER + SLIDER_OFFSET_ADDITIONAL, MAIN_SLIDER_Y);
-		this.damconCanvas.addKeyListener(slider);
 
 		SystemHeatSlider systemHeatSlider = new SystemHeatSlider(system, this.engineeringConsoleManager);
 		this.add(systemHeatSlider).setLocation(this.numSliders * SLIDER_OFFSET_MULTIPLIER + SLIDER_OFFSET_ADDITIONAL, HEAT_SLIDER_Y);
@@ -85,14 +86,13 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
         SystemHealthSlider systemHealthSlider = new SystemHealthSlider(system, this.engineeringConsoleManager);
         this.add(systemHealthSlider).setLocation(this.numSliders * SLIDER_OFFSET_MULTIPLIER + SLIDER_OFFSET_ADDITIONAL, HEALTH_SLIDER_Y);
 
+        this.sliders.add(slider);
 		this.numSliders ++;
 	}
 
 	@Override
-	public void keyPressed(KeyEvent e) {				
-
+	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_BACK_SLASH) {
-			System.out.println("\n\n\n\n\n\n\n\n");
 			System.out.println("Beams: " + this.engineeringConsoleManager.getSystemEnergyAllocated(BEAMS) + "%");
 			System.out.println("Torpedoes: " + this.engineeringConsoleManager.getSystemEnergyAllocated(TORPEDOES) + "%");
 			System.out.println("Sensors: " + this.engineeringConsoleManager.getSystemEnergyAllocated(SENSORS) + "%");
@@ -101,6 +101,8 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 			System.out.println("Warp: " + this.engineeringConsoleManager.getSystemEnergyAllocated(WARP_JUMP_DRIVE) + "%");
 			System.out.println("Front Shields: " + this.engineeringConsoleManager.getSystemEnergyAllocated(FORE_SHIELDS) + "%");
 			System.out.println("Rear Shields: " + this.engineeringConsoleManager.getSystemEnergyAllocated(AFT_SHIELDS) + "%");
+
+            System.out.println("\n\n\n");
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 			this.engineeringConsoleManager.resetEnergy();
@@ -115,8 +117,19 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 		else if (e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_9) {
 			int presetNumber = e.getKeyCode() - KeyEvent.VK_0;
 			this.presetManager.applyPreset(presetNumber);
-		}
+		} else {
+            /***
+             * Only one Swing item seems to be able to receive keys at once probably due to the insane Java focus
+             * model (see https://docs.oracle.com/javase/7/docs/api/java/awt/doc-files/FocusSpec.html).
+             *
+             * As such, the UserInterfaceFrame redirects keys to relevant receivers that would normally implement
+             * KeyListener.
+             */
 
+            for (SystemSlider slider : this.sliders) {
+                slider.handleKeyPress(e);
+            }
+        }
 	}
 
     @Override

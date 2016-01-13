@@ -53,6 +53,15 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
         addMouseListeners();
         setCameraPresets();
+
+        // This allows the UserInterfaceFrame to receive key events.  See:
+        // https://community.oracle.com/thread/1276834?start=0&tstart=0
+        // And also see other keyboard related comments (UserInterfacerame.keyPressed() and
+        // SystemSlider.handleKeyPress()).
+        //
+        // This also would work (and remove the setFocusable() calls), but is somehow uglier:
+        // this.damconCanvas.addKeyListener(slider);
+        this.canvas.setFocusable(false);
     }
 
     private void loadAndWireframeifyModel() {
