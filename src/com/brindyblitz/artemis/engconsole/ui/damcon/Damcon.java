@@ -26,8 +26,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
             ZOOM_FACTOR = 0.25d,
             ROTATION_FACTOR = 0.01d,
             MIN_PITCH_Y = 0.1d,
-            MIN_ZOOM_RADIUS = 2d;
-    private static final Vector2d MAX_ROTATION_AMOUNT = new Vector2d(0.1, 0.1);
+            MIN_ZOOM_RADIUS = 2.9d;
+    private static final Vector2d MAX_ROTATION_AMOUNT = new Vector2d(0.125, 0.125);
 
     private Point lastMouseDragPosition = new Point();
     private boolean rotating = false;
@@ -165,11 +165,13 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
                 rotating = true;
                 lastMouseDragPosition = e.getPoint();
             } else {
+                // Get mouse movement
                 Point mouse_diff = new Point(lastMouseDragPosition.x - e.getPoint().x, lastMouseDragPosition.y - e.getPoint().y);
                 lastMouseDragPosition = e.getPoint();
 
-                Vector2d rotation_amount = new Vector2d(Math.min(ROTATION_FACTOR * mouse_diff.x, MAX_ROTATION_AMOUNT.x),
-                        Math.min(ROTATION_FACTOR * mouse_diff.y, MAX_ROTATION_AMOUNT.y));
+                // Convert mouse movement to rotation factors
+                Vector2d rotation_amount = new Vector2d(ROTATION_FACTOR * mouse_diff.x, ROTATION_FACTOR * mouse_diff.y);
+                clampRotation(rotation_amount);
 
                 // Get camera spatial data
                 TransformGroup camera = getCamera();
@@ -230,23 +232,36 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         }
     }
 
+    private static void clampRotation(Vector2d rotation_amount) {
+        rotation_amount.x = clampRotationAxis(rotation_amount.x, MAX_ROTATION_AMOUNT.x);
+        rotation_amount.y = clampRotationAxis(rotation_amount.y, MAX_ROTATION_AMOUNT.y);
+    }
+
+    private static double clampRotationAxis(double r, double max) {
+        if (Math.abs(r) > max) {
+            return max * Math.signum(r);
+        }
+        return r;
+    }
+
     @Override
     public void mouseMoved(MouseEvent e) {
     }
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        double zoom_move_distance = ZOOM_FACTOR * e.getPreciseWheelRotation();
+        double zoom_move_distance = ZOOM_FACTOR * -e.getPreciseWheelRotation();
 
         // Get camera spatial data
         TransformGroup camera = getCamera();
         Transform3D xform = new Transform3D();  // copy camera's transform to xform
-        Vector3d cam_pos = new Vector3d();
         camera.getTransform(xform);
+        Vector3d cam_pos = new Vector3d();
         xform.get(cam_pos);                     // copy camera's position to cam_pos
 
         // Get unit vector representing camera's look/forward
-        Vector3d look = new Vector3d(cam_pos);  // we know the camera is looking at the origin so this math is simpler than the general case
+        //Vector3d look = new Vector3d(cam_pos);  // we know the camera is looking at the origin so this math is simpler than the general case
+        Vector3d look = new Vector3d(-cam_pos.x, -cam_pos.y, -cam_pos.z);  // we know the camera is looking at the origin so this math is simpler than the general case
         look.normalize();
 
         // Determine zoom movement vector and apply it to camera position
@@ -255,12 +270,12 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
         // If zoom takes us too close to the object's center (such that it won't fit in the frame or the camera would be inside the object),
         // drop it at the edge of the minimum radius
-        if (new_cam_pos.length() < MIN_ZOOM_RADIUS && Math.signum(zoom_move_distance) < 0d) {
-            new_cam_pos = new Vector3d(look.x * MIN_ZOOM_RADIUS, look.y * MIN_ZOOM_RADIUS, look.z * MIN_ZOOM_RADIUS);
+        if (new_cam_pos.length() < MIN_ZOOM_RADIUS && Math.signum(zoom_move_distance) > 0d) {
+            new_cam_pos = new Vector3d(-look.x * MIN_ZOOM_RADIUS, -look.y * MIN_ZOOM_RADIUS, -look.z * MIN_ZOOM_RADIUS);
         }
 
         // Apply new position to transformation and transformation back to camera
-        xform.set(new_cam_pos);
+        xform.setTranslation(new_cam_pos);
         camera.setTransform(xform);
     }
 }
