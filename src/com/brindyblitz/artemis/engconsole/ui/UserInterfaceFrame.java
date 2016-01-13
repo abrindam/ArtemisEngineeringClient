@@ -2,6 +2,7 @@ package com.brindyblitz.artemis.engconsole.ui;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.config.InputMapping;
+import com.brindyblitz.artemis.engconsole.ui.damcon.Damcon;
 import net.dhleong.acl.enums.ShipSystem;
 
 import javax.media.j3d.Canvas3D;
@@ -19,6 +20,8 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 	private EngineeringConsoleManager engineeringConsoleManager;
 	private int numSliders = 0;
 	private long lastResetEnergy;
+
+	private Canvas3D damconCanvas;
 
     // TODO: constant cleanup!
 	private static final int
@@ -39,12 +42,14 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 
 	public UserInterfaceFrame(EngineeringConsoleManager engineeringConsoleManager, Canvas3D damcon_canvas) {
 		this.engineeringConsoleManager = engineeringConsoleManager;
-		setTitle("Artemis: Engineering Console (Client)");
-		setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-		getContentPane().setBackground(Color.BLACK);
+        this.damconCanvas = damcon_canvas;
+
+        setTitle("Artemis: Engineering Console (Client)");
+        setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        getContentPane().setBackground(Color.BLACK);
 		setLayout(null);
 		setLocationRelativeTo(null);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         SYSTEM_NAME_MAP.put(BEAMS, "Primary Beam");
         SYSTEM_NAME_MAP.put(TORPEDOES, "Torpedoes");
@@ -66,14 +71,13 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 		
 		this.add(new CoolantRemainingSlider(engineeringConsoleManager)).setLocation(50, COOLANT_SLIDER_Y);
 
-        // TODO: there is still a separate window...
-        this.getContentPane().add(damcon_canvas).setLocation(10, DAMCON_Y);
+        this.getContentPane().add(damconCanvas).setLocation(10, DAMCON_Y);
 	}
 
 	private void addSlider(ShipSystem system, String label, InputMapping mapping) {
 		SystemSlider slider = new SystemSlider(system, label, mapping, this.engineeringConsoleManager);
 		this.add(slider).setLocation(this.numSliders * SLIDER_OFFSET_MULTIPLIER + SLIDER_OFFSET_ADDITIONAL, MAIN_SLIDER_Y);
-		this.addKeyListener(slider);
+		this.damconCanvas.addKeyListener(slider);
 
 		SystemHeatSlider systemHeatSlider = new SystemHeatSlider(system, this.engineeringConsoleManager);
 		this.add(systemHeatSlider).setLocation(this.numSliders * SLIDER_OFFSET_MULTIPLIER + SLIDER_OFFSET_ADDITIONAL, HEAT_SLIDER_Y);

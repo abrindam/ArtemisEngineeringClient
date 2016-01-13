@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -19,7 +21,7 @@ import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer.IntervalType;
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.world.Artemis;
 
-public class SystemSlider extends JPanel implements KeyListener {
+public class SystemSlider extends JPanel implements KeyListener, MouseWheelListener {
 
 	private static final long serialVersionUID = 1L;
 	private EngineeringConsoleManager engineeringConsoleManager;
@@ -27,6 +29,8 @@ public class SystemSlider extends JPanel implements KeyListener {
 	private ShipSystem system;
 	private String label;
 	private InputMapping inputMapping;
+
+    private long lastScrollTime = System.currentTimeMillis();
 
 	private static final Color
             SLIDER_BACKGROUND = Color.BLACK,
@@ -40,6 +44,13 @@ public class SystemSlider extends JPanel implements KeyListener {
 
 	private static final int
 		ENERGY_INCREMENT = 25,
+        COOLANT_INCREMENT = 1,
+
+        // TODO: consider adding this to configuration options.  It's not just a super-power-user option.  Mice vary
+        // a lot on scroll rates and wheel dynamics, and smart trackpads (e.g. those on MacBooks) can act as scroll
+        // devices as well.  50 feels too slow for my mouse wheel and too fast for my trackpad.
+        // ~Jake
+        SCROLL_TIMEOUT_MS = 50,
 
 		WIDGET_WIDTH = 100,
 		SLIDER_WIDTH = WIDGET_WIDTH / 2,
@@ -73,6 +84,8 @@ public class SystemSlider extends JPanel implements KeyListener {
 
 		this.setSize(WIDGET_WIDTH, WIDGET_HEIGHT);
 		this.setBackground(new Color(0, 0, 0, 0));
+
+        this.addMouseWheelListener(this);
 
 		this.engineeringConsoleManager.addChangeListener(new EngineeringConsoleChangeListener() {
 
@@ -171,14 +184,14 @@ public class SystemSlider extends JPanel implements KeyListener {
 		g.setColor(INCREASE_FONT_COLOR);
 		String increase = (this.inputMapping.increaseKeyStr).toUpperCase().substring(0, Math.min(SHORTCUT_MAX_LENGTH, this.inputMapping.increaseKeyStr.length()));
 		g.drawString(increase,
-                     SLIDER_WIDTH * 1.5f - g.getFontMetrics().stringWidth(increase) / 2f,
-                     SHORTCUT_FONT.getSize() - 5);
+                SLIDER_WIDTH * 1.5f - g.getFontMetrics().stringWidth(increase) / 2f,
+                SHORTCUT_FONT.getSize() - 5);
 
 		g.setColor(DECREASE_FONT_COLOR);
         String decrease = (this.inputMapping.decreaseKeyStr).toUpperCase().substring(0, Math.min(SHORTCUT_MAX_LENGTH, this.inputMapping.decreaseKeyStr.length()));
 		g.drawString(decrease,
-                     SLIDER_WIDTH * 1.5f - g.getFontMetrics().stringWidth(decrease) / 2f,
-                     SLIDER_BOTTOM + SHORTCUT_FONT.getSize() - 2);
+                SLIDER_WIDTH * 1.5f - g.getFontMetrics().stringWidth(decrease) / 2f,
+                SLIDER_BOTTOM + SHORTCUT_FONT.getSize() - 2);
 	}
 
 	private static void drawAndFillRect(Graphics2D g, int x, int y, int width, int height, Color fill, Color border) {
@@ -205,18 +218,31 @@ public class SystemSlider extends JPanel implements KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == this.inputMapping.increaseKey || e.getKeyCode() == this.inputMapping.decreaseKey) {
-			if (e.isShiftDown()) {
-				this.engineeringConsoleManager.incrementSystemCoolantAllocated(this.system, (e.getKeyCode() == this.inputMapping.increaseKey ? 1 : -1));
-			} else {
-				this.engineeringConsoleManager.incrementSystemEnergyAllocated(this.system, (e.getKeyCode() == this.inputMapping.increaseKey ? ENERGY_INCREMENT : -ENERGY_INCREMENT));
-			}
-			this.repaint();
+            handleInput(e.getKeyCode() == this.inputMapping.increaseKey, e.isShiftDown());
 		}
 	}
+
+    private void handleInput(boolean positive, boolean shift_down) {
+        if (shift_down) {
+            this.engineeringConsoleManager.incrementSystemCoolantAllocated(this.system, positive ? COOLANT_INCREMENT : -COOLANT_INCREMENT);
+        } else {
+            this.engineeringConsoleManager.incrementSystemEnergyAllocated(this.system, positive ? ENERGY_INCREMENT : -ENERGY_INCREMENT);
+        }
+        this.repaint();
+    }
 
 	@Override
 	public void keyTyped(KeyEvent e) {}
 
 	@Override
 	public void keyReleased(KeyEvent e) {}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+        long t = System.currentTimeMillis();
+        if (t - this.lastScrollTime > SCROLL_TIMEOUT_MS) {
+            handleInput(e.getPreciseWheelRotation() < 0d, e.isShiftDown());
+            this.lastScrollTime = t;
+        }
+	}
 }

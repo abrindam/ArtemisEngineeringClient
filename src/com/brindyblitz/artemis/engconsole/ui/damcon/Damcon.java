@@ -5,6 +5,7 @@ import com.sun.j3d.loaders.ParsingErrorException;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.loaders.objectfile.ObjectFile;
 import com.sun.j3d.utils.universe.SimpleUniverse;
+import com.sun.j3d.utils.universe.Viewer;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
 import javax.media.j3d.*;
@@ -21,6 +22,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private Canvas3D canvas;
     private SimpleUniverse universe;
+    private Scene scene = null;
+    private static final boolean WINDOW_HACK = true;
 
     private static final double
             ZOOM_FACTOR = 0.25d,
@@ -33,49 +36,63 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private boolean rotating = false;
 
     public Damcon() {
-        universe = new SimpleUniverse();
+        loadAndWireframeifyModel();
 
-        String OBJ_PATH = new File(System.getProperty("user.dir"), "art/models/obj-from-blender/artemis2.obj").getPath();
-        try {
-            Scene scene = new ObjectFile(ObjectFile.RESIZE).load(OBJ_PATH);
-            wireframeifyScene(scene);
-            universe.addBranchGraph(scene.getSceneGroup());
-        } catch (FileNotFoundException | IncorrectFormatException | ParsingErrorException e) {
-            e.printStackTrace();
+        if (WINDOW_HACK) {
+            createUniverseAndScene_HACK();
+            // TODO: This is a hack to get rid of the extra window. The reason this creates a new window is explained here:
+            // http://download.java.net/media/java3d/javadoc/1.3.2/com/sun/j3d/utils/universe/Viewer.html
+            // This might help: https://community.oracle.com/thread/1274674?start=0&tstart=0
+            JFrame unused_frame = universe.getViewer().getJFrame(0);
+            unused_frame.setVisible(false);
+            unused_frame.dispose();
+        } else {
+            createUniverseAndScene();
         }
 
-        // TODO: This is a hack to get rid of the extra window. The reason this creates a new window is explained here:
-        // http://download.java.net/media/java3d/javadoc/1.3.2/com/sun/j3d/utils/universe/Viewer.html
-        // This might help: https://community.oracle.com/thread/1274674?start=0&tstart=0
-        JFrame unused_frame = universe.getViewer().getJFrame(0);
-        unused_frame.setVisible(false);
-        unused_frame.dispose();
+        addMouseListeners();
+        setCameraPresets();
+    }
 
+    private void loadAndWireframeifyModel() {
+        String OBJ_PATH = new File(System.getProperty("user.dir"), "art/models/obj-from-blender/artemis2.obj").getPath();
+        try {
+            this.scene = new ObjectFile(ObjectFile.RESIZE).load(OBJ_PATH);
+            wireframeifyScene(scene);
+
+        } catch (FileNotFoundException | IncorrectFormatException | ParsingErrorException e) {
+            e.printStackTrace(System.err);
+        }
+    }
+
+    private void createUniverseAndScene() {
         // This is an attempt to give the Viewer a canvas so it doesn't create its own window (it doesn't render properly)
-        /*GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
         Canvas3D canvas = new Canvas3D(config);
         Viewer viewer = new Viewer(canvas);
         ViewingPlatform viewingPlatform = new ViewingPlatform();
-        SimpleUniverse universe = new SimpleUniverse(viewingPlatform, viewer);
-        universe.getViewingPlatform().setNominalViewingTransform();
-        String OBJ_PATH = new File(System.getProperty("user.dir"), "art/models/obj-from-blender/artemis2.obj").getPath();
-        try {
-            Scene scene = new ObjectFile(ObjectFile.RESIZE).load(OBJ_PATH);
-            wireframeifyScene(scene);
-            universe.addBranchGraph(scene.getSceneGroup());
-        } catch (FileNotFoundException | IncorrectFormatException | ParsingErrorException e) {
-            e.printStackTrace();
-        }
-        return canvas;*/
+        this.universe = new SimpleUniverse(viewingPlatform, viewer);
+    }
 
+    private void createUniverseAndScene_HACK() {
+        this.universe = new SimpleUniverse();
+        this.universe.addBranchGraph(scene.getSceneGroup());
+    }
+
+    private void addMouseListeners() {
         this.canvas = universe.getCanvas();
         this.canvas.addMouseListener(this);
         this.canvas.addMouseMotionListener(this);
         this.canvas.addMouseWheelListener(this);
+    }
 
-        // Camera preset
-        ViewingPlatform vp = universe.getViewingPlatform();
+    private void setCameraPresets() {
+        ViewingPlatform vp = this.universe.getViewingPlatform();
         vp.setNominalViewingTransform();
+        // TODO: this actually puts the camera too close.
+        // Fixes:
+        // (1) manually set camera start position (I'd recommend a side or 3/4 view)
+        // (2) call the code in mouse wheel zoom and it'll automatically fix camera position
     }
 
     ////////
