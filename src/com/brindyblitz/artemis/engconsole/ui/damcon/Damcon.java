@@ -29,7 +29,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
             ZOOM_FACTOR = 0.25d,
             ROTATION_FACTOR = 0.01d,
             MIN_PITCH_Y = 0.1d,
-            MIN_ZOOM_RADIUS = 2.9d;
+            MIN_ZOOM_RADIUS = 2.9d,
+            MAX_ZOOM_RADIUS = 15d;
     private static final Vector2d MAX_ROTATION_AMOUNT = new Vector2d(0.125, 0.125);
 
     private Point lastMouseDragPosition = new Point();
@@ -243,8 +244,6 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
                 xform.lookAt(new Point3d(yawed_cam_pos.x, yawed_cam_pos.y, yawed_cam_pos.z), new Point3d(0d, 0d, 0d), new_up);
                 xform.invert();             // Why do we have to invert this?!  Who knows?!
                 camera.setTransform(xform);
-
-                // TODO: make sure look is not colinear with up etc./set axis limits
             }
         }
     }
@@ -289,6 +288,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         // drop it at the edge of the minimum radius
         if (new_cam_pos.length() < MIN_ZOOM_RADIUS && Math.signum(zoom_move_distance) > 0d) {
             new_cam_pos = new Vector3d(-look.x * MIN_ZOOM_RADIUS, -look.y * MIN_ZOOM_RADIUS, -look.z * MIN_ZOOM_RADIUS);
+        } else if (new_cam_pos.length() > MAX_ZOOM_RADIUS && Math.signum(zoom_move_distance) < 0d) {
+            new_cam_pos = new Vector3d(-look.x * MAX_ZOOM_RADIUS, -look.y * MAX_ZOOM_RADIUS, -look.z * MAX_ZOOM_RADIUS);
         }
 
         // Apply new position to transformation and transformation back to camera
