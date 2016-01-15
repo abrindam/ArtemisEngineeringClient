@@ -18,7 +18,15 @@ import java.io.FileNotFoundException;
 import java.util.Enumeration;
 
 public class Damcon implements MouseListener, MouseMotionListener, MouseWheelListener {
+    private static final int WIDTH = 400, HEIGHT = 300;
+
     private static final Color WIREFRAME_COLOR = Color.GREEN;
+
+    private static final Transform3D DEFAULT_CAMERA_VIEW = new Transform3D(new double[] {
+            0.6954015757171349d, 0.4658852009660681d, -0.5471449789689495d, -2.0244364221851137d,
+            -0.0, 0.7613814659810991d, 0.648304144102498d, 2.3987253331792435d,
+            0.7186213526539035d, -0.45083172335282545d, 0.5294658711650786d, 1.9590237233107914d,
+            0.0d, 0.0d, 0.0d, 1.0d });
 
     private Canvas3D canvas;
     private SimpleUniverse universe;
@@ -29,7 +37,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
             ZOOM_FACTOR = 0.25d,
             ROTATION_FACTOR = 0.01d,
             MIN_PITCH_Y = 0.1d,
-            MIN_ZOOM_RADIUS = 2.9d,
+            MIN_ZOOM_RADIUS = 3.7d,
             MAX_ZOOM_RADIUS = 15d;
     private static final Vector2d MAX_ROTATION_AMOUNT = new Vector2d(0.125, 0.125);
 
@@ -62,6 +70,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         // This also would work (and remove the setFocusable() calls), but is somehow uglier:
         // this.damconCanvas.addKeyListener(slider);
         this.canvas.setFocusable(false);
+
+        this.canvas.setSize(WIDTH, HEIGHT);
     }
 
     private void loadAndWireframeifyModel() {
@@ -98,11 +108,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private void setCameraPresets() {
         ViewingPlatform vp = this.universe.getViewingPlatform();
-        vp.setNominalViewingTransform();
-        // TODO: this actually puts the camera too close.
-        // Fixes:
-        // (1) manually set camera start position (I'd recommend a side or 3/4 view)
-        // (2) call the code in mouse wheel zoom and it'll automatically fix camera position
+        getCamera().setTransform(DEFAULT_CAMERA_VIEW);
     }
 
     ////////
@@ -253,6 +259,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
                 xform.lookAt(new Point3d(yawed_cam_pos.x, yawed_cam_pos.y, yawed_cam_pos.z), new Point3d(0d, 0d, 0d), new_up);
                 xform.invert();             // Why do we have to invert this?!  Who knows?!
                 camera.setTransform(xform);
+
+                System.out.println(xform);
             }
         }
     }

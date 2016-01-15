@@ -1,35 +1,38 @@
 package com.brindyblitz.artemis.engconsole.ui;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 
 import javax.swing.JPanel;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.EngineeringConsoleChangeListener;
+import net.dhleong.acl.world.Artemis;
 
 public class CoolantRemainingSlider extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	
-	private static final Font
-		LABEL_FONT = new Font("Arial", Font.ITALIC, 16);
 
-	private static final int
-		WIDGET_WIDTH = 600,
-		WIDGET_HEIGHT = 60;
+    private String label = "COOLANT";
+	private static final Font LABEL_FONT = new Font("Courier New", Font.BOLD, 36);
 
-    private static final int BUBBLE_OFFSET = 25, BUBBLE_Y = LABEL_FONT.getSize() + 5, BUBBLE_DIMENSION = 20;
+    private static final int BUBBLE_DIMENSION = 32, EMPTY_BUBBLE_THICKNESS = 3;
+
+    private static final Color color = new Color(0, 0, 255);
+
+    private int width, height, bubbleOffset, bubbleX;
+
+    private EngineeringConsoleManager engineeringConsoleManager;
 	
-	private EngineeringConsoleManager engineeringConsoleManager;
-	
-	public CoolantRemainingSlider(EngineeringConsoleManager engineeringConsoleManager) {
+	public CoolantRemainingSlider(EngineeringConsoleManager engineeringConsoleManager, int width, int height) {
 		this.engineeringConsoleManager = engineeringConsoleManager;
-		
-		this.setSize(WIDGET_WIDTH, WIDGET_HEIGHT);
-		this.setBackground(new Color(0, 0, 0, 0));
+
+        this.width = width;
+        this.height = height;
+        this.setSize(width, height);
+        this.bubbleOffset = this.height / this.engineeringConsoleManager.getTotalShipCoolant();
+        this.bubbleX = width - (BUBBLE_DIMENSION + EMPTY_BUBBLE_THICKNESS);
+
+        this.setBackground(new Color(0, 0, 0, 0));
 
 		this.engineeringConsoleManager.addChangeListener(new EngineeringConsoleChangeListener() {
 
@@ -46,21 +49,31 @@ public class CoolantRemainingSlider extends JPanel {
 
 		Graphics2D gfx = (Graphics2D) g;
 		drawSlider(gfx);
+        drawLabel(gfx);
 	}
-	
-	private void drawSlider(Graphics2D g) {
+
+	private void drawLabel(Graphics2D g) {
+		g.rotate(-Math.PI / 2);
 		g.setColor(Color.WHITE);
 		g.setFont(LABEL_FONT);
-		g.drawString("COOLANT", 0, LABEL_FONT.getSize());
+		g.drawString(label,
+                -(height / 2) - g.getFontMetrics().stringWidth(this.label) / 2,
+                bubbleX - 8);
+        g.rotate(Math.PI / 2);
+	}
 
+	private void drawSlider(Graphics2D g) {
 		int remaining_coolant = this.engineeringConsoleManager.getTotalCoolantRemaining();
+        int total_coolant = this.engineeringConsoleManager.getTotalShipCoolant();
+        int used_coolant = total_coolant - remaining_coolant;
 
-		g.setColor(Color.CYAN);
-		for (int i = 0; i < remaining_coolant; i++) {
-			g.fillOval(i * BUBBLE_OFFSET, BUBBLE_Y, BUBBLE_DIMENSION, BUBBLE_DIMENSION);
+		g.setColor(color);
+		for (int i = total_coolant; i > used_coolant; i--) {
+			g.fillOval(bubbleX, (i - 1) * bubbleOffset + EMPTY_BUBBLE_THICKNESS, BUBBLE_DIMENSION, BUBBLE_DIMENSION);
 		}
-		for (int i = remaining_coolant; i < this.engineeringConsoleManager.getTotalShipCoolant(); i++) {
-            g.drawOval(i * BUBBLE_OFFSET, BUBBLE_Y, BUBBLE_DIMENSION, BUBBLE_DIMENSION);
+        g.setStroke(new BasicStroke(EMPTY_BUBBLE_THICKNESS));
+		for (int i = used_coolant; i > 0; i--) {
+            g.drawOval(bubbleX, (i - 1) * bubbleOffset + EMPTY_BUBBLE_THICKNESS, BUBBLE_DIMENSION, BUBBLE_DIMENSION);
         }
 	}
 }

@@ -37,7 +37,7 @@ public class SystemSlider extends JPanel implements MouseWheelListener {
             NOT_APPLICABLE = Color.DARK_GRAY;
 
 	private static final Font
-		LABEL_FONT = new Font("Arial", Font.PLAIN, 16),
+		LABEL_FONT = new Font("Courier New", Font.BOLD, 24),
 		SHORTCUT_FONT = new Font("Courier New", Font.BOLD | Font.ITALIC, 20);
 	private static Color INCREASE_FONT_COLOR = Color.WHITE, DECREASE_FONT_COLOR = Color.WHITE;
 
@@ -173,7 +173,7 @@ public class SystemSlider extends JPanel implements MouseWheelListener {
 		g.setFont(LABEL_FONT);
 		g.drawString(this.label.toUpperCase(),
                 -SLIDER_BOTTOM + (SLIDER_HEIGHT / 2) - g.getFontMetrics().stringWidth(this.label.toUpperCase()) / 2,
-                SLIDER_WIDTH - (LABEL_FONT.getSize() - 6));
+                SLIDER_WIDTH - 7);
 		g.rotate(Math.PI / 2);
 	}
 
@@ -203,13 +203,13 @@ public class SystemSlider extends JPanel implements MouseWheelListener {
 	private Color getIntervalColor(IntervalType type) {
 		switch (type) {
 		case OVERCHARGED_COOLED:
-			return new Color(235, 195, 30);
+			return new Color(90, 215, 255);
 		case OVERCHARGED_UNCOOLED:
-			return Color.RED;
+			return new Color(255, 0, 0);
 		case OVERCOOLED:
-			return Color.CYAN;
+			return new Color(0, 0, 255);
 		case UNDERCHARGED:
-			return new Color(195, 30, 235);
+			return new Color(0, 255, 200);
 		}
 		throw new RuntimeException("Unexpected Interval Type");
 	}
