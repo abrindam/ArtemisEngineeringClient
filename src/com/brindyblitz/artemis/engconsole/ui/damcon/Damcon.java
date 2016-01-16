@@ -146,6 +146,9 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private static Appearance getWireframeAppearance() {
         Appearance appearance = new Appearance();
 
+        TransparencyAttributes transparency =  new TransparencyAttributes(TransparencyAttributes.BLENDED, .75f);
+        appearance.setTransparencyAttributes(transparency);
+
         Color awtColor = WIREFRAME_COLOR;
         Color3f color = new Color3f(awtColor);
         ColoringAttributes ca = new ColoringAttributes();
