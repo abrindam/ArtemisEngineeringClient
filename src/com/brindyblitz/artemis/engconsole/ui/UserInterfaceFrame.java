@@ -2,9 +2,9 @@ package com.brindyblitz.artemis.engconsole.ui;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.config.InputMapping;
+import com.brindyblitz.artemis.engconsole.ui.damcon.Damcon;
 import net.dhleong.acl.enums.ShipSystem;
 
-import javax.media.j3d.Canvas3D;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -22,7 +22,7 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 	private long lastResetEnergy;
 
     private ArrayList<SystemSlider> sliders = new ArrayList<>();
-	private Canvas3D damconCanvas;
+    private Damcon damcon;
 
     // TODO: constant cleanup!
 	private static final int
@@ -39,9 +39,9 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 
     private static HashMap<ShipSystem, String> SYSTEM_NAME_MAP = new HashMap<ShipSystem, String>();
 
-	public UserInterfaceFrame(EngineeringConsoleManager engineeringConsoleManager, Canvas3D damcon_canvas) {
+	public UserInterfaceFrame(EngineeringConsoleManager engineeringConsoleManager, Damcon damcon) {
 		this.engineeringConsoleManager = engineeringConsoleManager;
-        this.damconCanvas = damcon_canvas;
+        this.damcon = damcon;
 
         setTitle("Artemis: Engineering Console (Client)");
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -72,7 +72,7 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 		this.add(new CoolantRemainingSlider(engineeringConsoleManager, last_slider.getWidth(), last_slider.getHeight())).setLocation(
 				this.numSliders * SLIDER_OFFSET_MULTIPLIER + SLIDER_OFFSET_ADDITIONAL, MAIN_SLIDER_Y);
 
-        this.getContentPane().add(damconCanvas).setLocation(10, DAMCON_Y);
+        this.getContentPane().add(damcon.getCanvas()).setLocation(10, DAMCON_Y);
 
         this.setFocusable(true);
 
@@ -95,7 +95,9 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_BACK_SLASH) {
+        int kc = e.getKeyCode();
+
+		if (kc == KeyEvent.VK_BACK_SLASH) {
 			System.out.println("Beams: " + this.engineeringConsoleManager.getSystemEnergyAllocated(BEAMS) + "%");
 			System.out.println("Torpedoes: " + this.engineeringConsoleManager.getSystemEnergyAllocated(TORPEDOES) + "%");
 			System.out.println("Sensors: " + this.engineeringConsoleManager.getSystemEnergyAllocated(SENSORS) + "%");
@@ -106,19 +108,21 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 			System.out.println("Rear Shields: " + this.engineeringConsoleManager.getSystemEnergyAllocated(AFT_SHIELDS) + "%");
 
             System.out.println("\n\n\n");
-		}
-		else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+		} else if (kc == KeyEvent.VK_BACK_QUOTE) {
+            this.damcon.setDamageShake(true);
+        }
+        else if (kc == KeyEvent.VK_SPACE) {
 			this.engineeringConsoleManager.resetEnergy();
 			if (this.lastResetEnergy > System.currentTimeMillis() - 2000) {
 				this.engineeringConsoleManager.resetCoolant();
 			}
 			this.lastResetEnergy = System.currentTimeMillis();
 		}
-		else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+		else if (kc == KeyEvent.VK_ENTER) {
 			this.engineeringConsoleManager.resetCoolant();
 		}
-		else if (e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_9) {
-			int presetNumber = e.getKeyCode() - KeyEvent.VK_0;
+		else if (kc >= KeyEvent.VK_0 && kc <= KeyEvent.VK_9) {
+			int presetNumber = kc - KeyEvent.VK_0;
 			this.presetManager.applyPreset(presetNumber);
 		} else {
             /***

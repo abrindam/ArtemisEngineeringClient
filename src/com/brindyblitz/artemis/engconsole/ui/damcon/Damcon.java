@@ -44,7 +44,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private static final Vector2d MAX_ROTATION_AMOUNT = new Vector2d(0.125, 0.125);
 
     private Point lastMouseDragPosition = new Point();
-    private boolean rotating = false;
+    private boolean rotating = false, dotified = false;
 
     public Damcon(EngineeringConsoleManager engineeringConsoleManager) {
         this.engineeringConsoleManager = engineeringConsoleManager;
@@ -82,7 +82,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         String OBJ_PATH = new File(System.getProperty("user.dir"), "art/models/obj-from-blender/artemis2.obj").getPath();
         try {
             this.scene = new ObjectFile(ObjectFile.RESIZE).load(OBJ_PATH);
-            wireframeifyScene(scene);
+            wireframeifyScene(scene, false);
 
         } catch (FileNotFoundException | IncorrectFormatException | ParsingErrorException e) {
             e.printStackTrace(System.err);
@@ -129,8 +129,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     ///////////////
     // Wireframe //
     ///////////////
-    private static void wireframeifyScene(Scene scene) {
-        Appearance wireframe = getWireframeAppearance();
+    private static void wireframeifyScene(Scene scene, boolean dots) {
+        Appearance wireframe = getWireframeAppearance(dots);
 
         // TODO: This works for the Artemis OBJ model.  If the scene graph has multiple Shape3D nodes, this would need to be set on all of them.  Is that necessary or can we guarantee it won't be needed?
         Enumeration<Node> children = scene.getSceneGroup().getAllChildren();
@@ -139,11 +139,17 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
             if (node.getClass().equals(Shape3D.class)) {
                 Shape3D s3d = (Shape3D) node;
                 s3d.setAppearance(wireframe);
+                try {
+                    s3d.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
+                } catch(RestrictedAccessException e) {
+                    // TODO: look into missing capabilities for this:
+                    // Exception in thread "AWT-EventQueue-0" javax.media.j3d.RestrictedAccessException: Cannot modify capability bits on a live or compiled object
+                }
             }
         }
     }
 
-    private static Appearance getWireframeAppearance() {
+    private static Appearance getWireframeAppearance(boolean dots) {
         Appearance appearance = new Appearance();
 
         // Set transparency
@@ -151,22 +157,25 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         appearance.setTransparencyAttributes(transparency);
 
         // Enable automatic anti-aliasing
-        LineAttributes la = new LineAttributes();
-        la.setLineAntialiasingEnable(true);
-        appearance.setLineAttributes(la);
+        LineAttributes line_attributes = new LineAttributes();
+        line_attributes.setLineAntialiasingEnable(true);
+        if (dots) {
+            line_attributes.setLinePattern(LineAttributes.PATTERN_DOT);
+        }
+        appearance.setLineAttributes(line_attributes);
 
         // Set color
         Color awtColor = WIREFRAME_COLOR;
         Color3f color = new Color3f(awtColor);
-        ColoringAttributes ca = new ColoringAttributes();
-        ca.setColor(color);
-        appearance.setColoringAttributes(ca);
+        ColoringAttributes coloring_attributes = new ColoringAttributes();
+        coloring_attributes.setColor(color);
+        appearance.setColoringAttributes(coloring_attributes);
 
         // Make wireframe
-        PolygonAttributes pa = new PolygonAttributes();
-        pa.setPolygonMode(pa.POLYGON_LINE);
-        pa.setCullFace(pa.CULL_NONE);   // allow triangles with normals facing away from the camera to render
-        appearance.setPolygonAttributes(pa);
+        PolygonAttributes polygon_attributes = new PolygonAttributes();
+        polygon_attributes.setPolygonMode(PolygonAttributes.POLYGON_LINE);
+        polygon_attributes.setCullFace(PolygonAttributes.CULL_NONE);   // allow triangles with normals facing away from the camera to render
+        appearance.setPolygonAttributes(polygon_attributes);
 
         return appearance;
     }
@@ -325,5 +334,14 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         // Apply new position to transformation and transformation back to camera
         xform.setTranslation(new_cam_pos);
         camera.setTransform(xform);
+    }
+
+    //////////
+    // Misc //
+    //////////
+
+    public void setDamageShake(boolean enabled) {
+        dotified = !dotified;
+        wireframeifyScene(this.scene, dotified);
     }
 }
