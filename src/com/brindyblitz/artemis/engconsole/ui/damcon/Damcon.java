@@ -1,5 +1,6 @@
 package com.brindyblitz.artemis.engconsole.ui.damcon;
 
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.sun.j3d.loaders.IncorrectFormatException;
 import com.sun.j3d.loaders.ParsingErrorException;
 import com.sun.j3d.loaders.Scene;
@@ -28,6 +29,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
             0.7186213526539035d, -0.45083172335282545d, 0.5294658711650786d, 1.9590237233107914d,
             0.0d, 0.0d, 0.0d, 1.0d });
 
+    private EngineeringConsoleManager engineeringConsoleManager;
     private Canvas3D canvas;
     private SimpleUniverse universe;
     private Scene scene = null;
@@ -44,7 +46,9 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private Point lastMouseDragPosition = new Point();
     private boolean rotating = false;
 
-    public Damcon() {
+    public Damcon(EngineeringConsoleManager engineeringConsoleManager) {
+        this.engineeringConsoleManager = engineeringConsoleManager;
+
         loadAndWireframeifyModel();
 
         if (WINDOW_HACK) {
@@ -259,8 +263,6 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
                 xform.lookAt(new Point3d(yawed_cam_pos.x, yawed_cam_pos.y, yawed_cam_pos.z), new Point3d(0d, 0d, 0d), new_up);
                 xform.invert();             // Why do we have to invert this?!  Who knows?!
                 camera.setTransform(xform);
-
-                System.out.println(xform);
             }
         }
     }
