@@ -44,13 +44,13 @@ public class ClientMain {
 
 	public ClientMain() {
 		EngineeringConsoleManager engineeringConsoleManager = new FakeEngineeringConsoleManager();
-		buildUIFrame(engineeringConsoleManager, new Damcon().getCanvas());
+		buildUIFrame(engineeringConsoleManager, new Damcon(engineeringConsoleManager).getCanvas());
 	}
 
 	public ClientMain(String host, int port) throws IOException {
 		WorldAwareRobustProxyListener worldAwareRobustProxyListener = new WorldAwareRobustProxyListener(host, port, port);
 		EngineeringConsoleManager engineeringConsoleManager = new RealEngineeringConsoleManager(worldAwareRobustProxyListener);
-		buildUIFrame(engineeringConsoleManager, new Damcon().getCanvas());
+		buildUIFrame(engineeringConsoleManager, new Damcon(engineeringConsoleManager).getCanvas());
 	}
 
 	private static void buildUIFrame(EngineeringConsoleManager engineeringConsoleManager, Canvas3D damcon_canvas) {
