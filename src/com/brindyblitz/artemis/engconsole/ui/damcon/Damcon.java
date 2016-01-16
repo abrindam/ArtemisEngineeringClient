@@ -147,7 +147,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         Appearance appearance = new Appearance();
 
         // Set transparency
-        TransparencyAttributes transparency =  new TransparencyAttributes(TransparencyAttributes.BLENDED, .75f);
+        TransparencyAttributes transparency =  new TransparencyAttributes(TransparencyAttributes.NICEST, .75f);
         appearance.setTransparencyAttributes(transparency);
 
         // Enable automatic anti-aliasing

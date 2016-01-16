@@ -75,6 +75,8 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
         this.getContentPane().add(damconCanvas).setLocation(10, DAMCON_Y);
 
         this.setFocusable(true);
+
+		this.setResizable(false);
 	}
 
 	private void addSlider(ShipSystem system, String label, InputMapping mapping) {
