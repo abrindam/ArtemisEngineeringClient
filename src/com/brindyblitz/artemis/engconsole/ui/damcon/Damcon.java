@@ -146,18 +146,26 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private static Appearance getWireframeAppearance() {
         Appearance appearance = new Appearance();
 
+        // Set transparency
         TransparencyAttributes transparency =  new TransparencyAttributes(TransparencyAttributes.BLENDED, .75f);
         appearance.setTransparencyAttributes(transparency);
 
+        // Enable automatic anti-aliasing
+        LineAttributes la = new LineAttributes();
+        la.setLineAntialiasingEnable(true);
+        appearance.setLineAttributes(la);
+
+        // Set color
         Color awtColor = WIREFRAME_COLOR;
         Color3f color = new Color3f(awtColor);
         ColoringAttributes ca = new ColoringAttributes();
         ca.setColor(color);
         appearance.setColoringAttributes(ca);
 
+        // Make wireframe
         PolygonAttributes pa = new PolygonAttributes();
         pa.setPolygonMode(pa.POLYGON_LINE);
-        pa.setCullFace(pa.CULL_NONE);
+        pa.setCullFace(pa.CULL_NONE);   // allow triangles with normals facing away from the camera to render
         appearance.setPolygonAttributes(pa);
 
         return appearance;
