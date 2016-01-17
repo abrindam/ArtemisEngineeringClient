@@ -101,7 +101,7 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 			System.out.println("Beams: " + this.engineeringConsoleManager.getSystemEnergyAllocated(BEAMS) + "%");
 			System.out.println("Torpedoes: " + this.engineeringConsoleManager.getSystemEnergyAllocated(TORPEDOES) + "%");
 			System.out.println("Sensors: " + this.engineeringConsoleManager.getSystemEnergyAllocated(SENSORS) + "%");
-			System.out.println("Manuvering: " + this.engineeringConsoleManager.getSystemEnergyAllocated(MANEUVERING) + "%");
+			System.out.println("Maneuvering: " + this.engineeringConsoleManager.getSystemEnergyAllocated(MANEUVERING) + "%");
 			System.out.println("Impulse: " + this.engineeringConsoleManager.getSystemEnergyAllocated(IMPULSE) + "%");
 			System.out.println("Warp: " + this.engineeringConsoleManager.getSystemEnergyAllocated(WARP_JUMP_DRIVE) + "%");
 			System.out.println("Front Shields: " + this.engineeringConsoleManager.getSystemEnergyAllocated(FORE_SHIELDS) + "%");
@@ -109,7 +109,11 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 
             System.out.println("\n\n\n");
 		} else if (kc == KeyEvent.VK_BACK_QUOTE) {
-            this.damcon.setDamageShake(true);
+            if (e.isShiftDown()) {
+                this.damcon.toggleDamageShake();
+            } else {
+                this.damcon.startDamageShake(1000l, 0.7d);
+            }
         }
         else if (kc == KeyEvent.VK_SPACE) {
 			this.engineeringConsoleManager.resetEnergy();

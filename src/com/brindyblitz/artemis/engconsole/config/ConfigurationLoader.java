@@ -20,6 +20,7 @@ public class ConfigurationLoader {
 
     private static final int[] RESERVED_KEYS = new int[] {
             KeyEvent.VK_BACK_SLASH,
+			KeyEvent.VK_BACK_QUOTE,
             KeyEvent.VK_SPACE,
             KeyEvent.VK_ENTER,
             KeyEvent.VK_0,

@@ -17,6 +17,8 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Enumeration;
+import java.util.Random;
+import java.util.TimerTask;
 
 public class Damcon implements MouseListener, MouseMotionListener, MouseWheelListener {
     private static final int WIDTH = 400, HEIGHT = 300;
@@ -45,6 +47,10 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private Point lastMouseDragPosition = new Point();
     private boolean rotating = false, dotified = false;
+
+    private static final int[] wireframeLineTypes =
+            new int[] { LineAttributes.PATTERN_DASH, LineAttributes.PATTERN_DASH_DOT, LineAttributes.PATTERN_DOT, LineAttributes.PATTERN_SOLID };
+    private static final Random random = new Random();
 
     public Damcon(EngineeringConsoleManager engineeringConsoleManager) {
         this.engineeringConsoleManager = engineeringConsoleManager;
@@ -82,7 +88,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         String OBJ_PATH = new File(System.getProperty("user.dir"), "art/models/obj-from-blender/artemis2.obj").getPath();
         try {
             this.scene = new ObjectFile(ObjectFile.RESIZE).load(OBJ_PATH);
-            wireframeifyScene(scene, false);
+            wireframeifyScene(scene, LineAttributes.PATTERN_SOLID);
 
         } catch (FileNotFoundException | IncorrectFormatException | ParsingErrorException e) {
             e.printStackTrace(System.err);
@@ -129,8 +135,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     ///////////////
     // Wireframe //
     ///////////////
-    private static void wireframeifyScene(Scene scene, boolean dots) {
-        Appearance wireframe = getWireframeAppearance(dots);
+    private static void wireframeifyScene(Scene scene, int line_attribute_pattern) {
+        Appearance wireframe = getWireframeAppearance(line_attribute_pattern);
 
         // TODO: This works for the Artemis OBJ model.  If the scene graph has multiple Shape3D nodes, this would need to be set on all of them.  Is that necessary or can we guarantee it won't be needed?
         Enumeration<Node> children = scene.getSceneGroup().getAllChildren();
@@ -149,7 +155,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         }
     }
 
-    private static Appearance getWireframeAppearance(boolean dots) {
+    private static Appearance getWireframeAppearance(int line_attributes_pattern) {
         Appearance appearance = new Appearance();
 
         // Set transparency
@@ -159,9 +165,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         // Enable automatic anti-aliasing
         LineAttributes line_attributes = new LineAttributes();
         line_attributes.setLineAntialiasingEnable(true);
-        if (dots) {
-            line_attributes.setLinePattern(LineAttributes.PATTERN_DOT);
-        }
+        line_attributes.setLinePattern(line_attributes_pattern);
         appearance.setLineAttributes(line_attributes);
 
         // Set color
@@ -340,8 +344,52 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     // Misc //
     //////////
 
-    public void setDamageShake(boolean enabled) {
+    public void toggleDamageShake() {
         dotified = !dotified;
-        wireframeifyScene(this.scene, dotified);
+        setDamageShake(dotified);
+    }
+
+    public void setDamageShake (boolean enabled) {
+        setLineType(enabled ? LineAttributes.PATTERN_DOT : LineAttributes.PATTERN_SOLID);
+    }
+
+    public void setLineType(int line_attributes_pattern) {
+        wireframeifyScene(this.scene, line_attributes_pattern);
+    }
+
+    public void startDamageShake(long duration_ms, double intensity) {
+        java.util.Timer timer = new java.util.Timer();
+        timer.schedule(new DamageShake(duration_ms, intensity), 0, 10);
+    }
+
+    private class DamageShake extends TimerTask {
+        private long end;
+        private double intensity;
+
+        public DamageShake(long duration, double intensity) {
+            this.end = System.currentTimeMillis() + duration;
+            this.intensity = intensity;
+        }
+
+        @Override
+        public void run() {
+            if (System.currentTimeMillis() >= end) {
+                setDamageShake(false);
+                this.cancel();
+                return;
+            }
+
+            // toggleDamageShake();
+
+            //if (random.nextDouble() < this.intensity) {
+            //    toggleDamageShake();
+            //}
+
+            // setDamageShake(random.nextDouble() < this.intensity);
+
+            if (random.nextDouble() < this.intensity) {
+                setLineType(wireframeLineTypes[random.nextInt(wireframeLineTypes.length)]);
+            }
+        }
     }
 }
