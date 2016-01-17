@@ -16,18 +16,25 @@ import net.dhleong.acl.world.Artemis;
 public abstract class BaseEngineeringConsoleManager implements EngineeringConsoleManager {
 
 	private List<EngineeringConsoleChangeListener> listeners = new ArrayList<>();
+	private ShipSystemGrid shipSystemGrid;
+	private List<VesselNode> grid;
 	
-	protected ShipSystemGrid loadGrid() {
-		NonShittyShipSystemGrid grid = new NonShittyShipSystemGrid();
+	
+	public BaseEngineeringConsoleManager() {
+	
+		NonShittyShipSystemGrid shipSystemGrid = new NonShittyShipSystemGrid();
+		this.grid = new ArrayList<>();
 		Vessel vessel = VesselData.get().getVessel(0);
 		Iterator<VesselNode> nodeIterator = vessel.getInternals().nodeIterator();
 		while (nodeIterator.hasNext()) {
 			VesselNode node = nodeIterator.next();
+			grid.add(node);
 			if (node.getSystem() != null) {
-				grid.addNode(node.getSystem(), node.getGridCoord());				
+				shipSystemGrid.addNode(node.getSystem(), node.getGridCoord());				
 			}
 		}
-		return grid;
+		
+		this.shipSystemGrid = shipSystemGrid;
 	}
 	
 	protected void fireChange() {
@@ -48,6 +55,15 @@ public abstract class BaseEngineeringConsoleManager implements EngineeringConsol
 	@Override
 	public void incrementSystemEnergyAllocated(ShipSystem system, int amount) {
 		updateSystemEnergyAllocated(system, Math.min(Artemis.MAX_ENERGY_ALLOCATION_PERCENT, Math.max(0,this.getSystemEnergyAllocated(system) + amount)));
+	}
+	
+	@Override
+	public List<VesselNode> getGrid() {
+		return this.grid;
+	}
+	
+	protected ShipSystemGrid getShipSystemGrid() {
+		return shipSystemGrid;
 	}
 	
 	protected abstract void updateSystemEnergyAllocated(ShipSystem system, int amount);

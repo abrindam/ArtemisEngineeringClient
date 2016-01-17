@@ -1,9 +1,11 @@
 package com.brindyblitz.artemis.engconsole;
 
+import java.util.List;
 import java.util.Map;
 
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.util.GridCoord;
+import net.dhleong.acl.vesseldata.VesselNode;
 
 public interface EngineeringConsoleManager {
 	int getTotalShipCoolant();
@@ -19,6 +21,8 @@ public interface EngineeringConsoleManager {
 	int getTotalCoolantRemaining();
 	
 	Map<GridCoord, Float> getGridHealth();
+
+	List<VesselNode> getGrid();
 
 	void setSystemEnergyAllocated(ShipSystem system, int amount);
 

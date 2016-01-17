@@ -27,7 +27,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 				RealEngineeringConsoleManager.this.fireChange();
 			}
 		});
-		this.worldAwareRobustProxyListener.getSystemManager().setSystemGrid(loadGrid());
+		this.worldAwareRobustProxyListener.getSystemManager().setSystemGrid(getShipSystemGrid());
 	}
 	
 	@Override
