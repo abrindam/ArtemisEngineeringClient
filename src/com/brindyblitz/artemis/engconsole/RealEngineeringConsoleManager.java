@@ -58,7 +58,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	@Override
 	public int getSystemHealth(ShipSystem system) {
 		if (this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0) == null) {
-			return 0;
+			return 100;
 		}
 		return (int) (this.worldAwareRobustProxyListener.getSystemManager().getHealthOfSystem(system) * 100);
 	}
@@ -75,7 +75,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	@Override
 	public int getTotalShipCoolant() {
 		if (this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0) == null) {
-			return 0;
+			return 8;
 		}
 		return this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0).getAvailableCoolant();
 	}
