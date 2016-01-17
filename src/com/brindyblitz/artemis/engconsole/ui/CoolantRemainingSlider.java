@@ -19,7 +19,7 @@ public class CoolantRemainingSlider extends JPanel {
 
     private static final Color color = new Color(0, 0, 255);
 
-    private int width, height, bubbleOffset, bubbleX;
+    private int width, height, bubbleX;
 
     private EngineeringConsoleManager engineeringConsoleManager;
 	
@@ -29,7 +29,6 @@ public class CoolantRemainingSlider extends JPanel {
         this.width = width;
         this.height = height;
         this.setSize(width, height);
-        this.bubbleOffset = this.height / this.engineeringConsoleManager.getTotalShipCoolant();
         this.bubbleX = width - (BUBBLE_DIMENSION + EMPTY_BUBBLE_THICKNESS);
 
         this.setBackground(new Color(0, 0, 0, 0));
@@ -63,9 +62,14 @@ public class CoolantRemainingSlider extends JPanel {
 	}
 
 	private void drawSlider(Graphics2D g) {
+		int total_coolant = this.engineeringConsoleManager.getTotalShipCoolant();
+		if (total_coolant <= 0) {
+			return;
+		}
+
 		int remaining_coolant = this.engineeringConsoleManager.getTotalCoolantRemaining();
-        int total_coolant = this.engineeringConsoleManager.getTotalShipCoolant();
         int used_coolant = total_coolant - remaining_coolant;
+		int bubbleOffset = this.height / total_coolant;
 
 		g.setColor(color);
 		for (int i = total_coolant; i > used_coolant; i--) {
