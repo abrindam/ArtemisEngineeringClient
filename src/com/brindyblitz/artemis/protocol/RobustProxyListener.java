@@ -41,10 +41,10 @@ public class RobustProxyListener implements Runnable {
 			System.out.println("Listening for connections on port " + this.proxyPort + "...");
 			Socket skt = listener.accept();
 
-			System.out.println("Received connection from " + skt.getRemoteSocketAddress());
+			System.out.println("Received connection from " + skt.getRemoteSocketAddress().toString().substring(1) + ".");
 			this.client = new ThreadedArtemisNetworkInterface(skt, ConnectionType.CLIENT);
 
-			System.out.println("Connecting to server at " + serverAddr + ":" + serverPort + "...");
+			System.out.print("Connecting to server at " + serverAddr + ":" + serverPort + "...");
 			this.server = new ThreadedArtemisNetworkInterface(serverAddr, serverPort);
 
 
@@ -57,7 +57,7 @@ public class RobustProxyListener implements Runnable {
 
 			this.server.start();
 			this.client.start();
-			System.out.println("Connection established.");
+			System.out.println("connection established.");
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} finally {

@@ -32,7 +32,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	
 	@Override
 	public int getSystemEnergyAllocated(ShipSystem system) {
-		if (this.worldAwareRobustProxyListener.getServer() == null) {
+		if (this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0) == null) {
 			return 100;
 		}
 		return (int)(this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0).getSystemEnergy(system) * 300);
@@ -40,7 +40,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	
 	@Override
 	public int getSystemCoolantAllocated(ShipSystem system) {
-		if (this.worldAwareRobustProxyListener.getServer() == null) {
+		if (this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0) == null) {
 			return 0;
 		}
 		return this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0).getSystemCoolant(system);
@@ -48,15 +48,16 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	
 	@Override
 	public int getSystemHeat(ShipSystem system) {
-		if (this.worldAwareRobustProxyListener.getServer() == null) {
+		if (this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0) == null) {
 			return 0;
 		}
+
 		return (int) (this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0).getSystemHeat(system) * 100);
 	}
 	
 	@Override
 	public int getSystemHealth(ShipSystem system) {
-		if (this.worldAwareRobustProxyListener.getServer() == null) {
+		if (this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0) == null) {
 			return 0;
 		}
 		return (int) (this.worldAwareRobustProxyListener.getSystemManager().getHealthOfSystem(system) * 100);
@@ -64,7 +65,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	
 	@Override
 	public int getTotalCoolantRemaining() {
-		if (this.worldAwareRobustProxyListener.getServer() == null) {
+		if (this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0) == null) {
 			return Artemis.DEFAULT_COOLANT;
 		}
 		final int totalCoolantUsed = Arrays.stream(ShipSystem.values()).mapToInt(system -> this.getSystemCoolantAllocated(system)).sum();
@@ -73,7 +74,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 
 	@Override
 	public int getTotalShipCoolant() {
-		if (this.worldAwareRobustProxyListener.getServer() == null) {
+		if (this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0) == null) {
 			return 0;
 		}
 		return this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0).getAvailableCoolant();
@@ -90,7 +91,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	
 	@Override
 	public void incrementSystemEnergyAllocated(ShipSystem system, int amount) {
-		if (this.worldAwareRobustProxyListener.getServer() == null) {
+		if (this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0) == null) {
 			return;
 		}
 		super.incrementSystemEnergyAllocated(system, amount);
@@ -98,7 +99,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	
 	@Override
 	public void incrementSystemCoolantAllocated(ShipSystem system, int amount) {
-		if (this.worldAwareRobustProxyListener.getServer() == null) {
+		if (this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0) == null) {
 			return;
 		}
 		super.incrementSystemCoolantAllocated(system, amount);

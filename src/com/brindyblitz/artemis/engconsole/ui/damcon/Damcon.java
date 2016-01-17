@@ -1,13 +1,20 @@
 package com.brindyblitz.artemis.engconsole.ui.damcon;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
+
+// See: http://download.java.net/media/java3d/javadoc/1.5.1/
 import com.sun.j3d.loaders.IncorrectFormatException;
 import com.sun.j3d.loaders.ParsingErrorException;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.loaders.objectfile.ObjectFile;
+import com.sun.j3d.utils.pickfast.PickCanvas;
+import com.sun.j3d.utils.picking.PickResult;
+import com.sun.j3d.utils.picking.PickTool;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.Viewer;
 import com.sun.j3d.utils.universe.ViewingPlatform;
+import net.dhleong.acl.util.GridCoord;
+import net.dhleong.acl.vesseldata.VesselNode;
 
 import javax.media.j3d.*;
 import javax.swing.*;
@@ -16,14 +23,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Enumeration;
-import java.util.Random;
-import java.util.TimerTask;
+import java.util.*;
 
 public class Damcon implements MouseListener, MouseMotionListener, MouseWheelListener {
     private static final int WIDTH = 400, HEIGHT = 300;
 
-    private static final Color WIREFRAME_COLOR = Color.GREEN;
+    private static final Color WIREFRAME_COLOR = Color.GREEN; // TODO: vary this color with total ship health if available?
 
     private static final Transform3D DEFAULT_CAMERA_VIEW = new Transform3D(new double[] {
             0.6954015757171349d, 0.4658852009660681d, -0.5471449789689495d, -2.0244364221851137d,
@@ -33,6 +38,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private EngineeringConsoleManager engineeringConsoleManager;
     private Canvas3D canvas;
+    private PickCanvas pickCanvas;
     private SimpleUniverse universe;
     private Scene scene = null;
     private static final boolean WINDOW_HACK = true;
@@ -52,6 +58,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
             new int[] { LineAttributes.PATTERN_DASH, LineAttributes.PATTERN_DASH_DOT, LineAttributes.PATTERN_DOT, LineAttributes.PATTERN_SOLID };
     private static final Random random = new Random();
 
+    private Map<GridCoord, InternalNode> internalNodes = new HashMap<>();
+
     public Damcon(EngineeringConsoleManager engineeringConsoleManager) {
         this.engineeringConsoleManager = engineeringConsoleManager;
 
@@ -68,6 +76,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         } else {
             createUniverseAndScene();
         }
+
+        loadInternalNodes();
 
         addMouseListeners();
         setCameraPresets();
@@ -93,6 +103,33 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         } catch (FileNotFoundException | IncorrectFormatException | ParsingErrorException e) {
             e.printStackTrace(System.err);
         }
+    }
+
+    private void loadInternalNodes() {
+        BranchGroup node_branchgroup = new BranchGroup();
+
+        for (VesselNode vn : this.engineeringConsoleManager.getGrid()) {
+            InternalNode in = new InternalNode(vn);
+            internalNodes.put(vn.getGridCoord(), in);
+            node_branchgroup.addChild(in.getBranchGroup());
+        }
+
+        this.universe.addBranchGraph(node_branchgroup);
+
+        pickCanvas = new PickCanvas(this.canvas, node_branchgroup);
+        pickCanvas.setMode(PickInfo.PICK_GEOMETRY);
+        pickCanvas.setFlags(PickInfo.NODE | PickInfo.CLOSEST_INTERSECTION_POINT);
+        pickCanvas.setTolerance(0.5f);
+
+        this.engineeringConsoleManager.addChangeListener(new EngineeringConsoleManager.EngineeringConsoleChangeListener() {
+            @Override
+            public void onChange() {
+                for (Map.Entry<GridCoord, Float> entry : engineeringConsoleManager.getGridHealth().entrySet()) {
+                    InternalNode node = internalNodes.get(entry.getKey());
+                    node.updateHealth(entry.getValue());
+                }
+            }
+        });
     }
 
     private void createUniverseAndScene() {
@@ -147,9 +184,11 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
                 s3d.setAppearance(wireframe);
                 try {
                     s3d.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
+                    // TODO: try scene.setCapability above with BranchGroup.ALLOW_CHILDREN_WRITE etc. and see if this exception is no longer thrown
+                    // See http://www.java-tips.org/other-api-tips-100035/119-java3d/1527-how-to-use-the-capability.html
+                    // I got it working for the internal node spheres so I probably just need to figure out which node(s) to set it on, or set it on creation
                 } catch(RestrictedAccessException e) {
-                    // TODO: look into missing capabilities for this:
-                    // Exception in thread "AWT-EventQueue-0" javax.media.j3d.RestrictedAccessException: Cannot modify capability bits on a live or compiled object
+                    // e=Exception in thread "AWT-EventQueue-0" javax.media.j3d.RestrictedAccessException: Cannot modify capability bits on a live or compiled object
                 }
             }
         }
@@ -159,7 +198,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         Appearance appearance = new Appearance();
 
         // Set transparency
-        TransparencyAttributes transparency =  new TransparencyAttributes(TransparencyAttributes.NICEST, .75f);
+        TransparencyAttributes transparency =  new TransparencyAttributes(TransparencyAttributes.NICEST, .9f);
         appearance.setTransparencyAttributes(transparency);
 
         // Enable automatic anti-aliasing
@@ -191,7 +230,13 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     public void mouseClicked(MouseEvent e) {
         if (e.getButton() == 1) {
             // TODO: damcon selection and orders issuing
-            System.out.println("Left click");
+            // pickCanvas.setShapeLocation(e);
+            // PickInfo[] pickInfos = pickCanvas.pickAll();
+
+            System.out.println("Left click:\n");
+            /*for (PickInfo pi : pickInfos) {
+                System.out.println(pi);
+            }*/
         }
     }
 
@@ -340,9 +385,9 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         camera.setTransform(xform);
     }
 
-    //////////
-    // Misc //
-    //////////
+    //////////////////
+    // Damage Shake //
+    //////////////////
 
     public void toggleDamageShake() {
         dotified = !dotified;
