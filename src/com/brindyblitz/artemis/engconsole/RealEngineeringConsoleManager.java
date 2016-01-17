@@ -1,6 +1,9 @@
 package com.brindyblitz.artemis.engconsole;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.brindyblitz.artemis.protocol.NotifyingSystemManager.SystemManagerChangeListener;
 import com.brindyblitz.artemis.protocol.WorldAwareRobustProxyListener;
@@ -8,6 +11,8 @@ import com.brindyblitz.artemis.protocol.WorldAwareRobustProxyListener;
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.protocol.core.eng.EngSetCoolantPacket;
 import net.dhleong.acl.protocol.core.eng.EngSetEnergyPacket;
+import net.dhleong.acl.util.GridCoord;
+import net.dhleong.acl.world.Artemis;
 
 public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager {
 
@@ -22,6 +27,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 				RealEngineeringConsoleManager.this.fireChange();
 			}
 		});
+		this.worldAwareRobustProxyListener.getSystemManager().setSystemGrid(loadGrid());
 	}
 	
 	@Override
@@ -59,7 +65,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	@Override
 	public int getTotalCoolantRemaining() {
 		if (this.worldAwareRobustProxyListener.getServer() == null) {
-			return 0;
+			return Artemis.DEFAULT_COOLANT;
 		}
 		final int totalCoolantUsed = Arrays.stream(ShipSystem.values()).mapToInt(system -> this.getSystemCoolantAllocated(system)).sum();
 		return getTotalShipCoolant() - totalCoolantUsed;
@@ -70,8 +76,16 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		if (this.worldAwareRobustProxyListener.getServer() == null) {
 			return 0;
 		}
-
 		return this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0).getAvailableCoolant();
+	}
+	
+	@Override
+	public Map<GridCoord, Float> getGridHealth() {
+		Map<GridCoord, Float> result = new HashMap<>();
+		for (Entry<GridCoord, Float> entry : this.worldAwareRobustProxyListener.getSystemManager().getGridDamages()) {
+			result.put(entry.getKey(), 1.0f - entry.getValue());
+		}
+		return result;
 	}
 	
 	@Override

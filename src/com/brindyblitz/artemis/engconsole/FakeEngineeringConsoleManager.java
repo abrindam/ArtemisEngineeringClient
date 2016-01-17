@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer;
 
 import net.dhleong.acl.enums.ShipSystem;
+import net.dhleong.acl.util.GridCoord;
 
 public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager {
 
@@ -49,6 +50,11 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	@Override
 	public int getTotalCoolantRemaining() {
 		return MAX_COOLANT - coolantAllocated.values().stream().mapToInt(Integer::intValue).sum();
+	}
+	
+	@Override
+	public Map<GridCoord, Float> getGridHealth() {
+		return new HashMap<>();
 	}
 
 	@Override

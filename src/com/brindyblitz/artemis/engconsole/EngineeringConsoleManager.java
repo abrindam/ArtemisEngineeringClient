@@ -1,6 +1,9 @@
 package com.brindyblitz.artemis.engconsole;
 
+import java.util.Map;
+
 import net.dhleong.acl.enums.ShipSystem;
+import net.dhleong.acl.util.GridCoord;
 
 public interface EngineeringConsoleManager {
 	int getTotalShipCoolant();
@@ -14,6 +17,8 @@ public interface EngineeringConsoleManager {
 	int getSystemHealth(ShipSystem system);
 
 	int getTotalCoolantRemaining();
+	
+	Map<GridCoord, Float> getGridHealth();
 
 	void setSystemEnergyAllocated(ShipSystem system, int amount);
 

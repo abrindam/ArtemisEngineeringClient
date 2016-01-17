@@ -1,15 +1,34 @@
 package com.brindyblitz.artemis.engconsole;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import com.brindyblitz.artemis.protocol.NonShittyShipSystemGrid;
+
 import net.dhleong.acl.enums.ShipSystem;
+import net.dhleong.acl.util.ShipSystemGrid;
+import net.dhleong.acl.vesseldata.Vessel;
+import net.dhleong.acl.vesseldata.VesselData;
+import net.dhleong.acl.vesseldata.VesselNode;
 import net.dhleong.acl.world.Artemis;
 
 public abstract class BaseEngineeringConsoleManager implements EngineeringConsoleManager {
 
 	private List<EngineeringConsoleChangeListener> listeners = new ArrayList<>();
 	
+	protected ShipSystemGrid loadGrid() {
+		NonShittyShipSystemGrid grid = new NonShittyShipSystemGrid();
+		Vessel vessel = VesselData.get().getVessel(0);
+		Iterator<VesselNode> nodeIterator = vessel.getInternals().nodeIterator();
+		while (nodeIterator.hasNext()) {
+			VesselNode node = nodeIterator.next();
+			if (node.getSystem() != null) {
+				grid.addNode(node.getSystem(), node.getGridCoord());				
+			}
+		}
+		return grid;
+	}
 	
 	protected void fireChange() {
 		for (EngineeringConsoleChangeListener listener: listeners) {
