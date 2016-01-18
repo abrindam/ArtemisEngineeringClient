@@ -15,6 +15,7 @@ import com.sun.j3d.utils.universe.Viewer;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 import net.dhleong.acl.util.GridCoord;
 import net.dhleong.acl.vesseldata.VesselNode;
+import net.dhleong.acl.vesseldata.VesselNodeConnection;
 
 import javax.media.j3d.*;
 import javax.swing.*;
@@ -59,6 +60,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private static final Random random = new Random();
 
     private Map<GridCoord, InternalNode> internalNodes = new HashMap<>();
+    private Set<InternalHallway> internalHallways = new HashSet<>();
 
     public Damcon(EngineeringConsoleManager engineeringConsoleManager) {
         this.engineeringConsoleManager = engineeringConsoleManager;
@@ -78,6 +80,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         }
 
         loadInternalNodes();
+        loadCorridors();
 
         addMouseListeners();
         setCameraPresets();
@@ -130,6 +133,18 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
                 }
             }
         });
+    }
+
+    private void loadCorridors() {
+        BranchGroup corridor_bg = new BranchGroup();
+
+        for (VesselNodeConnection vnc : this.engineeringConsoleManager.getGridConnections()) {
+            InternalHallway ih = new InternalHallway(vnc);
+            internalHallways.add(ih);
+            corridor_bg.addChild(ih.getShape());
+        }
+
+        this.universe.addBranchGraph(corridor_bg);
     }
 
     private void createUniverseAndScene() {
