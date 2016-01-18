@@ -13,6 +13,8 @@ import java.awt.image.BufferedImage;
 public abstract class SystemStatusSlider extends JPanel {
     private static final long serialVersionUID = 1L;
 
+    protected boolean isHealth;
+
     protected static final int
             WIDGET_HEIGHT = 20,
             WIDGET_WIDTH = 100,
@@ -30,9 +32,10 @@ public abstract class SystemStatusSlider extends JPanel {
 
     protected ShipSystem system;
 
-    public SystemStatusSlider(ShipSystem system, EngineeringConsoleManager engineeringConsoleManager) {
+    public SystemStatusSlider(ShipSystem system, EngineeringConsoleManager engineeringConsoleManager, boolean is_health) {
         this.system = system;
         this.engineeringConsoleManager = engineeringConsoleManager;
+        this.isHealth = is_health;
 
         this.setSize(WIDGET_WIDTH, WIDGET_HEIGHT);
         this.setBackground(new Color(0, 0, 0, 0));
@@ -117,13 +120,28 @@ public abstract class SystemStatusSlider extends JPanel {
 
     private Color getStatusColor() {
         float factor = getStatusScaleFactor();
-        return factor == 0f ? Color.GRAY : Color.getHSBColor(getEmptyHue() - (getEmptyHue() - getFullHue()) * getStatusScaleFactor(), 1, 1);
+        return factor == 0f ? Color.GRAY :
+                Color.getHSBColor(getEmptyHue(isHealth) - (getEmptyHue(isHealth) - getFullHue(isHealth)) * getStatusScaleFactor(), 1, 1);
     }
 
     protected abstract int getStatusPctInt();
     protected abstract void loadIcons();
     protected abstract BufferedImage getStatusImageWithColor();
     protected abstract BufferedImage getStatusImageWhite();
-    protected abstract float getFullHue();
-    protected abstract float getEmptyHue();
+
+    public static float getFullHue(boolean health) {
+        if (health) {
+            return 120f / 360f;
+        } else {
+            return 0f;
+        }
+    }
+
+    public static float getEmptyHue(boolean health) {
+        if (health) {
+            return 0f;
+        } else {
+            return 60f / 360f;
+        }
+    }
 }

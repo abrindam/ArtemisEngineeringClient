@@ -25,8 +25,7 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 
     private ArrayList<SystemSlider> sliders = new ArrayList<>();
     private Damcon damcon;
-
-    // TODO: constant cleanup!
+	
 	private static final int
             WINDOW_WIDTH = 1024,
             WINDOW_HEIGHT = 768,

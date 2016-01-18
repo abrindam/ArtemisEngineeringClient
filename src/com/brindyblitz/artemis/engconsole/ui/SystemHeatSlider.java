@@ -15,7 +15,7 @@ public class SystemHeatSlider extends SystemStatusSlider {
     private static BufferedImage statusImageWithColor = null, statusImageWhite = null;
 
     public SystemHeatSlider(ShipSystem system, EngineeringConsoleManager engineeringConsoleManager) {
-        super(system, engineeringConsoleManager);
+        super(system, engineeringConsoleManager, false);
     }
 
     @Override
@@ -45,15 +45,5 @@ public class SystemHeatSlider extends SystemStatusSlider {
     @Override
     protected BufferedImage getStatusImageWhite() {
         return statusImageWhite;
-    }
-
-    @Override
-    protected float getFullHue() {
-        return 0f;
-    }
-
-    @Override
-    protected float getEmptyHue() {
-        return 60f / 360f;
     }
 }
