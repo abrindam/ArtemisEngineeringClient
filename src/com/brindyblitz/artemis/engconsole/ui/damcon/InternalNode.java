@@ -27,7 +27,7 @@ public class InternalNode extends Internal {
             Vector3f pos = new Vector3f(-vessel_node.getX(), vessel_node.getY(), vessel_node.getZ());
             pos.scale(SCALE);
 
-            Sphere sphere = new Sphere(RADIUS, appearanceFromHealthPercentage(1f));
+            sphere = new Sphere(RADIUS, appearanceFromHealthPercentage(1f));
             sphere.getShape(Sphere.BODY).setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
 
             sphere.setCapability(Shape3D.ENABLE_PICK_REPORTING);
