@@ -1,6 +1,8 @@
 package com.brindyblitz.artemis.engconsole;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -8,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer;
 
 import net.dhleong.acl.enums.ShipSystem;
+import net.dhleong.acl.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
 import net.dhleong.acl.util.GridCoord;
 
 public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager {
@@ -67,6 +70,13 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	@Override
 	public Map<GridCoord, Float> getGridHealth() {
 		return this.gridHealth;
+	}
+	
+	
+
+	@Override
+	protected List<DamconStatus> getRawDamconStatus() {
+		return Arrays.asList(new DamconStatus(0, 6, 2, 2, 2, 2, 2, 3, 0.3f));
 	}
 
 	@Override

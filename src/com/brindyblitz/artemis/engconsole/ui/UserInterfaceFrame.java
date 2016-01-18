@@ -1,20 +1,28 @@
 package com.brindyblitz.artemis.engconsole.ui;
 
-import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
-import com.brindyblitz.artemis.engconsole.config.InputMapping;
-import com.brindyblitz.artemis.engconsole.ui.damcon.Damcon;
-import net.dhleong.acl.enums.ShipSystem;
-import net.dhleong.acl.util.GridCoord;
+import static net.dhleong.acl.enums.ShipSystem.AFT_SHIELDS;
+import static net.dhleong.acl.enums.ShipSystem.BEAMS;
+import static net.dhleong.acl.enums.ShipSystem.FORE_SHIELDS;
+import static net.dhleong.acl.enums.ShipSystem.IMPULSE;
+import static net.dhleong.acl.enums.ShipSystem.MANEUVERING;
+import static net.dhleong.acl.enums.ShipSystem.SENSORS;
+import static net.dhleong.acl.enums.ShipSystem.TORPEDOES;
+import static net.dhleong.acl.enums.ShipSystem.WARP_JUMP_DRIVE;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
-import static net.dhleong.acl.enums.ShipSystem.*;
+import javax.swing.JFrame;
+
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.EnhancedDamconStatus;
+import com.brindyblitz.artemis.engconsole.config.InputMapping;
+import com.brindyblitz.artemis.engconsole.ui.damcon.Damcon;
+
+import net.dhleong.acl.enums.ShipSystem;
 
 public class UserInterfaceFrame extends JFrame implements KeyListener {
 
@@ -112,8 +120,12 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 			System.out.println("Front Shields: " + this.engineeringConsoleManager.getSystemEnergyAllocated(FORE_SHIELDS) + "%");
 			System.out.println("Rear Shields: " + this.engineeringConsoleManager.getSystemEnergyAllocated(AFT_SHIELDS) + "%");
 			
-			for (Entry<GridCoord, Float> entry : this.engineeringConsoleManager.getGridHealth().entrySet()) {
-				System.out.println(entry.getKey() + " = " + entry.getValue());
+//			for (Entry<GridCoord, Float> entry : this.engineeringConsoleManager.getGridHealth().entrySet()) {
+//				System.out.println(entry.getKey() + " = " + entry.getValue());
+//			}
+			
+			for (EnhancedDamconStatus damconStatus : this.engineeringConsoleManager.getDamconTeams()) {
+				System.out.println(damconStatus);
 			}
 
             System.out.println("\n\n\n");

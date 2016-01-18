@@ -1,30 +1,59 @@
 package com.brindyblitz.artemis.engconsole.ui.damcon;
 
-import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
+import java.awt.Color;
+import java.awt.GraphicsConfiguration;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.TimerTask;
 
+import javax.media.j3d.Appearance;
+import javax.media.j3d.BranchGroup;
+import javax.media.j3d.Canvas3D;
+import javax.media.j3d.ColoringAttributes;
+import javax.media.j3d.LineAttributes;
+import javax.media.j3d.Node;
+import javax.media.j3d.PickInfo;
+import javax.media.j3d.PolygonAttributes;
+import javax.media.j3d.RestrictedAccessException;
+import javax.media.j3d.Shape3D;
+import javax.media.j3d.Transform3D;
+import javax.media.j3d.TransformGroup;
+import javax.media.j3d.TransparencyAttributes;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.vecmath.AxisAngle4d;
+import javax.vecmath.Color3f;
+import javax.vecmath.Point3d;
+import javax.vecmath.Vector2d;
+import javax.vecmath.Vector3d;
+
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.EnhancedDamconStatus;
 // See: http://download.java.net/media/java3d/javadoc/1.5.1/
 import com.sun.j3d.loaders.IncorrectFormatException;
 import com.sun.j3d.loaders.ParsingErrorException;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.loaders.objectfile.ObjectFile;
 import com.sun.j3d.utils.pickfast.PickCanvas;
-import com.sun.j3d.utils.picking.PickResult;
-import com.sun.j3d.utils.picking.PickTool;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.Viewer;
 import com.sun.j3d.utils.universe.ViewingPlatform;
+
 import net.dhleong.acl.util.GridCoord;
 import net.dhleong.acl.vesseldata.VesselNode;
 import net.dhleong.acl.vesseldata.VesselNodeConnection;
-
-import javax.media.j3d.*;
-import javax.swing.*;
-import javax.vecmath.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.*;
 
 public class Damcon implements MouseListener, MouseMotionListener, MouseWheelListener {
     private static final int WIDTH = 400, HEIGHT = 300;
@@ -62,6 +91,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private Map<GridCoord, InternalNode> internalNodes = new HashMap<>();
     private Set<InternalHallway> internalHallways = new HashSet<>();
+    private Map<Integer, InternalTeam> internalTeams = new HashMap<>();
 
     public Damcon(EngineeringConsoleManager engineeringConsoleManager) {
         this.engineeringConsoleManager = engineeringConsoleManager;
@@ -111,13 +141,15 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private void loadInternalNodes() {
         BranchGroup node_branchgroup = new BranchGroup();
+        node_branchgroup.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
+        node_branchgroup.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
 
         for (VesselNode vn : this.engineeringConsoleManager.getGrid()) {
             InternalNode in = new InternalNode(vn);
             internalNodes.put(vn.getGridCoord(), in);
             node_branchgroup.addChild(in.getBranchGroup());
         }
-
+       
         this.universe.addBranchGraph(node_branchgroup);
 
         pickCanvas = new PickCanvas(this.canvas, node_branchgroup);
@@ -132,6 +164,16 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
                     InternalNode node = internalNodes.get(entry.getKey());
                     node.updateHealth(entry.getValue());
                 }
+                
+                for (EnhancedDamconStatus damconStatus : engineeringConsoleManager.getDamconTeams()) {
+        			InternalTeam it = internalTeams.get(damconStatus.getTeamNumber());
+        			if (it == null) {
+        				it = new InternalTeam(damconStatus.getX(), damconStatus.getY(), damconStatus.getZ());
+        				internalTeams.put(damconStatus.getTeamNumber(), it);
+        				node_branchgroup.addChild(it.getBranchGroup());
+        			}
+        			it.updatePos(damconStatus.getX(), damconStatus.getY(), damconStatus.getZ());
+        		}
             }
         });
     }

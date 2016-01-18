@@ -1,7 +1,9 @@
 package com.brindyblitz.artemis.engconsole;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -9,6 +11,7 @@ import com.brindyblitz.artemis.protocol.NotifyingSystemManager.SystemManagerChan
 import com.brindyblitz.artemis.protocol.WorldAwareRobustProxyListener;
 
 import net.dhleong.acl.enums.ShipSystem;
+import net.dhleong.acl.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
 import net.dhleong.acl.protocol.core.eng.EngSetCoolantPacket;
 import net.dhleong.acl.protocol.core.eng.EngSetEnergyPacket;
 import net.dhleong.acl.util.GridCoord;
@@ -87,6 +90,18 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 			result.put(entry.getKey(), 1.0f - entry.getValue());
 		}
 		return result;
+	}
+	
+	@Override
+	public List<DamconStatus> getRawDamconStatus() {
+		List<DamconStatus> teams = new ArrayList<>();
+		for(int teamNumber = 0; teamNumber < 16; teamNumber++) {
+			DamconStatus damcon = this.worldAwareRobustProxyListener.getSystemManager().getDamcon(teamNumber);
+			if (damcon != null) {
+				teams.add(damcon);
+			}
+		}
+		return teams;
 	}
 	
 	@Override
