@@ -11,6 +11,7 @@ import net.dhleong.acl.util.ShipSystemGrid;
 import net.dhleong.acl.vesseldata.Vessel;
 import net.dhleong.acl.vesseldata.VesselData;
 import net.dhleong.acl.vesseldata.VesselNode;
+import net.dhleong.acl.vesseldata.VesselNodeConnection;
 import net.dhleong.acl.world.Artemis;
 
 public abstract class BaseEngineeringConsoleManager implements EngineeringConsoleManager {
@@ -18,6 +19,7 @@ public abstract class BaseEngineeringConsoleManager implements EngineeringConsol
 	private List<EngineeringConsoleChangeListener> listeners = new ArrayList<>();
 	private ShipSystemGrid shipSystemGrid;
 	private List<VesselNode> grid;
+	private List<VesselNodeConnection> gridConnections;
 	
 	
 	public BaseEngineeringConsoleManager() {
@@ -32,6 +34,11 @@ public abstract class BaseEngineeringConsoleManager implements EngineeringConsol
 			if (node.getSystem() != null) {
 				shipSystemGrid.addNode(node.getSystem(), node.getGridCoord());				
 			}
+		}
+		
+		Iterator<VesselNodeConnection> connectionIterator = vessel.getInternals().connectionIterator();
+		while(connectionIterator.hasNext()) {
+			gridConnections.add(connectionIterator.next());
 		}
 		
 		this.shipSystemGrid = shipSystemGrid;
@@ -60,6 +67,11 @@ public abstract class BaseEngineeringConsoleManager implements EngineeringConsol
 	@Override
 	public List<VesselNode> getGrid() {
 		return this.grid;
+	}
+	
+	@Override
+	public List<VesselNodeConnection> getGridConnections() {
+		return this.gridConnections;
 	}
 	
 	protected ShipSystemGrid getShipSystemGrid() {

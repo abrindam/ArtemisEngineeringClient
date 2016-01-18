@@ -6,6 +6,7 @@ import java.util.Map;
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.util.GridCoord;
 import net.dhleong.acl.vesseldata.VesselNode;
+import net.dhleong.acl.vesseldata.VesselNodeConnection;
 
 public interface EngineeringConsoleManager {
 	int getTotalShipCoolant();
@@ -23,6 +24,8 @@ public interface EngineeringConsoleManager {
 	Map<GridCoord, Float> getGridHealth();
 
 	List<VesselNode> getGrid();
+	
+	List<VesselNodeConnection> getGridConnections();
 
 	void setSystemEnergyAllocated(ShipSystem system, int amount);
 
