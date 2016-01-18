@@ -33,6 +33,7 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
             SLIDER_OFFSET_MULTIPLIER = 110,
             SLIDER_OFFSET_ADDITIONAL = 25,
             DAMCON_Y = 10,
+            PRESET_Y = 50,
             HEALTH_SLIDER_Y = 320,
             HEAT_SLIDER_Y = HEALTH_SLIDER_Y + 30,
             MAIN_SLIDER_Y = HEAT_SLIDER_Y + 40;
@@ -73,6 +74,9 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 		SystemSlider last_slider = sliders.get(sliders.size() - 1);
 		this.add(new CoolantRemainingSlider(engineeringConsoleManager, last_slider.getWidth(), last_slider.getHeight())).setLocation(
 				this.numSliders * SLIDER_OFFSET_MULTIPLIER + SLIDER_OFFSET_ADDITIONAL, MAIN_SLIDER_Y);
+		
+		PresetPanel presetPanel = new PresetPanel(this.presetManager);
+		this.add(presetPanel).setLocation(WINDOW_WIDTH - presetPanel.getWidth(), PRESET_Y);
 
         this.getContentPane().add(damcon.getCanvas()).setLocation(10, DAMCON_Y);
 

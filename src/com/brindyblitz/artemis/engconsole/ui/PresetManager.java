@@ -30,4 +30,9 @@ public class PresetManager {
 			
 		}
 	}
+	
+	public EnergyCoolantPreset[] getPresets() {
+		return presets;
+	}
 }
+
