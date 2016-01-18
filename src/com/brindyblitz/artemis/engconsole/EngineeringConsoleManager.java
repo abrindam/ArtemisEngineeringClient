@@ -39,6 +39,8 @@ public interface EngineeringConsoleManager {
 	void incrementSystemEnergyAllocated(ShipSystem system, int amount);
 
 	void incrementSystemCoolantAllocated(ShipSystem system, int amount);
+	
+	void moveDamconTeam(int teamId, GridCoord coord);
 
 	void addChangeListener(EngineeringConsoleChangeListener listener);
 	

@@ -91,6 +91,11 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		fireChange();
 		
 	}
+	
+	@Override
+	public void moveDamconTeam(int teamId, GridCoord coord) {
+		// Not supported for now		
+	}
 
 	@Override
 	public int getTotalShipCoolant() {

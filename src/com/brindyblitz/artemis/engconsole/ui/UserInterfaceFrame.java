@@ -23,6 +23,7 @@ import com.brindyblitz.artemis.engconsole.config.InputMapping;
 import com.brindyblitz.artemis.engconsole.ui.damcon.Damcon;
 
 import net.dhleong.acl.enums.ShipSystem;
+import net.dhleong.acl.util.GridCoord;
 
 public class UserInterfaceFrame extends JFrame implements KeyListener {
 
@@ -129,6 +130,9 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 			}
 
             System.out.println("\n\n\n");
+		} else if (kc == KeyEvent.VK_EQUALS) {
+			System.out.println("Sending damcon team");
+			this.engineeringConsoleManager.moveDamconTeam(0, GridCoord.getInstance(2, 2, 5));
 		} else if (kc == KeyEvent.VK_BACK_QUOTE) {
             if (e.isShiftDown()) {
                 this.damcon.toggleDamageShake();

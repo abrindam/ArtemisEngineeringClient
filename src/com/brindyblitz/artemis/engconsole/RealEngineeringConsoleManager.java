@@ -12,6 +12,7 @@ import com.brindyblitz.artemis.protocol.WorldAwareRobustProxyListener;
 
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
+import net.dhleong.acl.protocol.core.eng.EngSendDamconPacket;
 import net.dhleong.acl.protocol.core.eng.EngSetCoolantPacket;
 import net.dhleong.acl.protocol.core.eng.EngSetEnergyPacket;
 import net.dhleong.acl.util.GridCoord;
@@ -128,5 +129,9 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	@Override
 	protected void updateSystemCoolantAllocated(ShipSystem system, int amount) {
 		this.worldAwareRobustProxyListener.getServer().send(new EngSetCoolantPacket(system, amount));		
+	}
+	
+	public void moveDamconTeam(int teamId, GridCoord coord) {
+		this.worldAwareRobustProxyListener.getServer().send(new EngSendDamconPacket(teamId, coord));
 	}
 }
