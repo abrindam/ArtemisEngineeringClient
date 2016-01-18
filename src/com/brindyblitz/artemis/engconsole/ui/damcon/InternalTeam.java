@@ -24,18 +24,11 @@ public class InternalTeam {
 
         this.branchGroup = new BranchGroup();
 
-       
         sphere = new Sphere(RADIUS, appearance());
-        // sphere = new Sphere(RADIUS, Shape3D.ALLOW_APPEARANCE_WRITE | Shape3D.ALLOW_APPEARANCE_OVERRIDE_WRITE, appearanceFromHealthPercentage(1f));
-        /*sphere.setCapability(Shape3D.ALLOW_APPEARANCE_READ);
-        sphere.setCapability(Shape3D.ALLOW_APPEARANCE_OVERRIDE_READ);
-        sphere.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
-        sphere.setCapability(Shape3D.ALLOW_APPEARANCE_OVERRIDE_WRITE);*/
 
-        sphere.setCapability(Shape3D.ENABLE_PICK_REPORTING);
-        sphere.setPickable(true);
-
-        
+        Shape3D shape = sphere.getShape(Sphere.BODY);
+        shape.setCapability(Shape3D.ENABLE_PICK_REPORTING);
+        shape.setPickable(true);
 
         tg = new TransformGroup();
         updatePos(x, y, z);
@@ -43,7 +36,6 @@ public class InternalTeam {
         tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 
         this.branchGroup.addChild(tg);
-        
     }
 
     public void updatePos(float x, float y, float z) {
@@ -67,7 +59,7 @@ public class InternalTeam {
         app.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_READ);
         app.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
         app.setMaterial(new Material(ambientColour, emissiveColour, diffuseColour, specularColour, shininess));
-        TransparencyAttributes transparency =  new TransparencyAttributes(TransparencyAttributes.NICEST, .5f);  // TODO: when hovering, make opaque
+        TransparencyAttributes transparency =  new TransparencyAttributes(TransparencyAttributes.NICEST, .5f);  // TODO: FILE ISSUE > when hovering, make opaque
         app.setTransparencyAttributes(transparency);
         return app;
     }
@@ -75,4 +67,6 @@ public class InternalTeam {
     public BranchGroup getBranchGroup() {
         return branchGroup;
     }
+
+    // TODO: > clean this up to bring in line with other Internal classes
 }

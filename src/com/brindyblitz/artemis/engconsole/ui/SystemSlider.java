@@ -45,7 +45,7 @@ public class SystemSlider extends JPanel implements MouseWheelListener {
 		ENERGY_INCREMENT = 25,
         COOLANT_INCREMENT = 1,
 
-        // TODO: consider adding this to configuration options.  It's not just a super-power-user option.  Mice vary
+        // TODO: FILE ISSUE > consider adding this to configuration options.  It's not just a super-power-user option.  Mice vary
         // a lot on scroll rates and wheel dynamics, and smart trackpads (e.g. those on MacBooks) can act as scroll
         // devices as well.  50 feels too slow for my mouse wheel and too fast for my trackpad.
         // ~Jake

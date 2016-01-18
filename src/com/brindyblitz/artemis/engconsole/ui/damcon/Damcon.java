@@ -1,8 +1,6 @@
 package com.brindyblitz.artemis.engconsole.ui.damcon;
 
-import java.awt.Color;
-import java.awt.GraphicsConfiguration;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -10,27 +8,9 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.TimerTask;
+import java.util.*;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Canvas3D;
-import javax.media.j3d.ColoringAttributes;
-import javax.media.j3d.LineAttributes;
-import javax.media.j3d.Node;
-import javax.media.j3d.PickInfo;
-import javax.media.j3d.PolygonAttributes;
-import javax.media.j3d.RestrictedAccessException;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.media.j3d.TransparencyAttributes;
+import javax.media.j3d.*;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.vecmath.AxisAngle4d;
@@ -40,13 +20,13 @@ import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
-import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.EnhancedDamconStatus;
 // See: http://download.java.net/media/java3d/javadoc/1.5.1/
 import com.sun.j3d.loaders.IncorrectFormatException;
 import com.sun.j3d.loaders.ParsingErrorException;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.loaders.objectfile.ObjectFile;
 import com.sun.j3d.utils.pickfast.PickCanvas;
+import com.sun.j3d.utils.picking.PickTool;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.Viewer;
 import com.sun.j3d.utils.universe.ViewingPlatform;
@@ -78,7 +58,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
             ZOOM_FACTOR = 0.25d,
             ROTATION_FACTOR = 0.01d,
             MIN_PITCH_Y = 0.1d,
-            MIN_ZOOM_RADIUS = 3.7d,
+            MIN_ZOOM_RADIUS = 2d,     // 3.7d keeps us out of the inside of the Artemis model
             MAX_ZOOM_RADIUS = 15d;
     private static final Vector2d MAX_ROTATION_AMOUNT = new Vector2d(0.125, 0.125);
 
@@ -92,6 +72,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private Map<GridCoord, InternalNode> internalNodes = new HashMap<>();
     private Set<InternalHallway> internalHallways = new HashSet<>();
     private Map<Integer, InternalTeam> internalTeams = new HashMap<>();
+    private Map<Node, Internal> nodesToInternals = new HashMap<>();
+    private static final float PICK_TOLERANCE = 0.1f;
 
     public Damcon(EngineeringConsoleManager engineeringConsoleManager) {
         this.engineeringConsoleManager = engineeringConsoleManager;
@@ -100,7 +82,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
         if (WINDOW_HACK) {
             createUniverseAndScene_HACK();
-            // TODO: This is a hack to get rid of the extra window. The reason this creates a new window is explained here:
+            // TODO: FILE ISSUE > This is a hack to get rid of the extra window. The reason this creates a new window is explained here:
             // http://download.java.net/media/java3d/javadoc/1.3.2/com/sun/j3d/utils/universe/Viewer.html
             // This might help: https://community.oracle.com/thread/1274674?start=0&tstart=0
             JFrame unused_frame = universe.getViewer().getJFrame(0);
@@ -132,7 +114,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         String OBJ_PATH = new File(System.getProperty("user.dir"), "art/models/obj-from-blender/artemis2.obj").getPath();
         try {
             this.scene = new ObjectFile(ObjectFile.RESIZE).load(OBJ_PATH);
-            wireframeifyScene(scene, LineAttributes.PATTERN_SOLID);
+            wireframeifyNonPickableScene(scene, LineAttributes.PATTERN_SOLID);
 
         } catch (FileNotFoundException | IncorrectFormatException | ParsingErrorException e) {
             e.printStackTrace(System.err);
@@ -140,22 +122,18 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     }
 
     private void loadInternalNodes() {
-        BranchGroup node_branchgroup = new BranchGroup();
+        BranchGroup node_branchgroup = new BranchGroup(), damcon_branchgroup = new BranchGroup();
         node_branchgroup.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
         node_branchgroup.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
 
         for (VesselNode vn : this.engineeringConsoleManager.getGrid()) {
             InternalNode in = new InternalNode(vn);
             internalNodes.put(vn.getGridCoord(), in);
+            nodesToInternals.put(in.getShape(), in);
             node_branchgroup.addChild(in.getBranchGroup());
         }
        
         this.universe.addBranchGraph(node_branchgroup);
-
-        pickCanvas = new PickCanvas(this.canvas, node_branchgroup);
-        pickCanvas.setMode(PickInfo.PICK_GEOMETRY);
-        pickCanvas.setFlags(PickInfo.NODE | PickInfo.CLOSEST_INTERSECTION_POINT);
-        pickCanvas.setTolerance(0.5f);
 
         this.engineeringConsoleManager.addChangeListener(new EngineeringConsoleManager.EngineeringConsoleChangeListener() {
             @Override
@@ -164,18 +142,20 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
                     InternalNode node = internalNodes.get(entry.getKey());
                     node.updateHealth(entry.getValue());
                 }
-                
-                for (EnhancedDamconStatus damconStatus : engineeringConsoleManager.getDamconTeams()) {
+
+                for (EngineeringConsoleManager.EnhancedDamconStatus damconStatus : engineeringConsoleManager.getDamconTeams()) {
         			InternalTeam it = internalTeams.get(damconStatus.getTeamNumber());
         			if (it == null) {
         				it = new InternalTeam(damconStatus.getX(), damconStatus.getY(), damconStatus.getZ());
         				internalTeams.put(damconStatus.getTeamNumber(), it);
-        				node_branchgroup.addChild(it.getBranchGroup());
+        				damcon_branchgroup.addChild(it.getBranchGroup());
         			}
         			it.updatePos(damconStatus.getX(), damconStatus.getY(), damconStatus.getZ());
         		}
             }
         });
+
+        this.universe.addBranchGraph(damcon_branchgroup);
     }
 
     private void loadCorridors() {
@@ -184,7 +164,9 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         for (VesselNodeConnection vnc : this.engineeringConsoleManager.getGridConnections()) {
             InternalHallway ih = new InternalHallway(vnc);
             internalHallways.add(ih);
-            corridor_bg.addChild(ih.getShape());
+            Node node = ih.getShape();
+            nodesToInternals.put(node, ih);
+            corridor_bg.addChild(node);
         }
 
         this.universe.addBranchGraph(corridor_bg);
@@ -206,6 +188,12 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private void addMouseListeners() {
         this.canvas = universe.getCanvas();
+
+        pickCanvas = new PickCanvas(this.canvas, this.universe.getLocale());
+        pickCanvas.setMode(PickInfo.PICK_GEOMETRY); // TODO: > needs to be PICK_GEOMETRY_INTERSECT_INFO?  see https://community.oracle.com/thread/1276552?start=0&tstart=0
+        pickCanvas.setFlags(PickInfo.NODE | PickInfo.CLOSEST_INTERSECTION_POINT);
+        pickCanvas.setTolerance(PICK_TOLERANCE);
+
         this.canvas.addMouseListener(this);
         this.canvas.addMouseMotionListener(this);
         this.canvas.addMouseWheelListener(this);
@@ -230,7 +218,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     ///////////////
     // Wireframe //
     ///////////////
-    private static void wireframeifyScene(Scene scene, int line_attribute_pattern) {
+    private static void wireframeifyNonPickableScene(Scene scene, int line_attribute_pattern) {
         Appearance wireframe = getWireframeAppearance(line_attribute_pattern);
 
         // TODO: This works for the Artemis OBJ model.  If the scene graph has multiple Shape3D nodes, this would need to be set on all of them.  Is that necessary or can we guarantee it won't be needed?
@@ -240,14 +228,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
             if (node.getClass().equals(Shape3D.class)) {
                 Shape3D s3d = (Shape3D) node;
                 s3d.setAppearance(wireframe);
-                try {
-                    s3d.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
-                    // TODO: try scene.setCapability above with BranchGroup.ALLOW_CHILDREN_WRITE etc. and see if this exception is no longer thrown
-                    // See http://www.java-tips.org/other-api-tips-100035/119-java3d/1527-how-to-use-the-capability.html
-                    // I got it working for the internal node spheres so I probably just need to figure out which node(s) to set it on, or set it on creation
-                } catch(RestrictedAccessException e) {
-                    // e=Exception in thread "AWT-EventQueue-0" javax.media.j3d.RestrictedAccessException: Cannot modify capability bits on a live or compiled object
-                }
+                s3d.setPickable(false);
             }
         }
     }
@@ -284,17 +265,28 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     ///////////
     // Mouse //
     ///////////
+
     @Override
     public void mouseClicked(MouseEvent e) {
         if (e.getButton() == 1) {
-            // TODO: damcon selection and orders issuing
-            // pickCanvas.setShapeLocation(e);
-            // PickInfo[] pickInfos = pickCanvas.pickAll();
+            pickCanvas.setShapeLocation(e);
+            PickInfo pi = pickCanvas.pickClosest();
 
-            System.out.println("Left click:\n");
-            /*for (PickInfo pi : pickInfos) {
-                System.out.println(pi);
-            }*/
+            // TODO: DAMCON > Use pickAll().  Prioritize as follows:
+            // DAMCON teams, system nodes, non-system nodes, hallways
+
+            for (Internal i : nodesToInternals.values()) {
+                i.setSelected(false);
+            }
+
+            if (pi == null) {
+                return;
+            }
+
+            Node scene_node = pi.getNode();
+            Internal internal = nodesToInternals.get(scene_node);
+            internal.setSelected(true);
+            System.out.println("Selecting " + internal);
         }
     }
 
@@ -457,7 +449,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     }
 
     public void setLineType(int line_attributes_pattern) {
-        wireframeifyScene(this.scene, line_attributes_pattern);
+        wireframeifyNonPickableScene(this.scene, line_attributes_pattern);
     }
 
     public void startDamageShake(long duration_ms, double intensity) {

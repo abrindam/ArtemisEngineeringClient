@@ -1,5 +1,6 @@
 package com.brindyblitz.artemis.engconsole.ui.damcon;
 
+import com.sun.j3d.utils.picking.PickTool;
 import net.dhleong.acl.vesseldata.VesselNodeConnection;
 
 import javax.media.j3d.*;
@@ -23,11 +24,18 @@ public class InternalHallway extends Internal {
         lineArray.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
 
         this.shape = new Shape3D(lineArray, appearanceFromHealthPercentage(1f));
+        this.shape.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
+
+        this.shape.setCapability(Shape3D.ENABLE_PICK_REPORTING);
         this.shape.setPickable(true);
+
+        // TODO: > make fully transparent sphere here for picking similar to picking from InternalNode?
+        // can you even pick a hallway in the real client?
     }
 
     @Override
     public void updateHealth(float pct) {
+        super.updateHealth(pct);
         shape.setAppearance(appearanceFromHealthPercentage(pct));
     }
 
