@@ -8,13 +8,8 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import javax.media.j3d.*;
 import javax.vecmath.*;
 
-public class InternalNode extends Internal {
-    private static final float RADIUS = 0.05f;
-    private static final Color3f BLACK = new Color3f(0f, 0f, 0f);
-
-    private BranchGroup branchGroup;
+public class InternalNode extends InternalSelectable {
     private VesselNode vesselNode;
-    private Sphere sphere;
 
     public InternalNode(VesselNode vessel_node) {
         alpha = 0.3f;
@@ -26,11 +21,11 @@ public class InternalNode extends Internal {
         Vector3f pos = new Vector3f(-vessel_node.getX(), vessel_node.getY(), vessel_node.getZ());
         pos.scale(SCALE);
 
-        sphere = new Sphere(RADIUS, appearanceFromHealthPercentage(1f));
+        sphere = new Sphere(RADIUS, appearanceFromHealthPercentage(1f, !isSystemNode()));
         sphere.getShape(Sphere.BODY).setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
 
         Transform3D transform = new Transform3D();
-        transform.setTranslation(new Vector3f(Internal.vesselNodePosition(vessel_node)));
+        transform.setTranslation(new Vector3f(Internal.internalPositionToWorldSpace(vessel_node)));
 
         TransformGroup tg = new TransformGroup();
         tg.setTransform(transform);
@@ -38,19 +33,15 @@ public class InternalNode extends Internal {
 
         this.branchGroup.addChild(tg);
 
-        // TODO: this one works, remove unneeded calls to appearance caps elsewhere (except for internalhallway)
-        // be careful not to break anything!
         Shape3D shape = this.sphere.getShape(Sphere.BODY);
         shape.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
-
-        shape.setCapability(Shape3D.ENABLE_PICK_REPORTING);
-        shape.setPickable(true);
+        setPickable(shape);
     }
 
     @Override
     public void updateHealth(float pct) {
         super.updateHealth(pct);
-        sphere.setAppearance(appearanceFromHealthPercentage(pct));
+        sphere.setAppearance(appearanceFromHealthPercentage(pct, !isSystemNode()));
     }
 
     @Override
@@ -59,31 +50,29 @@ public class InternalNode extends Internal {
             return;
         }
 
-        // TODO: > bug here.  Transparency of something is jumping on first node selection after launch.  Investigate.
-        if (selected) {
-            Appearance app = appearanceFromHealthPercentage(healthPct);
-            TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.NICEST, 0f);
-            app.setTransparencyAttributes(ta);
-            sphere.setAppearance(app);
-        } else {
-            updateHealth(healthPct);
-        }
+        super.updateSelection();
+    }
 
-        // TODO: can I pull this up to Internal?  Node vs. shape vs. group issue, same as elsewhere, worth cleaning up
+    // TODO: > can I pull these 2 methods up to Internal?  Node vs. shape vs. group issue, same as elsewhere, worth cleaning up
+
+
+    public Shape3D getShape() {
+        return this.sphere.getShape(Sphere.BODY);
+    }
+
+    private boolean isSystemNode() {
+        return this.vesselNode.getSystem() != null;
     }
 
     @Override
-    protected Appearance appearanceFromHealthPercentage(float pct) {
-        Appearance app = new Appearance();
-        app.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_READ);
-        app.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
-        app.setMaterial(new Material(BLACK, getColorFromHealth(pct), BLACK, BLACK, SHININESS));
-        TransparencyAttributes transparency =  new TransparencyAttributes(TransparencyAttributes.NICEST,
-                isSystemNode() ? alpha : 1f);   // TODO: FILE ISSUE > when hovering, make opaque or circle or something
-        app.setTransparencyAttributes(transparency);
-        return app;
+    public String toString() {
+        return "Node: " + this.vesselNode;
     }
 
+
+    //////////////////////
+    // WIP: Billboards? //
+    //////////////////////
     private InternalNode(Vector3d position, int IDONTWORKYET) {
         if (true) {
             throw new NotImplementedException();
@@ -127,22 +116,5 @@ public class InternalNode extends Internal {
 
         branchGroup = new BranchGroup();
         branchGroup.addChild(billboard);
-    }
-
-    public BranchGroup getBranchGroup() {
-        return branchGroup;
-    }
-
-    public Shape3D getShape() {
-        return this.sphere.getShape(Sphere.BODY);
-    }
-
-    private boolean isSystemNode() {
-        return this.vesselNode.getSystem() != null;
-    }
-
-    @Override
-    public String toString() {
-        return "Node: " + this.vesselNode;
     }
 }

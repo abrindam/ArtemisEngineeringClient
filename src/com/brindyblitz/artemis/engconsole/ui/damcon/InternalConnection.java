@@ -1,17 +1,16 @@
 package com.brindyblitz.artemis.engconsole.ui.damcon;
 
-import com.sun.j3d.utils.picking.PickTool;
 import net.dhleong.acl.vesseldata.VesselNodeConnection;
 
 import javax.media.j3d.*;
 import javax.vecmath.Color3f;
-import javax.vecmath.Point3f;
-import java.awt.*;
 
 public class InternalConnection extends Internal {
     private VesselNodeConnection vesselNodeConnection;
     private LineArray lineArray;
     private Shape3D shape;
+
+    private static final Color3f LINE_COLOR = new Color3f(0f, 1f, 0f);
 
     public InternalConnection(VesselNodeConnection vessel_node_connection) {
         alpha = 0.1f;
@@ -19,22 +18,10 @@ public class InternalConnection extends Internal {
         this.vesselNodeConnection = vessel_node_connection;
 
         lineArray = new LineArray(2, LineArray.COORDINATES);
-        lineArray.setCoordinate(0, Internal.vesselNodePosition(this.vesselNodeConnection.getNode1()));
-        lineArray.setCoordinate(1, Internal.vesselNodePosition(this.vesselNodeConnection.getNode2()));
+        lineArray.setCoordinate(0, Internal.internalPositionToWorldSpace(this.vesselNodeConnection.getNode1()));
+        lineArray.setCoordinate(1, Internal.internalPositionToWorldSpace(this.vesselNodeConnection.getNode2()));
         lineArray.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
 
-        this.shape = new Shape3D(lineArray, appearanceFromHealthPercentage(1f));
-        this.shape.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
-    }
-
-    @Override
-    public void updateHealth(float pct) {
-        super.updateHealth(pct);
-        shape.setAppearance(appearanceFromHealthPercentage(pct));
-    }
-
-    @Override
-    protected Appearance appearanceFromHealthPercentage(float pct) {
         Appearance appearance = new Appearance();
 
         // Set transparency
@@ -49,10 +36,11 @@ public class InternalConnection extends Internal {
 
         // Set color
         ColoringAttributes coloring_attributes = new ColoringAttributes();
-        coloring_attributes.setColor(getColorFromHealth(pct));
+        coloring_attributes.setColor(LINE_COLOR);
         appearance.setColoringAttributes(coloring_attributes);
 
-        return appearance;
+        this.shape = new Shape3D(lineArray, appearance);
+        this.shape.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
     }
 
     public Shape3D getShape() {

@@ -71,7 +71,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private Map<GridCoord, InternalNode> internalNodes = new HashMap<>();
     private Set<InternalConnection> internalConnections = new HashSet<>();
     private Map<Integer, InternalTeam> internalTeams = new HashMap<>();
-    private Map<Node, Internal> nodesToInternals = new HashMap<>();
+    private Map<Node, InternalSelectable> nodesToSelectabls = new HashMap<>();
     private static final float PICK_TOLERANCE = 0.1f;
 
     public Damcon(EngineeringConsoleManager engineeringConsoleManager) {
@@ -91,7 +91,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
             createUniverseAndScene();
         }
 
-        loadInternalNodes();
+        loadInternalNodesAndDamconTeams();
         loadCorridors();
 
         addMouseListeners();
@@ -120,19 +120,23 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         }
     }
 
-    private void loadInternalNodes() {
-        BranchGroup node_branchgroup = new BranchGroup(), damcon_branchgroup = new BranchGroup();
+    private void loadInternalNodesAndDamconTeams() {
+        BranchGroup node_branchgroup = new BranchGroup();
         node_branchgroup.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
         node_branchgroup.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
 
         for (VesselNode vn : this.engineeringConsoleManager.getGrid()) {
             InternalNode in = new InternalNode(vn);
             internalNodes.put(vn.getGridCoord(), in);
-            nodesToInternals.put(in.getShape(), in);
+            nodesToSelectabls.put(in.getShape(), in);
             node_branchgroup.addChild(in.getBranchGroup());
         }
        
         this.universe.addBranchGraph(node_branchgroup);
+
+        BranchGroup damcon_branchgroup = new BranchGroup();
+        damcon_branchgroup.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
+        damcon_branchgroup.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
 
         this.engineeringConsoleManager.addChangeListener(new EngineeringConsoleManager.EngineeringConsoleChangeListener() {
             @Override
@@ -147,6 +151,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         			if (it == null) {
         				it = new InternalTeam(damconStatus.getX(), damconStatus.getY(), damconStatus.getZ());
         				internalTeams.put(damconStatus.getTeamNumber(), it);
+                        nodesToSelectabls.put(it.getBranchGroup(), it);
         				damcon_branchgroup.addChild(it.getBranchGroup());
         			}
         			it.updatePos(damconStatus.getX(), damconStatus.getY(), damconStatus.getZ());
@@ -164,7 +169,6 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
             InternalConnection ih = new InternalConnection(vnc);
             internalConnections.add(ih);
             Node node = ih.getShape();
-            nodesToInternals.put(node, ih);
             corridor_bg.addChild(node);
         }
 
@@ -274,7 +278,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
             // TODO: DAMCON > Use pickAll().  Prioritize as follows:
             // DAMCON teams, system nodes, non-system nodes, hallways
 
-            for (Internal i : nodesToInternals.values()) {
+            for (InternalSelectable i : nodesToSelectabls.values()) {
                 i.setSelected(false);
             }
 
@@ -283,7 +287,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
             }
 
             Node scene_node = pi.getNode();
-            Internal internal = nodesToInternals.get(scene_node);
+            InternalSelectable internal = nodesToSelectabls.get(scene_node);
             internal.setSelected(true);
             System.out.println("Selecting " + internal);
         }
