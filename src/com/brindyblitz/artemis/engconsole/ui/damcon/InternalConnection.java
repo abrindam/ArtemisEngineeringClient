@@ -8,12 +8,12 @@ import javax.vecmath.Color3f;
 import javax.vecmath.Point3f;
 import java.awt.*;
 
-public class InternalHallway extends Internal {
+public class InternalConnection extends Internal {
     private VesselNodeConnection vesselNodeConnection;
     private LineArray lineArray;
     private Shape3D shape;
 
-    public InternalHallway(VesselNodeConnection vessel_node_connection) {
+    public InternalConnection(VesselNodeConnection vessel_node_connection) {
         alpha = 0.1f;
 
         this.vesselNodeConnection = vessel_node_connection;
@@ -25,12 +25,6 @@ public class InternalHallway extends Internal {
 
         this.shape = new Shape3D(lineArray, appearanceFromHealthPercentage(1f));
         this.shape.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
-
-        this.shape.setCapability(Shape3D.ENABLE_PICK_REPORTING);
-        this.shape.setPickable(true);
-
-        // TODO: > make fully transparent sphere here for picking similar to picking from InternalNode?
-        // can you even pick a hallway in the real client?
     }
 
     @Override

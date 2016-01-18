@@ -26,7 +26,6 @@ import com.sun.j3d.loaders.ParsingErrorException;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.loaders.objectfile.ObjectFile;
 import com.sun.j3d.utils.pickfast.PickCanvas;
-import com.sun.j3d.utils.picking.PickTool;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.Viewer;
 import com.sun.j3d.utils.universe.ViewingPlatform;
@@ -70,7 +69,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private static final Random random = new Random();
 
     private Map<GridCoord, InternalNode> internalNodes = new HashMap<>();
-    private Set<InternalHallway> internalHallways = new HashSet<>();
+    private Set<InternalConnection> internalConnections = new HashSet<>();
     private Map<Integer, InternalTeam> internalTeams = new HashMap<>();
     private Map<Node, Internal> nodesToInternals = new HashMap<>();
     private static final float PICK_TOLERANCE = 0.1f;
@@ -162,8 +161,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         BranchGroup corridor_bg = new BranchGroup();
 
         for (VesselNodeConnection vnc : this.engineeringConsoleManager.getGridConnections()) {
-            InternalHallway ih = new InternalHallway(vnc);
-            internalHallways.add(ih);
+            InternalConnection ih = new InternalConnection(vnc);
+            internalConnections.add(ih);
             Node node = ih.getShape();
             nodesToInternals.put(node, ih);
             corridor_bg.addChild(node);
