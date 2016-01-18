@@ -36,6 +36,7 @@ public abstract class BaseEngineeringConsoleManager implements EngineeringConsol
 			}
 		}
 		
+		this.gridConnections = new ArrayList<>();
 		Iterator<VesselNodeConnection> connectionIterator = vessel.getInternals().connectionIterator();
 		while(connectionIterator.hasNext()) {
 			gridConnections.add(connectionIterator.next());
