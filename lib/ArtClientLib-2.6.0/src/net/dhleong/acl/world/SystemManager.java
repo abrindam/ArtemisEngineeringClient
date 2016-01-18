@@ -280,9 +280,9 @@ public class SystemManager {
     }
 
     /**
-     * Get the overall healthPct of the given system
+     * Get the overall health of the given system
      * @param sys
-     * @return A float [0, 1] indicating percentage healthPct
+     * @return A float [0, 1] indicating percentage health
      * @throws IllegalStateException if the SystemManager doesn't
      *  yet have a ShipSystemGrid
      */
