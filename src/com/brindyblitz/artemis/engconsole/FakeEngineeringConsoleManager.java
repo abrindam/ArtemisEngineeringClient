@@ -16,12 +16,17 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	private Map<ShipSystem, Integer> energyAllocated = new HashMap<>();
 	private Map<ShipSystem, Integer> coolantAllocated = new HashMap<>();
 	private Map<ShipSystem, Integer> heat = new HashMap<>();
+	private Map<GridCoord, Float> gridHealth = new HashMap<>();
 	
 	public FakeEngineeringConsoleManager() {
 		for (ShipSystem system: ShipSystem.values()) {
 			energyAllocated.put(system, 100);
 			coolantAllocated.put(system, 0);
 			heat.put(system, 0);
+		}
+		
+		for (GridCoord gridCoord : this.getShipSystemGrid().getCoords()) {
+			gridHealth.put(gridCoord, 1.0f);
 		}
 		
 		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new HeatAndDamageGenerator(), 0, 1, TimeUnit.SECONDS);
@@ -44,7 +49,14 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	
 	@Override
 	public int getSystemHealth(ShipSystem system) {
-		return 100;
+		float maxHealth = 0f;
+		float currentHealth = 0f;
+		for (GridCoord gridCoord : this.getShipSystemGrid().getCoordsFor(system)) {
+			maxHealth += 1.0;
+			currentHealth += gridHealth.get(gridCoord);
+		}
+		
+		return (int) (currentHealth/maxHealth * 100);
 	}
 	
 	@Override
@@ -54,7 +66,7 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	
 	@Override
 	public Map<GridCoord, Float> getGridHealth() {
-		return new HashMap<>();
+		return this.gridHealth;
 	}
 
 	@Override
@@ -85,7 +97,17 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 				
 				if (effectiveEnergy != 0) {
 					int currentHeat = getSystemHeat(system);
-					heat.put(system, Math.max(0, Math.min(100, (int) (currentHeat + effectiveEnergy * 0.05))));
+					int newHeat = Math.max(0, Math.min(100, (int) (currentHeat + effectiveEnergy * 0.05)));
+					if (newHeat == 100) {
+						for (GridCoord gridCoord : getShipSystemGrid().getCoordsFor(system)) {
+							if (gridHealth.get(gridCoord) != 0f) {
+								gridHealth.put(gridCoord, 0f);
+								newHeat = 50;
+								break;
+							}
+						}
+					}
+					heat.put(system, newHeat);
 					fireChange();						
 				}
 			}
