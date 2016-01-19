@@ -51,6 +51,8 @@ public abstract class InternalSelectable extends Internal {
 
     protected void updateSelection() {
         // TODO: > bug here.  Transparency of something is jumping on first node selection after launch.  Investigate.
+        // Same if I select a damcon team too, soemthing in depth buffer/render order is changing with pick
+
         // It actually looks like the depth of the nodes is being put behind the model for some reason
         if (selected) {
             Appearance app = appearanceFromHealthPercentage(healthPct, false);
@@ -64,5 +66,9 @@ public abstract class InternalSelectable extends Internal {
 
     public BranchGroup getBranchGroup() {
         return branchGroup;
+    }
+
+    public Shape3D getShape() {
+        return this.sphere.getShape(Sphere.BODY);
     }
 }

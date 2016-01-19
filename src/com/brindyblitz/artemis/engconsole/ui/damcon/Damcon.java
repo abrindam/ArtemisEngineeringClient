@@ -149,9 +149,9 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
                 for (EngineeringConsoleManager.EnhancedDamconStatus damconStatus : engineeringConsoleManager.getDamconTeams()) {
         			InternalTeam it = internalTeams.get(damconStatus.getTeamNumber());
         			if (it == null) {
-        				it = new InternalTeam(damconStatus.getX(), damconStatus.getY(), damconStatus.getZ());
+        				it = new InternalTeam(damconStatus);
         				internalTeams.put(damconStatus.getTeamNumber(), it);
-                        nodesToSelectabls.put(it.getBranchGroup(), it);
+                        nodesToSelectabls.put(it.getShape(), it);
         				damcon_branchgroup.addChild(it.getBranchGroup());
         			}
         			it.updatePos(damconStatus.getX(), damconStatus.getY(), damconStatus.getZ());

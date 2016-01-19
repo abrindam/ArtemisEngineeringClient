@@ -14,7 +14,6 @@ import net.dhleong.acl.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
 import net.dhleong.acl.util.GridCoord;
 
 public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager {
-
 	private static final int MAX_COOLANT = 8;
 	private Map<ShipSystem, Integer> energyAllocated = new HashMap<>();
 	private Map<ShipSystem, Integer> coolantAllocated = new HashMap<>();

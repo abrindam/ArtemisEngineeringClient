@@ -1,25 +1,24 @@
 package com.brindyblitz.artemis.engconsole.ui.damcon;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Material;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.media.j3d.TransparencyAttributes;
+import javax.media.j3d.*;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.sun.j3d.utils.geometry.Sphere;
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.EnhancedDamconStatus;
 
 public class InternalTeam extends InternalSelectable {
 	private TransformGroup transformGroup;
+    private EnhancedDamconStatus status;
 
     // TODO: use a Box instead of a sphere or something (set every side to be pickable or use billboards)
 
-    public InternalTeam(float x, float y, float z) {
-        alpha = 0.5f;
+    public InternalTeam(EngineeringConsoleManager.EnhancedDamconStatus damcon_status) {
+        this.status = damcon_status;
+
+        alpha = 0.1f;
 
         this.branchGroup = new BranchGroup();
 
@@ -30,7 +29,7 @@ public class InternalTeam extends InternalSelectable {
         setPickable(shape);
 
         this.transformGroup = new TransformGroup();
-        updatePos(x, y, z);
+        updatePos(this.status.getX(), this.status.getY(), this.status.getZ());
         this.transformGroup.addChild(sphere);
         this.transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 
@@ -50,5 +49,20 @@ public class InternalTeam extends InternalSelectable {
     public void updateHealth(float pct) {
         super.updateHealth(pct);
         sphere.setAppearance(appearanceFromHealthPercentage(pct, false));
+    }
+
+    @Override
+    public Appearance appearanceFromHealthPercentage(float pct, boolean invisible) {
+        Appearance app = super.appearanceFromHealthPercentage(pct, invisible);
+        if (!invisible) {
+            // TODO: > damcon team coloration?
+            app.setMaterial(new Material(BLACK, new Color3f(0f, 0f, 1f), BLACK, BLACK, SHININESS));
+        }
+        return app;
+    }
+
+    @Override
+    public String toString() {
+        return this.status.toString();
     }
 }

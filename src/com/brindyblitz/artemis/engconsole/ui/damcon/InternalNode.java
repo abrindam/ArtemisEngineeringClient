@@ -53,13 +53,6 @@ public class InternalNode extends InternalSelectable {
         super.updateSelection();
     }
 
-    // TODO: > can I pull these 2 methods up to Internal?  Node vs. shape vs. group issue, same as elsewhere, worth cleaning up
-
-
-    public Shape3D getShape() {
-        return this.sphere.getShape(Sphere.BODY);
-    }
-
     private boolean isSystemNode() {
         return this.vesselNode.getSystem() != null;
     }
