@@ -30,7 +30,6 @@ public class InternalTeam extends InternalSelectable {
         setPickable(shape);
 
         this.transformGroup = new TransformGroup();
-        updatePos(this.status.getX(), this.status.getY(), this.status.getZ());
         this.transformGroup.addChild(sphere);
         this.transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         this.branchGroup.addChild(transformGroup);
@@ -59,8 +58,6 @@ public class InternalTeam extends InternalSelectable {
 
         this.selected = selected;
         this.sphere.setAppearance(appearanceFromHealthPercentage());
-
-        // TODO: >>> Track who's selected and issue orders on click of system node when selection != null
     }
 
     @Override

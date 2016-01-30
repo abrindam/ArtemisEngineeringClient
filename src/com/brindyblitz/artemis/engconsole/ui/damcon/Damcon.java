@@ -29,7 +29,6 @@ import com.sun.j3d.utils.universe.ViewingPlatform;
 import net.dhleong.acl.util.GridCoord;
 import net.dhleong.acl.vesseldata.VesselNode;
 import net.dhleong.acl.vesseldata.VesselNodeConnection;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class Damcon implements MouseListener, MouseMotionListener, MouseWheelListener {
     private static final int WIDTH = 400, HEIGHT = 300;
@@ -72,6 +71,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private Map<Node, InternalSelectable> nodesToSelectables = new HashMap<>();  // TODO: use setUserData() on nodes rather than table lookup?
     private static final float PICK_TOLERANCE = 0.1f;
 
+    private BranchGroup damconBranchGroup;
     private InternalTeam selected = null;
 
     public Damcon(EngineeringConsoleManager engineeringConsoleManager) {
@@ -136,9 +136,10 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
        
         this.universe.addBranchGraph(node_branchgroup);
 
-        BranchGroup damcon_branchgroup = new BranchGroup();
-        damcon_branchgroup.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
-        damcon_branchgroup.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
+        damconBranchGroup = new BranchGroup();
+        damconBranchGroup.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
+        damconBranchGroup.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
+        this.universe.addBranchGraph(damconBranchGroup);
 
         this.engineeringConsoleManager.addChangeListener(new EngineeringConsoleManager.EngineeringConsoleChangeListener() {
             @Override
@@ -149,19 +150,19 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
                 }
 
                 for (EngineeringConsoleManager.EnhancedDamconStatus damconStatus : engineeringConsoleManager.getDamconTeams()) {
-        			InternalTeam it = internalTeams.get(damconStatus.getTeamNumber());
-        			if (it == null) {
-        				it = new InternalTeam(damconStatus);
-        				internalTeams.put(damconStatus.getTeamNumber(), it);
+                    InternalTeam it = internalTeams.get(damconStatus.getTeamNumber());
+
+                    if (it == null) {
+                        it = new InternalTeam(damconStatus);
+                        internalTeams.put(damconStatus.getTeamNumber(), it);
                         nodesToSelectables.put(it.getShape(), it);
-        				damcon_branchgroup.addChild(it.getBranchGroup());
-        			}
-        			it.updatePos(damconStatus.getX(), damconStatus.getY(), damconStatus.getZ());
+                        damconBranchGroup.addChild(it.getBranchGroup());
+                    }
+
+                    it.updatePos(damconStatus.getX(), damconStatus.getY(), damconStatus.getZ());
         		}
             }
         });
-
-        this.universe.addBranchGraph(damcon_branchgroup);
     }
 
     private void loadCorridors() {
@@ -208,7 +209,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         this.canvas = universe.getCanvas();
 
         pickCanvas = new PickCanvas(this.canvas, this.universe.getLocale());
-        pickCanvas.setMode(PickInfo.PICK_GEOMETRY); // TODO: > needs to be PICK_GEOMETRY_INTERSECT_INFO?  see https://community.oracle.com/thread/1276552?start=0&tstart=0
+        pickCanvas.setMode(PickInfo.PICK_GEOMETRY);
         pickCanvas.setFlags(PickInfo.NODE | PickInfo.CLOSEST_INTERSECTION_POINT);
         pickCanvas.setTolerance(PICK_TOLERANCE);
 
@@ -285,12 +286,26 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     ///////////
 
     private InternalSelectable pick(MouseEvent e) {
-        // TODO: DAMCON > Use pickAll().  Prioritize as follows:
-        // DAMCON teams, system nodes, non-system nodes, hallways (maybe prioritize nodes if DAMCON currently selected)
         pickCanvas.setShapeLocation(e);
-        PickInfo pi = pickCanvas.pickClosest();
+        PickInfo[] picks = pickCanvas.pickAllSorted();
+        if (picks == null)
+            return null;
 
-        return pi == null ? null : nodesToSelectables.get(pi.getNode());
+        InternalNode nearest_node = null;
+        for (PickInfo pi : picks) {
+            InternalSelectable i = nodesToSelectables.get(pi.getNode());
+
+            if (i == null) {
+                continue;                           // TODO: BUG? > skip non-selectable nodes; this is necessary, but should it be?
+            } else if (i.getClass().equals(InternalTeam.class)) {
+                return i;                           // prioritize DAMCON teams
+            } else { // if (i.getClass().equals(InternalNode.class))
+                if (nearest_node == null) {
+                    nearest_node = (InternalNode)i; // store nearest node to camera
+                }
+            }
+        }
+        return nearest_node; // if we didn't pick a DAMCON team, return picked node closest to camera (or null)
     }
 
     @Override

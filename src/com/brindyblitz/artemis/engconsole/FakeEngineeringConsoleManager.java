@@ -75,7 +75,8 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 
 	@Override
 	protected List<DamconStatus> getRawDamconStatus() {
-		return Arrays.asList(new DamconStatus(0, 6, 2, 2, 2, 2, 2, 3, 0.3f));
+		// return Arrays.asList(new DamconStatus(0, 6, 2, 2, 2, 2, 2, 3, 0.3f));
+		return Arrays.asList(new DamconStatus(0, 6, 2, 0, 6, 2, 0, 6, 0f));
 	}
 
 	@Override

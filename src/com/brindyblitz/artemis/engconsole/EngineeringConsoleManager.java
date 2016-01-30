@@ -87,7 +87,7 @@ public interface EngineeringConsoleManager {
         
 		@Override
 		public String toString() {
-			return "Team #" + getTeamNumber() + " (" + getMembers() + ") @ " +
+			return "Team #" + getTeamNumber() + " (" + getMembers() + " members) @ " +
 					"(" + this.x + "," + this.y + "," + this.z + ")";
 		}
 	}
