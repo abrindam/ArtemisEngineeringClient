@@ -13,11 +13,7 @@ import java.util.*;
 import javax.media.j3d.*;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import javax.vecmath.AxisAngle4d;
-import javax.vecmath.Color3f;
-import javax.vecmath.Point3d;
-import javax.vecmath.Vector2d;
-import javax.vecmath.Vector3d;
+import javax.vecmath.*;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 // See: http://download.java.net/media/java3d/javadoc/1.5.1/
@@ -51,6 +47,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private PickCanvas pickCanvas;
     private SimpleUniverse universe;
     private Scene scene = null;
+    private PointLight light;
     private static final boolean WINDOW_HACK = true;
 
     private static final double
@@ -71,7 +68,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private Map<GridCoord, InternalNode> internalNodes = new HashMap<>();
     private Set<InternalConnection> internalConnections = new HashSet<>();
     private Map<Integer, InternalTeam> internalTeams = new HashMap<>();
-    private Map<Node, InternalSelectable> nodesToSelectabls = new HashMap<>();
+    private Map<Node, InternalSelectable> nodesToSelectables = new HashMap<>();  // TODO: use setUserData() on nodes rather than table lookup?
     private static final float PICK_TOLERANCE = 0.1f;
 
     public Damcon(EngineeringConsoleManager engineeringConsoleManager) {
@@ -81,7 +78,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
         if (WINDOW_HACK) {
             createUniverseAndScene_HACK();
-            // TODO: FILE ISSUE > This is a hack to get rid of the extra window. The reason this creates a new window is explained here:
+            // TODO: HACK > This is a hack to get rid of the extra window. The reason this creates a new window is explained here:
             // http://download.java.net/media/java3d/javadoc/1.3.2/com/sun/j3d/utils/universe/Viewer.html
             // This might help: https://community.oracle.com/thread/1274674?start=0&tstart=0
             JFrame unused_frame = universe.getViewer().getJFrame(0);
@@ -90,6 +87,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         } else {
             createUniverseAndScene();
         }
+
+        addLighting();
 
         loadInternalNodesAndDamconTeams();
         loadCorridors();
@@ -128,7 +127,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         for (VesselNode vn : this.engineeringConsoleManager.getGrid()) {
             InternalNode in = new InternalNode(vn);
             internalNodes.put(vn.getGridCoord(), in);
-            nodesToSelectabls.put(in.getShape(), in);
+            nodesToSelectables.put(in.getShape(), in);
             node_branchgroup.addChild(in.getBranchGroup());
         }
        
@@ -151,7 +150,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         			if (it == null) {
         				it = new InternalTeam(damconStatus);
         				internalTeams.put(damconStatus.getTeamNumber(), it);
-                        nodesToSelectabls.put(it.getShape(), it);
+                        nodesToSelectables.put(it.getShape(), it);
         				damcon_branchgroup.addChild(it.getBranchGroup());
         			}
         			it.updatePos(damconStatus.getX(), damconStatus.getY(), damconStatus.getZ());
@@ -186,7 +185,20 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private void createUniverseAndScene_HACK() {
         this.universe = new SimpleUniverse();
-        this.universe.addBranchGraph(scene.getSceneGroup());
+        this.universe.addBranchGraph(this.scene.getSceneGroup());
+    }
+
+    private void addLighting() {
+        BranchGroup group = new BranchGroup();
+        Color3f color = new Color3f(1.0f, 1.0f, 1.0f);
+        BoundingSphere bounds = new BoundingSphere(new Point3d(0d, 0d, 0d), 5d);
+
+        this.light = new PointLight(color, new Point3f(0f, 0f, 0f), new Point3f(1f, 0f, 0f));
+        this.light.setInfluencingBounds(bounds);
+        this.light.setCapability(PointLight.ALLOW_POSITION_WRITE);
+        group.addChild(this.light);
+
+        this.universe.addBranchGraph(group);
     }
 
     private void addMouseListeners() {
@@ -224,7 +236,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private static void wireframeifyNonPickableScene(Scene scene, int line_attribute_pattern) {
         Appearance wireframe = getWireframeAppearance(line_attribute_pattern);
 
-        // TODO: This works for the Artemis OBJ model.  If the scene graph has multiple Shape3D nodes, this would need to be set on all of them.  Is that necessary or can we guarantee it won't be needed?
+        // TODO: HACK > This works for the Artemis OBJ model.  If the scene graph has multiple Shape3D nodes, this would need to be set on all of them.  Is that necessary or can we guarantee it won't be needed?
         Enumeration<Node> children = scene.getSceneGroup().getAllChildren();
         while (children.hasMoreElements()) {
             Node node = children.nextElement();
@@ -271,11 +283,11 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private InternalSelectable pick(MouseEvent e) {
         // TODO: DAMCON > Use pickAll().  Prioritize as follows:
-        // DAMCON teams, system nodes, non-system nodes, hallways
+        // DAMCON teams, system nodes, non-system nodes, hallways (maybe prioritize nodes if DAMCON currently selected)
         pickCanvas.setShapeLocation(e);
         PickInfo pi = pickCanvas.pickClosest();
 
-        return pi == null ? null : nodesToSelectabls.get(pi.getNode());
+        return pi == null ? null : nodesToSelectables.get(pi.getNode());
     }
 
     @Override
@@ -284,7 +296,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
         if (e.getButton() == 1) {
             // Update selection state
-            for (InternalSelectable i : nodesToSelectabls.values()) {
+            for (InternalSelectable i : nodesToSelectables.values()) {
                 i.setSelected(internal != null && i.equals(internal));
             }
         }
@@ -382,6 +394,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
                 xform.lookAt(new Point3d(yawed_cam_pos.x, yawed_cam_pos.y, yawed_cam_pos.z), new Point3d(0d, 0d, 0d), new_up);
                 xform.invert();             // Why do we have to invert this?!  Who knows?!
                 camera.setTransform(xform);
+
+                this.light.setPosition((float)yawed_cam_pos.x, (float)yawed_cam_pos.y, (float)yawed_cam_pos.z);
             }
         }
     }
@@ -403,7 +417,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         InternalSelectable internal = pick(e);
 
         // Update hover state
-        for (InternalSelectable i : nodesToSelectabls.values()) {
+        for (InternalSelectable i : nodesToSelectables.values()) {
             i.setHovered(internal != null && i.equals(internal));
         }
     }
@@ -439,6 +453,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         // Apply new position to transformation and transformation back to camera
         xform.setTranslation(new_cam_pos);
         camera.setTransform(xform);
+
+        this.light.setPosition((float) new_cam_pos.x, (float) new_cam_pos.y, (float) new_cam_pos.z);
     }
 
     //////////////////

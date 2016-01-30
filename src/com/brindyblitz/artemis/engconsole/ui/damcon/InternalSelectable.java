@@ -10,7 +10,8 @@ import java.awt.*;
 public abstract class InternalSelectable extends Internal {
     protected static final float RADIUS = 0.05f;
     protected static final float SHININESS = 0f;
-    protected static final Color3f BLACK = new Color3f(0f, 0f, 0f);
+    protected static final Color3f BLACK = new Color3f(0f, 0f, 0f), WHITE = new Color3f(1f, 1f, 1f);
+    private static final float TRANSPARENT = 1f, OPAQUE = 0f;
 
     protected boolean selected = false, hovered = false;
     protected float healthPct = 1f;
@@ -22,22 +23,20 @@ public abstract class InternalSelectable extends Internal {
         Appearance app = new Appearance();
         app.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_READ);
         app.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
-        app.setMaterial(new Material(BLACK, getColorFromHealth(this.healthPct), BLACK, BLACK, SHININESS));
-        // TODO: FILE ISSUE > when hovering, make opaque or circle or something
+        app.setMaterial(new Material(BLACK, getColorFromHealth(this.healthPct), BLACK, BLACK, SHININESS));  // TODO: PERF > cache material and update on health change?
 
-        if (this.visible()) {
-            TransparencyAttributes transparency = new TransparencyAttributes(TransparencyAttributes.NICEST, 1f);
-            app.setTransparencyAttributes(transparency);
+        TransparencyAttributes transparency;
+        if (!this.visible()) {
+            transparency = new TransparencyAttributes(TransparencyAttributes.NICEST, TRANSPARENT);
         } else if (this.selected) {
-            TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.NICEST, 0f);
-            app.setTransparencyAttributes(ta);
+            transparency = new TransparencyAttributes(TransparencyAttributes.NICEST, OPAQUE);
+            app.setMaterial(new Material(BLACK, getColorFromHealth(this.healthPct), WHITE, BLACK, SHININESS));
         } else if (this.hovered) {
-            TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.NICEST, 0f);
-            app.setTransparencyAttributes(ta);
-        } else {
-            TransparencyAttributes transparency = new TransparencyAttributes(TransparencyAttributes.NICEST, alpha);
-            app.setTransparencyAttributes(transparency);
+            transparency = new TransparencyAttributes(TransparencyAttributes.NICEST, OPAQUE);
+        } else { // if (this.visible())
+            transparency = new TransparencyAttributes(TransparencyAttributes.NICEST, alpha);
         }
+        app.setTransparencyAttributes(transparency);
         // TODO: > bug here.  Transparency of something is jumping on first node selection after launch.  Investigate.
         // Same if I select a damcon team too, something in depth buffer/render order is changing with pick
 
@@ -66,8 +65,15 @@ public abstract class InternalSelectable extends Internal {
     }
 
     public void setSelected(boolean selected) {
+        if (selected) {
+            System.out.println("Selecting " + this);
+        }
+
         this.selected = selected;
         this.sphere.setAppearance(appearanceFromHealthPercentage());
+
+        // TODO: >>> selection is only relevant for damcon teams, not nodes, right?
+        // Need to track who's selected and issue orders on click of system node when selection != null
     }
 
     public void setHovered(boolean hovered) {

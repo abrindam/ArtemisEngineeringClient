@@ -59,6 +59,8 @@ public class InternalNode extends InternalSelectable {
     }
 
 
+    // TODO: Billboards
+    // Icons for systems would be really nice
     //////////////////////
     // WIP: Billboards? //
     //////////////////////
