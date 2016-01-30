@@ -12,21 +12,40 @@ public abstract class InternalSelectable extends Internal {
     protected static final float SHININESS = 0f;
     protected static final Color3f BLACK = new Color3f(0f, 0f, 0f);
 
-    protected boolean selected = false;
+    protected boolean selected = false, hovered = false;
     protected float healthPct = 1f;
 
     protected Sphere sphere;
     protected BranchGroup branchGroup;
 
-    protected Appearance appearanceFromHealthPercentage(float pct, boolean invisible) {
+    protected Appearance appearanceFromHealthPercentage() {
         Appearance app = new Appearance();
         app.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_READ);
         app.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
-        app.setMaterial(new Material(BLACK, getColorFromHealth(pct), BLACK, BLACK, SHININESS));
+        app.setMaterial(new Material(BLACK, getColorFromHealth(this.healthPct), BLACK, BLACK, SHININESS));
         // TODO: FILE ISSUE > when hovering, make opaque or circle or something
-        TransparencyAttributes transparency =  new TransparencyAttributes(TransparencyAttributes.NICEST, invisible ? 1f : alpha);
-        app.setTransparencyAttributes(transparency);
+
+        if (this.visible()) {
+            TransparencyAttributes transparency = new TransparencyAttributes(TransparencyAttributes.NICEST, 1f);
+            app.setTransparencyAttributes(transparency);
+        } else if (this.selected) {
+            TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.NICEST, 0f);
+            app.setTransparencyAttributes(ta);
+        } else if (this.hovered) {
+            TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.NICEST, 0f);
+            app.setTransparencyAttributes(ta);
+        } else {
+            TransparencyAttributes transparency = new TransparencyAttributes(TransparencyAttributes.NICEST, alpha);
+            app.setTransparencyAttributes(transparency);
+        }
+        // TODO: > bug here.  Transparency of something is jumping on first node selection after launch.  Investigate.
+        // Same if I select a damcon team too, something in depth buffer/render order is changing with pick
+
         return app;
+    }
+
+    protected boolean visible() {
+        return true;
     }
 
     protected void setPickable(Shape3D shape) {
@@ -35,6 +54,8 @@ public abstract class InternalSelectable extends Internal {
     }
 
     public void updateHealth(float pct) {
+        // Note: subclasses don't need to override this now but they will if I don't resolve the
+        // genericization of sphere vs. other geometry used for their models
         this.healthPct = pct;
     }
 
@@ -46,22 +67,12 @@ public abstract class InternalSelectable extends Internal {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
-        updateSelection();
+        this.sphere.setAppearance(appearanceFromHealthPercentage());
     }
 
-    protected void updateSelection() {
-        // TODO: > bug here.  Transparency of something is jumping on first node selection after launch.  Investigate.
-        // Same if I select a damcon team too, soemthing in depth buffer/render order is changing with pick
-
-        // It actually looks like the depth of the nodes is being put behind the model for some reason
-        if (selected) {
-            Appearance app = appearanceFromHealthPercentage(healthPct, false);
-            TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.NICEST, 0f);
-            app.setTransparencyAttributes(ta);
-            sphere.setAppearance(app);
-        } else {
-            updateHealth(healthPct);
-        }
+    public void setHovered(boolean hovered) {
+        this.hovered = hovered;
+        this.sphere.setAppearance(appearanceFromHealthPercentage());
     }
 
     public BranchGroup getBranchGroup() {

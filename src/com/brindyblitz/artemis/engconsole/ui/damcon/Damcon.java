@@ -269,27 +269,30 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     // Mouse //
     ///////////
 
+    private InternalSelectable pick(MouseEvent e) {
+        // TODO: DAMCON > Use pickAll().  Prioritize as follows:
+        // DAMCON teams, system nodes, non-system nodes, hallways
+        pickCanvas.setShapeLocation(e);
+        PickInfo pi = pickCanvas.pickClosest();
+
+        return pi == null ? null : nodesToSelectabls.get(pi.getNode());
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
+        InternalSelectable internal = pick(e);
+
         if (e.getButton() == 1) {
-            pickCanvas.setShapeLocation(e);
-            PickInfo pi = pickCanvas.pickClosest();
-
-            // TODO: DAMCON > Use pickAll().  Prioritize as follows:
-            // DAMCON teams, system nodes, non-system nodes, hallways
-
+            // Clear existing selection state
             for (InternalSelectable i : nodesToSelectabls.values()) {
                 i.setSelected(false);
             }
 
-            if (pi == null) {
-                return;
+            // Set new selection state
+            if (internal != null) {
+                internal.setSelected(true);
+                System.out.println("Selecting " + internal);
             }
-
-            Node scene_node = pi.getNode();
-            InternalSelectable internal = nodesToSelectabls.get(scene_node);
-            internal.setSelected(true);
-            System.out.println("Selecting " + internal);
         }
     }
 
@@ -403,6 +406,17 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        InternalSelectable internal = pick(e);
+
+        // Clear existing hover state
+        for (InternalSelectable i : nodesToSelectabls.values()) {
+            i.setHovered(internal != null && i.equals(internal));
+        }
+
+        // Set new hover state
+        /*if (internal != null) {
+            internal.setHovered(true);
+        }*/
     }
 
     @Override

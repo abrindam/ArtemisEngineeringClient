@@ -22,7 +22,7 @@ public class InternalTeam extends InternalSelectable {
 
         this.branchGroup = new BranchGroup();
 
-        this.sphere = new Sphere(RADIUS, appearanceFromHealthPercentage(1f, false));
+        this.sphere = new Sphere(RADIUS, appearanceFromHealthPercentage());
 
         Shape3D shape = this.sphere.getShape(Sphere.BODY);
         shape.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
@@ -48,16 +48,16 @@ public class InternalTeam extends InternalSelectable {
     @Override
     public void updateHealth(float pct) {
         super.updateHealth(pct);
-        sphere.setAppearance(appearanceFromHealthPercentage(pct, false));
+        sphere.setAppearance(appearanceFromHealthPercentage());
     }
 
     @Override
-    public Appearance appearanceFromHealthPercentage(float pct, boolean invisible) {
-        Appearance app = super.appearanceFromHealthPercentage(pct, invisible);
-        if (!invisible) {
-            // TODO: > damcon team coloration?
-            app.setMaterial(new Material(BLACK, new Color3f(0f, 0f, 1f), BLACK, BLACK, SHININESS));
-        }
+    public Appearance appearanceFromHealthPercentage() {
+        Appearance app = super.appearanceFromHealthPercentage();
+
+        // TODO: > damcon team coloration?
+        app.setMaterial(new Material(BLACK, new Color3f(0f, 0f, 1f), BLACK, BLACK, SHININESS));
+
         return app;
     }
 

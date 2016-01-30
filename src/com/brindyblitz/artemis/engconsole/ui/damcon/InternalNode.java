@@ -21,7 +21,7 @@ public class InternalNode extends InternalSelectable {
         Vector3f pos = new Vector3f(-vessel_node.getX(), vessel_node.getY(), vessel_node.getZ());
         pos.scale(SCALE);
 
-        sphere = new Sphere(RADIUS, appearanceFromHealthPercentage(1f, !isSystemNode()));
+        sphere = new Sphere(RADIUS, appearanceFromHealthPercentage());
         sphere.getShape(Sphere.BODY).setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
 
         Transform3D transform = new Transform3D();
@@ -41,16 +41,12 @@ public class InternalNode extends InternalSelectable {
     @Override
     public void updateHealth(float pct) {
         super.updateHealth(pct);
-        sphere.setAppearance(appearanceFromHealthPercentage(pct, !isSystemNode()));
+        sphere.setAppearance(appearanceFromHealthPercentage());
     }
 
     @Override
-    protected void updateSelection() {
-        if (!isSystemNode()) {
-            return;
-        }
-
-        super.updateSelection();
+    protected boolean visible() {
+        return isSystemNode();
     }
 
     private boolean isSystemNode() {
