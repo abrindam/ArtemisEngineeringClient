@@ -132,6 +132,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	}
 	
 	public void moveDamconTeam(int teamId, GridCoord coord) {
+		System.out.println("Moving DAMCON team " + teamId + " to grid " + coord);
 		this.worldAwareRobustProxyListener.getServer().send(new EngSendDamconPacket(teamId, coord));
 	}
 }
