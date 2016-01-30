@@ -29,6 +29,7 @@ import com.sun.j3d.utils.universe.ViewingPlatform;
 import net.dhleong.acl.util.GridCoord;
 import net.dhleong.acl.vesseldata.VesselNode;
 import net.dhleong.acl.vesseldata.VesselNodeConnection;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class Damcon implements MouseListener, MouseMotionListener, MouseWheelListener {
     private static final int WIDTH = 400, HEIGHT = 300;
@@ -70,6 +71,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private Map<Integer, InternalTeam> internalTeams = new HashMap<>();
     private Map<Node, InternalSelectable> nodesToSelectables = new HashMap<>();  // TODO: use setUserData() on nodes rather than table lookup?
     private static final float PICK_TOLERANCE = 0.1f;
+
+    private InternalTeam selected = null;
 
     public Damcon(EngineeringConsoleManager engineeringConsoleManager) {
         this.engineeringConsoleManager = engineeringConsoleManager;
@@ -298,6 +301,14 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
             // Update selection state
             for (InternalSelectable i : nodesToSelectables.values()) {
                 i.setSelected(internal != null && i.equals(internal));
+            }
+        }
+
+        if (internal.getClass().equals(InternalTeam.class)) {
+            selected = (InternalTeam)internal;
+        } else { // if (internal.getClass().equals(InternalNode.class))
+            if (selected != null) {
+                selected.setOrders((InternalNode)internal);
             }
         }
     }

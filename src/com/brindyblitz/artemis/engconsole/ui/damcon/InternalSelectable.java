@@ -13,7 +13,7 @@ public abstract class InternalSelectable extends Internal {
     protected static final Color3f BLACK = new Color3f(0f, 0f, 0f), WHITE = new Color3f(1f, 1f, 1f);
     private static final float TRANSPARENT = 1f, OPAQUE = 0f;
 
-    protected boolean selected = false, hovered = false;
+    protected boolean hovered = false;
     protected float healthPct = 1f;
 
     protected Sphere sphere;
@@ -28,10 +28,11 @@ public abstract class InternalSelectable extends Internal {
         TransparencyAttributes transparency;
         if (!this.visible()) {
             transparency = new TransparencyAttributes(TransparencyAttributes.NICEST, TRANSPARENT);
-        } else if (this.selected) {
+            // TODO: show some sort of indicator when hovering over non-system node (billboards would help with this)
+        } else if (this.selected()) {
             transparency = new TransparencyAttributes(TransparencyAttributes.NICEST, OPAQUE);
             app.setMaterial(new Material(BLACK, getColorFromHealth(this.healthPct), WHITE, BLACK, SHININESS));
-        } else if (this.hovered) {
+        } else if (this.hovered()) {
             transparency = new TransparencyAttributes(TransparencyAttributes.NICEST, OPAQUE);
         } else { // if (this.visible())
             transparency = new TransparencyAttributes(TransparencyAttributes.NICEST, alpha);
@@ -43,8 +44,16 @@ public abstract class InternalSelectable extends Internal {
         return app;
     }
 
+    public void setSelected(boolean selected) { }
+
     protected boolean visible() {
         return true;
+    }
+
+    protected abstract boolean selected();
+
+    protected boolean hovered() {
+        return this.hovered;
     }
 
     protected void setPickable(Shape3D shape) {
@@ -62,18 +71,6 @@ public abstract class InternalSelectable extends Internal {
         Color color = Color.getHSBColor(
                 SystemStatusSlider.getEmptyHue(true) - (SystemStatusSlider.getEmptyHue(true) - SystemStatusSlider.getFullHue(true)) * pct, 1, 1);
         return new Color3f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f);
-    }
-
-    public void setSelected(boolean selected) {
-        if (selected) {
-            System.out.println("Selecting " + this);
-        }
-
-        this.selected = selected;
-        this.sphere.setAppearance(appearanceFromHealthPercentage());
-
-        // TODO: >>> selection is only relevant for damcon teams, not nodes, right?
-        // Need to track who's selected and issue orders on click of system node when selection != null
     }
 
     public void setHovered(boolean hovered) {

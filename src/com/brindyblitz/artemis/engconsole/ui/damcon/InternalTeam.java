@@ -12,6 +12,7 @@ import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.EnhancedDamc
 public class InternalTeam extends InternalSelectable {
 	private TransformGroup transformGroup;
     private EnhancedDamconStatus status;
+    protected boolean selected = false;
 
     // TODO: use a Box instead of a sphere or something (set every side to be pickable or use billboards)
 
@@ -48,6 +49,27 @@ public class InternalTeam extends InternalSelectable {
     public void updateHealth(float pct) {
         super.updateHealth(pct);
         sphere.setAppearance(appearanceFromHealthPercentage());
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        if (selected) {
+            System.out.println("Selecting " + this);
+        }
+
+        this.selected = selected;
+        this.sphere.setAppearance(appearanceFromHealthPercentage());
+
+        // TODO: >>> Track who's selected and issue orders on click of system node when selection != null
+    }
+
+    @Override
+    protected boolean selected() {
+        return this.selected;
+    }
+
+    public void setOrders(InternalNode target) {
+        System.out.println("Ordering " + this + " to " + target);
     }
 
     @Override

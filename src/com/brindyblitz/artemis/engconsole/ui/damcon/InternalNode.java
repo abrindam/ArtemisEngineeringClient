@@ -49,6 +49,11 @@ public class InternalNode extends InternalSelectable {
         return isSystemNode();
     }
 
+    @Override
+    protected boolean selected() {
+        return false;
+    }
+
     private boolean isSystemNode() {
         return this.vesselNode.getSystem() != null;
     }
