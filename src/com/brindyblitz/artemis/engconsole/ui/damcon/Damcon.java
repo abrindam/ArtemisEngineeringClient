@@ -283,15 +283,9 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         InternalSelectable internal = pick(e);
 
         if (e.getButton() == 1) {
-            // Clear existing selection state
+            // Update selection state
             for (InternalSelectable i : nodesToSelectabls.values()) {
-                i.setSelected(false);
-            }
-
-            // Set new selection state
-            if (internal != null) {
-                internal.setSelected(true);
-                System.out.println("Selecting " + internal);
+                i.setSelected(internal != null && i.equals(internal));
             }
         }
     }
@@ -408,15 +402,10 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     public void mouseMoved(MouseEvent e) {
         InternalSelectable internal = pick(e);
 
-        // Clear existing hover state
+        // Update hover state
         for (InternalSelectable i : nodesToSelectabls.values()) {
             i.setHovered(internal != null && i.equals(internal));
         }
-
-        // Set new hover state
-        /*if (internal != null) {
-            internal.setHovered(true);
-        }*/
     }
 
     @Override
