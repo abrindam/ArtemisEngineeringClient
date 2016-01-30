@@ -93,6 +93,7 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	
 	@Override
 	public void moveDamconTeam(int teamId, GridCoord coord) {
+		System.out.println("Moving DAMCON team " + teamId + " to grid " + coord);
 		// Not supported for now		
 	}
 

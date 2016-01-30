@@ -68,8 +68,8 @@ public class InternalTeam extends InternalSelectable {
         return this.selected;
     }
 
-    public void setOrders(InternalNode target) {
-        System.out.println("Ordering " + this + " to " + target);
+    public int getTeamID() {
+        return status.getTeamNumber();
     }
 
     @Override

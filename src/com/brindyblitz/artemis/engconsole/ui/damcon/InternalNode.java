@@ -2,11 +2,13 @@ package com.brindyblitz.artemis.engconsole.ui.damcon;
 
 import com.sun.j3d.utils.geometry.ColorCube;
 import com.sun.j3d.utils.geometry.Sphere;
+import net.dhleong.acl.util.GridCoord;
 import net.dhleong.acl.vesseldata.VesselNode;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.media.j3d.*;
 import javax.vecmath.*;
+import java.util.Objects;
 
 public class InternalNode extends InternalSelectable {
     private VesselNode vesselNode;
@@ -56,6 +58,10 @@ public class InternalNode extends InternalSelectable {
 
     private boolean isSystemNode() {
         return this.vesselNode.getSystem() != null;
+    }
+
+    public GridCoord getGridCoords() {
+        return this.vesselNode.getGridCoord();
     }
 
     @Override

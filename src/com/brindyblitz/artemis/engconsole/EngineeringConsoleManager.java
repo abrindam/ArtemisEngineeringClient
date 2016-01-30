@@ -74,24 +74,21 @@ public interface EngineeringConsoleManager {
         }
         
         public float getX() {
-			return x;
+			return this.x;
 		}
         
         public float getY() {
-			return y;
+			return this.y;
 		}
         
         public float getZ() {
-			return z;
+			return this.z;
 		}
         
 		@Override
 		public String toString() {
-			StringBuilder b = new StringBuilder();
-        	b.append("Team #").append(getTeamNumber())
-        	.append(" (").append(getMembers()).append("): ")
-        	.append(" (").append(x).append(", ").append(y).append(", ").append(z).append(")");
-        	return b.toString();
+			return "Team #" + getTeamNumber() + " (" + getMembers() + ") @ " +
+					"(" + this.x + "," + this.y + "," + this.z + ")";
 		}
 	}
 }
