@@ -7,7 +7,6 @@ import com.brindyblitz.artemis.engconsole.ui.UserInterfaceFrame;
 import com.brindyblitz.artemis.engconsole.ui.damcon.Damcon;
 import com.brindyblitz.artemis.protocol.WorldAwareRobustProxyListener;
 
-import javax.media.j3d.Canvas3D;
 import java.io.IOException;
 
 public class ClientMain {

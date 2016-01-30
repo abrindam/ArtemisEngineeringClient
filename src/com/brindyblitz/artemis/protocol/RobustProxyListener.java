@@ -1,6 +1,7 @@
 package com.brindyblitz.artemis.protocol;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -38,7 +39,7 @@ public class RobustProxyListener implements Runnable {
 			listener = new ServerSocket(this.proxyPort, 0);
 			listener.setSoTimeout(0);
 
-			System.out.println("Listening for connections on port " + this.proxyPort + "...");
+			System.out.println("Listening for connections at " + InetAddress.getLocalHost().getHostAddress() + ":" + this.proxyPort);
 			Socket skt = listener.accept();
 
 			System.out.println("Received connection from " + skt.getRemoteSocketAddress().toString().substring(1) + ".");
