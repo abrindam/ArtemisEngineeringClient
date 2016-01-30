@@ -34,7 +34,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private static final int WIDTH = 400, HEIGHT = 300;
 
     private static final Color WIREFRAME_COLOR = Color.BLUE;
-    private static final float ALPHA = 0.9f;
+    private static final float WIREFRAME_ALPHA = 0.95f;
 
     private static final Transform3D DEFAULT_CAMERA_VIEW = new Transform3D(new double[] {
             0.6954015757171349d, 0.4658852009660681d, -0.5471449789689495d, -2.0244364221851137d,
@@ -252,7 +252,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         Appearance appearance = new Appearance();
 
         // Set transparency
-        TransparencyAttributes transparency =  new TransparencyAttributes(TransparencyAttributes.NICEST, ALPHA);
+        TransparencyAttributes transparency =  new TransparencyAttributes(TransparencyAttributes.NICEST, WIREFRAME_ALPHA);
         appearance.setTransparencyAttributes(transparency);
 
         // Enable automatic anti-aliasing

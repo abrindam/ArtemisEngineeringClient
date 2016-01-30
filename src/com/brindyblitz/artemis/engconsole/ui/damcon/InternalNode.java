@@ -12,7 +12,7 @@ public class InternalNode extends InternalSelectable {
     private VesselNode vesselNode;
 
     public InternalNode(VesselNode vessel_node) {
-        alpha = 0.3f;
+        alpha = 0.4f;
 
         this.vesselNode = vessel_node;
 

@@ -18,7 +18,7 @@ public class InternalTeam extends InternalSelectable {
     public InternalTeam(EngineeringConsoleManager.EnhancedDamconStatus damcon_status) {
         this.status = damcon_status;
 
-        alpha = 0.1f;
+        alpha = 0.25f;
 
         this.branchGroup = new BranchGroup();
 
@@ -32,7 +32,6 @@ public class InternalTeam extends InternalSelectable {
         updatePos(this.status.getX(), this.status.getY(), this.status.getZ());
         this.transformGroup.addChild(sphere);
         this.transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-
         this.branchGroup.addChild(transformGroup);
     }
 
@@ -49,16 +48,6 @@ public class InternalTeam extends InternalSelectable {
     public void updateHealth(float pct) {
         super.updateHealth(pct);
         sphere.setAppearance(appearanceFromHealthPercentage());
-    }
-
-    @Override
-    public Appearance appearanceFromHealthPercentage() {
-        Appearance app = super.appearanceFromHealthPercentage();
-
-        // TODO: > damcon team coloration?
-        app.setMaterial(new Material(BLACK, new Color3f(0f, 0f, 1f), BLACK, BLACK, SHININESS));
-
-        return app;
     }
 
     @Override
