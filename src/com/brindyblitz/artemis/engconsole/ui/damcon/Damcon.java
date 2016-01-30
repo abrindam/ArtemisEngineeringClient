@@ -309,7 +309,10 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
                 selected = (InternalTeam) internal;
             } else { // if (internal.getClass().equals(InternalNode.class))
                 if (selected != null) {
+                    // Move DAMCON team and clear selection
                     this.engineeringConsoleManager.moveDamconTeam(selected.getTeamID(), ((InternalNode) internal).getGridCoords());
+                    selected.setSelected(false);
+                    selected = null;
                 }
             }
         }
