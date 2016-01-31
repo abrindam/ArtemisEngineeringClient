@@ -20,16 +20,35 @@ import net.dhleong.acl.world.Artemis;
 public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager {
 
 	private WorldAwareRobustProxyListener worldAwareRobustProxyListener;
+	private GameState gameState = GameState.DISCONNECTED;
 
 	public RealEngineeringConsoleManager(WorldAwareRobustProxyListener worldAwareRobustProxyListener) {
 		this.worldAwareRobustProxyListener = worldAwareRobustProxyListener;
-		this.worldAwareRobustProxyListener.getSystemManager().addChangeListener(() -> this.fireChange());
+		this.worldAwareRobustProxyListener.onConnectionStateChange(() -> this.updateGameState());
+		this.worldAwareRobustProxyListener.getSystemManager().addChangeListener(() -> this.systemManagerChange());
 		this.worldAwareRobustProxyListener.getSystemManager().setSystemGrid(getShipSystemGrid());
+	}
+	
+	private void systemManagerChange() {
+		this.fireChange();
+		this.updateGameState();
+	}
+	
+	private void updateGameState() {
+		if (!worldAwareRobustProxyListener.isConnected()) {
+			gameState = GameState.DISCONNECTED;
+		}
+		else if ( this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0) != null) {
+			gameState = GameState.INGAME;
+		}
+		else {
+			gameState = GameState.PREGAME;
+		}
 	}
 	
 	@Override
 	public GameState getGameState() {
-		return GameState.INGAME;
+		return gameState;
 	}
 	
 	@Override

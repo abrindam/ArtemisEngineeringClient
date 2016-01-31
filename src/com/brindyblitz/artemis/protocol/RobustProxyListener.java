@@ -5,6 +5,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import com.brindyblitz.artemis.utils.EventEmitter;
+
 import net.dhleong.acl.enums.ConnectionType;
 import net.dhleong.acl.iface.ArtemisNetworkInterface;
 import net.dhleong.acl.iface.BaseDebugger;
@@ -20,9 +22,12 @@ public class RobustProxyListener implements Runnable {
 	private String serverAddr;
 	private int serverPort;
 	private int proxyPort;
+	private boolean connected;
 
 	private ArtemisNetworkInterface server;
 	private ArtemisNetworkInterface client;
+	
+	private EventEmitter<Events> eventEmitter = new EventEmitter<>();
 
 	public RobustProxyListener(String serverAddr, int serverPort, int proxyPort) {
 		this.serverAddr = serverAddr;
@@ -55,6 +60,8 @@ public class RobustProxyListener implements Runnable {
 			this.server.addListener(this);
 			this.client.addListener(this);
 			this.onBeforeClientServerStart();
+			this.connected = true;
+			eventEmitter.emit(Events.CONNECTION_STATE_CHANGE);
 
 			this.server.start();
 			this.client.start();
@@ -83,7 +90,14 @@ public class RobustProxyListener implements Runnable {
 	public ArtemisNetworkInterface getClient() {
 		return client;
 	}
-
+	
+	public boolean isConnected() {
+		return connected;
+	}
+	
+	public void onConnectionStateChange(Runnable listener) {
+		eventEmitter.on(Events.CONNECTION_STATE_CHANGE, listener);
+	}
 
 	@Listener
 	public void onDisconnect(DisconnectEvent event) {
@@ -128,5 +142,9 @@ public class RobustProxyListener implements Runnable {
 
 	protected boolean shouldProxyPacket(ArtemisPacket packet) {
 		return true;
+	}
+	
+	private enum Events {
+		CONNECTION_STATE_CHANGE
 	}
 }
