@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.brindyblitz.artemis.protocol.NotifyingSystemManager;
+import com.brindyblitz.artemis.protocol.RobustProxyListener;
 import com.brindyblitz.artemis.protocol.WorldAwareRobustProxyListener;
 
 import net.dhleong.acl.enums.ShipSystem;
@@ -24,8 +26,8 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 
 	public RealEngineeringConsoleManager(WorldAwareRobustProxyListener worldAwareRobustProxyListener) {
 		this.worldAwareRobustProxyListener = worldAwareRobustProxyListener;
-		this.worldAwareRobustProxyListener.onConnectionStateChange(() -> this.updateGameState());
-		this.worldAwareRobustProxyListener.getSystemManager().addChangeListener(() -> this.systemManagerChange());
+		this.worldAwareRobustProxyListener.events.on(RobustProxyListener.Events.CONNECTION_STATE_CHANGE, () -> this.updateGameState());
+		this.worldAwareRobustProxyListener.getSystemManager().events.on(NotifyingSystemManager.Events.CHANGE, () -> this.systemManagerChange());
 		this.worldAwareRobustProxyListener.getSystemManager().setSystemGrid(getShipSystemGrid());
 	}
 	
@@ -35,6 +37,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	}
 	
 	private void updateGameState() {
+		GameState oldGameState = gameState;
 		if (!worldAwareRobustProxyListener.isConnected()) {
 			gameState = GameState.DISCONNECTED;
 		}
@@ -43,6 +46,10 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		}
 		else {
 			gameState = GameState.PREGAME;
+		}
+		
+		if (oldGameState != gameState) {
+			eventEmitter.emit(Events.GAME_STATE_CHANGE);
 		}
 	}
 	

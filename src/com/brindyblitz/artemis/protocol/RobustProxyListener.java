@@ -6,6 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import com.brindyblitz.artemis.utils.EventEmitter;
+import com.brindyblitz.artemis.utils.EventSubscriber;
 
 import net.dhleong.acl.enums.ConnectionType;
 import net.dhleong.acl.iface.ArtemisNetworkInterface;
@@ -28,6 +29,7 @@ public class RobustProxyListener implements Runnable {
 	private ArtemisNetworkInterface client;
 	
 	private EventEmitter<Events> eventEmitter = new EventEmitter<>();
+	public final EventSubscriber<Events> events = eventEmitter.subscriber;
 
 	public RobustProxyListener(String serverAddr, int serverPort, int proxyPort) {
 		this.serverAddr = serverAddr;
@@ -94,10 +96,6 @@ public class RobustProxyListener implements Runnable {
 	public boolean isConnected() {
 		return connected;
 	}
-	
-	public void onConnectionStateChange(Runnable listener) {
-		eventEmitter.on(Events.CONNECTION_STATE_CHANGE, listener);
-	}
 
 	@Listener
 	public void onDisconnect(DisconnectEvent event) {
@@ -144,7 +142,7 @@ public class RobustProxyListener implements Runnable {
 		return true;
 	}
 	
-	private enum Events {
+	public enum Events {
 		CONNECTION_STATE_CHANGE
 	}
 }

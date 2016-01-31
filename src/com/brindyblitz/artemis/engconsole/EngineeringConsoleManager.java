@@ -45,18 +45,18 @@ public interface EngineeringConsoleManager {
 	
 	void moveDamconTeam(int teamId, GridCoord coord);
 
-	void addChangeListener(Runnable listener);
-	
-	public static interface EngineeringConsoleChangeListener {
-		public void onChange();
-	}
-
 	void resetEnergy();
 
 	void resetCoolant();
 	
+	void onEvent(Events event, Runnable listener);
+	
 	public enum GameState {
 		DISCONNECTED, PREGAME, INGAME
+	}
+	
+	public enum Events {
+		CHANGE, GAME_STATE_CHANGE
 	}
 	
 	public class EnhancedDamconStatus {

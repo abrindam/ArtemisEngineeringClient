@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.Events;
 
 import net.dhleong.acl.enums.ShipSystem;
 
@@ -48,7 +49,7 @@ public abstract class SystemStatusSlider extends JPanel {
 
         loadIcons();
 
-        this.engineeringConsoleManager.addChangeListener(() -> this.repaint());
+        this.engineeringConsoleManager.onEvent(Events.CHANGE, () -> this.repaint());
     }
 
     @Override

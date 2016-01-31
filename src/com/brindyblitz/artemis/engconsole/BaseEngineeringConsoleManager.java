@@ -21,8 +21,7 @@ import net.dhleong.acl.world.Artemis;
 
 public abstract class BaseEngineeringConsoleManager implements EngineeringConsoleManager {
 
-	private static final Object CHANGE_EVENT = new Object();
-	private EventEmitter<Object> eventEmitter;
+	protected EventEmitter<Events> eventEmitter;
 	private ShipSystemGrid shipSystemGrid;
 	private List<VesselNode> grid;
 	private Map<GridCoord, VesselNode> gridIndex;
@@ -56,11 +55,7 @@ public abstract class BaseEngineeringConsoleManager implements EngineeringConsol
 	}
 	
 	protected void fireChange() {
-		this.eventEmitter.emit(CHANGE_EVENT);
-	}
-	
-	public void addChangeListener(Runnable listener) {
-		this.eventEmitter.on(CHANGE_EVENT, listener);
+		this.eventEmitter.emit(Events.CHANGE);
 	}
 	
 	@Override
@@ -133,6 +128,11 @@ public abstract class BaseEngineeringConsoleManager implements EngineeringConsol
 		for (ShipSystem system: ShipSystem.values()) {
 			updateSystemCoolantAllocated(system, 0);
 		}
+	}
+	
+	@Override
+	public void onEvent(Events event, Runnable listener) {
+		eventEmitter.on(event, listener);
 	}
 
 }

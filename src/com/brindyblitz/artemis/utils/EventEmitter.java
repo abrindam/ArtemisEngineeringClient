@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 public class EventEmitter<E> {
 	
 	Map<E, List<Consumer<E>>> handler = new HashMap<>();
+	public final EventSubscriber<E> subscriber = new EventSubscriber<>(this);
 
 	public void emit(E event) {
 		List<Consumer<E>> list = handler.get(event);

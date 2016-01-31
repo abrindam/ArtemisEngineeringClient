@@ -1,12 +1,15 @@
 package com.brindyblitz.artemis.engconsole.ui;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
-import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.EngineeringConsoleChangeListener;
-import net.dhleong.acl.world.Artemis;
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.Events;
 
 public class CoolantRemainingSlider extends JPanel {
 
@@ -33,7 +36,7 @@ public class CoolantRemainingSlider extends JPanel {
 
         this.setBackground(new Color(0, 0, 0, 0));
 
-        this.engineeringConsoleManager.addChangeListener(() -> this.repaint());
+        this.engineeringConsoleManager.onEvent(Events.CHANGE, () -> this.repaint());
 	}
 	
 	@Override

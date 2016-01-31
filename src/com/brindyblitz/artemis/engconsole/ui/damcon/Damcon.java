@@ -41,6 +41,7 @@ import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.Events;
 // See: http://download.java.net/media/java3d/javadoc/1.5.1/
 import com.sun.j3d.loaders.IncorrectFormatException;
 import com.sun.j3d.loaders.ParsingErrorException;
@@ -153,7 +154,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         damconBranchGroup.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
         this.universe.addBranchGraph(damconBranchGroup);
 
-        this.engineeringConsoleManager.addChangeListener(() -> {
+        this.engineeringConsoleManager.onEvent(Events.CHANGE, () -> {
            
             for (Map.Entry<GridCoord, Float> entry : engineeringConsoleManager.getGridHealth().entrySet()) {
                 InternalNode node = internalNodes.get(entry.getKey());

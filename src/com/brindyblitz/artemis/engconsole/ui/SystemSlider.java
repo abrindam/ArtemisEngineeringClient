@@ -12,7 +12,7 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
-import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.EngineeringConsoleChangeListener;
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.Events;
 import com.brindyblitz.artemis.engconsole.config.InputMapping;
 import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer.Interval;
 import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer.IntervalType;
@@ -86,7 +86,7 @@ public class SystemSlider extends JPanel implements MouseWheelListener {
 
         this.addMouseWheelListener(this);
 
-		this.engineeringConsoleManager.addChangeListener(() -> this.repaint());
+        this.engineeringConsoleManager.onEvent(Events.CHANGE, () -> this.repaint());
 	}
 
 	@Override

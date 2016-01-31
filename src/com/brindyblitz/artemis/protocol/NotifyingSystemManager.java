@@ -1,6 +1,7 @@
 package com.brindyblitz.artemis.protocol;
 
 import com.brindyblitz.artemis.utils.EventEmitter;
+import com.brindyblitz.artemis.utils.EventSubscriber;
 
 import net.dhleong.acl.iface.Listener;
 import net.dhleong.acl.protocol.core.eng.EngGridUpdatePacket;
@@ -11,12 +12,8 @@ import net.dhleong.acl.world.SystemManager;
 
 public class NotifyingSystemManager extends SystemManager {
 
-	private static final Object CHANGE_EVENT = new Object();
-	private EventEmitter<Object> eventEmitter = new EventEmitter<>();
-	
-	public void addChangeListener(Runnable listener) {
-		eventEmitter.on(CHANGE_EVENT, listener);
-	}
+	private EventEmitter<Events> eventEmitter = new EventEmitter<>();
+	public final EventSubscriber<Events> events = eventEmitter.subscriber;
 	
 	@Override
 	@Listener
@@ -47,10 +44,10 @@ public class NotifyingSystemManager extends SystemManager {
 	}
 	
 	private void fireChange() {
-		eventEmitter.emit(CHANGE_EVENT);
+		eventEmitter.emit(Events.CHANGE);
 	}
 	
-	public static interface SystemManagerChangeListener {
-		public void onChange();
+	public enum Events {
+		CHANGE
 	}
 }

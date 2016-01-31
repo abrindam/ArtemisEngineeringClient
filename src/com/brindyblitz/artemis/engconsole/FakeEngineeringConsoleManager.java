@@ -19,6 +19,7 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	private Map<ShipSystem, Integer> coolantAllocated = new HashMap<>();
 	private Map<ShipSystem, Integer> heat = new HashMap<>();
 	private Map<GridCoord, Float> gridHealth = new HashMap<>();
+	private GameState gameState = GameState.PREGAME;
 	
 	public FakeEngineeringConsoleManager() {
 		for (ShipSystem system: ShipSystem.values()) {
@@ -32,11 +33,15 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		}
 		
 		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new HeatAndDamageGenerator(), 0, 1, TimeUnit.SECONDS);
+		Executors.newSingleThreadScheduledExecutor().schedule(() -> {
+			this.gameState = GameState.INGAME;
+			eventEmitter.emit(Events.GAME_STATE_CHANGE);
+		}, 2, TimeUnit.SECONDS);
 	}
 	
 	@Override
 	public GameState getGameState() {
-		return GameState.INGAME;
+		return this.gameState;
 	}
 	
 	@Override
