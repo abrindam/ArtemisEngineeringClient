@@ -83,6 +83,11 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		// return Arrays.asList(new DamconStatus(0, 6, 2, 2, 2, 2, 2, 3, 0.3f));
 		return Arrays.asList(new DamconStatus(0, 6, 2, 0, 6, 2, 0, 6, 0f));
 	}
+	
+	@Override
+	public float getTotalEnergyRemaining() {
+		return 1000;
+	}
 
 	@Override
 	protected void updateSystemEnergyAllocated(ShipSystem system, int amount) {

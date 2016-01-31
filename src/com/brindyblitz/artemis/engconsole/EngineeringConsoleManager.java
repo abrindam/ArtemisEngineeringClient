@@ -25,6 +25,8 @@ public interface EngineeringConsoleManager {
 
 	int getTotalCoolantRemaining();
 	
+	float getTotalEnergyRemaining(); 
+	
 	Map<GridCoord, Float> getGridHealth();
 
 	List<VesselNode> getGrid();

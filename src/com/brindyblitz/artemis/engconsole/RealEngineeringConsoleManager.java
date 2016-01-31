@@ -123,6 +123,15 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	}
 	
 	@Override
+	public float getTotalEnergyRemaining() {
+		if (this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0) == null) {
+			return 0;
+		}
+		
+		return this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0).getEnergy();
+	}
+	
+	@Override
 	public void incrementSystemEnergyAllocated(ShipSystem system, int amount) {
 		if (this.worldAwareRobustProxyListener.getSystemManager().getPlayerShip(0) == null) {
 			return;
