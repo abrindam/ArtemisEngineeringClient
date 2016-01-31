@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.brindyblitz.artemis.protocol.NonShittyShipSystemGrid;
+import com.brindyblitz.artemis.utils.EventEmitter;
 
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
@@ -20,7 +21,8 @@ import net.dhleong.acl.world.Artemis;
 
 public abstract class BaseEngineeringConsoleManager implements EngineeringConsoleManager {
 
-	private List<EngineeringConsoleChangeListener> listeners = new ArrayList<>();
+	private static final Object CHANGE_EVENT = new Object();
+	private EventEmitter<Object> eventEmitter;
 	private ShipSystemGrid shipSystemGrid;
 	private List<VesselNode> grid;
 	private Map<GridCoord, VesselNode> gridIndex;
@@ -28,7 +30,8 @@ public abstract class BaseEngineeringConsoleManager implements EngineeringConsol
 	
 	
 	public BaseEngineeringConsoleManager() {
-	
+		
+		this.eventEmitter = new EventEmitter<>();
 		NonShittyShipSystemGrid shipSystemGrid = new NonShittyShipSystemGrid();
 		this.grid = new ArrayList<>();
 		this.gridIndex = new HashMap<>();
@@ -53,13 +56,11 @@ public abstract class BaseEngineeringConsoleManager implements EngineeringConsol
 	}
 	
 	protected void fireChange() {
-		for (EngineeringConsoleChangeListener listener: listeners) {
-			listener.onChange();
-		}
+		this.eventEmitter.emit(CHANGE_EVENT);
 	}
 	
-	public void addChangeListener(EngineeringConsoleChangeListener listener) {
-		this.listeners.add(listener);
+	public void addChangeListener(Runnable listener) {
+		this.eventEmitter.on(CHANGE_EVENT, listener);
 	}
 	
 	@Override

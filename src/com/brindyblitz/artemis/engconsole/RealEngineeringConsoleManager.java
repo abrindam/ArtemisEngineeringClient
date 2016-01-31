@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.brindyblitz.artemis.protocol.NotifyingSystemManager.SystemManagerChangeListener;
 import com.brindyblitz.artemis.protocol.WorldAwareRobustProxyListener;
 
 import net.dhleong.acl.enums.ShipSystem;
@@ -24,14 +23,13 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 
 	public RealEngineeringConsoleManager(WorldAwareRobustProxyListener worldAwareRobustProxyListener) {
 		this.worldAwareRobustProxyListener = worldAwareRobustProxyListener;
-		this.worldAwareRobustProxyListener.getSystemManager().addChangeListener(new SystemManagerChangeListener() {
-			
-			@Override
-			public void onChange() {
-				RealEngineeringConsoleManager.this.fireChange();
-			}
-		});
+		this.worldAwareRobustProxyListener.getSystemManager().addChangeListener(() -> this.fireChange());
 		this.worldAwareRobustProxyListener.getSystemManager().setSystemGrid(getShipSystemGrid());
+	}
+	
+	@Override
+	public GameState getGameState() {
+		return GameState.INGAME;
 	}
 	
 	@Override

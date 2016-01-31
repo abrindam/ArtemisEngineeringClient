@@ -1,7 +1,6 @@
 package com.brindyblitz.artemis.protocol;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.brindyblitz.artemis.utils.EventEmitter;
 
 import net.dhleong.acl.iface.Listener;
 import net.dhleong.acl.protocol.core.eng.EngGridUpdatePacket;
@@ -12,10 +11,11 @@ import net.dhleong.acl.world.SystemManager;
 
 public class NotifyingSystemManager extends SystemManager {
 
-	private List<SystemManagerChangeListener> listeners = new ArrayList<>();
+	private static final Object CHANGE_EVENT = new Object();
+	private EventEmitter<Object> eventEmitter = new EventEmitter<>();
 	
-	public void addChangeListener(SystemManagerChangeListener listener) {
-		this.listeners.add(listener);
+	public void addChangeListener(Runnable listener) {
+		eventEmitter.on(CHANGE_EVENT, listener);
 	}
 	
 	@Override
@@ -47,9 +47,7 @@ public class NotifyingSystemManager extends SystemManager {
 	}
 	
 	private void fireChange() {
-		for (SystemManagerChangeListener listener: listeners) {
-			listener.onChange();
-		}
+		eventEmitter.emit(CHANGE_EVENT);
 	}
 	
 	public static interface SystemManagerChangeListener {

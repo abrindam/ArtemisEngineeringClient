@@ -1,14 +1,20 @@
 package com.brindyblitz.artemis.engconsole.ui;
 
-import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
-import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.EngineeringConsoleChangeListener;
-import net.dhleong.acl.enums.ShipSystem;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.image.BufferedImage;
+
+import javax.swing.JPanel;
+
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
+
+import net.dhleong.acl.enums.ShipSystem;
 
 public abstract class SystemStatusSlider extends JPanel {
     private static final long serialVersionUID = 1L;
@@ -42,12 +48,7 @@ public abstract class SystemStatusSlider extends JPanel {
 
         loadIcons();
 
-        this.engineeringConsoleManager.addChangeListener(new EngineeringConsoleChangeListener() {
-            @Override
-            public void onChange() {
-                SystemStatusSlider.this.repaint();
-            }
-        });
+        this.engineeringConsoleManager.addChangeListener(() -> this.repaint());
     }
 
     @Override

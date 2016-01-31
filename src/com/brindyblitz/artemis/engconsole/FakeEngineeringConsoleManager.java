@@ -35,6 +35,11 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	}
 	
 	@Override
+	public GameState getGameState() {
+		return GameState.INGAME;
+	}
+	
+	@Override
 	public int getSystemEnergyAllocated(ShipSystem system) {
 		return energyAllocated.get(system);
 	}

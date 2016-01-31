@@ -153,27 +153,26 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         damconBranchGroup.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
         this.universe.addBranchGraph(damconBranchGroup);
 
-        this.engineeringConsoleManager.addChangeListener(new EngineeringConsoleManager.EngineeringConsoleChangeListener() {
-            @Override
-            public void onChange() {
-                for (Map.Entry<GridCoord, Float> entry : engineeringConsoleManager.getGridHealth().entrySet()) {
-                    InternalNode node = internalNodes.get(entry.getKey());
-                    node.updateHealth(entry.getValue());
+        this.engineeringConsoleManager.addChangeListener(() -> {
+           
+            for (Map.Entry<GridCoord, Float> entry : engineeringConsoleManager.getGridHealth().entrySet()) {
+                InternalNode node = internalNodes.get(entry.getKey());
+                node.updateHealth(entry.getValue());
+            }
+
+            for (EngineeringConsoleManager.EnhancedDamconStatus damconStatus : engineeringConsoleManager.getDamconTeams()) {
+                InternalTeam it = internalTeams.get(damconStatus.getTeamNumber());
+
+                if (it == null) {
+                    it = new InternalTeam(damconStatus);
+                    internalTeams.put(damconStatus.getTeamNumber(), it);
+                    nodesToSelectables.put(it.getShape(), it);
+                    damconBranchGroup.addChild(it.getBranchGroup());
                 }
 
-                for (EngineeringConsoleManager.EnhancedDamconStatus damconStatus : engineeringConsoleManager.getDamconTeams()) {
-                    InternalTeam it = internalTeams.get(damconStatus.getTeamNumber());
-
-                    if (it == null) {
-                        it = new InternalTeam(damconStatus);
-                        internalTeams.put(damconStatus.getTeamNumber(), it);
-                        nodesToSelectables.put(it.getShape(), it);
-                        damconBranchGroup.addChild(it.getBranchGroup());
-                    }
-
-                    it.updatePos(damconStatus.getX(), damconStatus.getY(), damconStatus.getZ());
-        		}
-            }
+                it.updatePos(damconStatus.getX(), damconStatus.getY(), damconStatus.getZ());
+    		}
+            
         });
     }
 

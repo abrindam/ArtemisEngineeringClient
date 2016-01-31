@@ -86,13 +86,7 @@ public class SystemSlider extends JPanel implements MouseWheelListener {
 
         this.addMouseWheelListener(this);
 
-		this.engineeringConsoleManager.addChangeListener(new EngineeringConsoleChangeListener() {
-
-            @Override
-            public void onChange() {
-                SystemSlider.this.repaint();
-            }
-        });
+		this.engineeringConsoleManager.addChangeListener(() -> this.repaint());
 	}
 
 	@Override

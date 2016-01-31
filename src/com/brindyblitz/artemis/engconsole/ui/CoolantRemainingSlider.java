@@ -33,13 +33,7 @@ public class CoolantRemainingSlider extends JPanel {
 
         this.setBackground(new Color(0, 0, 0, 0));
 
-		this.engineeringConsoleManager.addChangeListener(new EngineeringConsoleChangeListener() {
-
-			@Override
-			public void onChange() {
-				CoolantRemainingSlider.this.repaint();
-			}
-		});	
+        this.engineeringConsoleManager.addChangeListener(() -> this.repaint());
 	}
 	
 	@Override

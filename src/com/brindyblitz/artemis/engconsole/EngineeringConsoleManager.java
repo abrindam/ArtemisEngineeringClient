@@ -3,8 +3,6 @@ package com.brindyblitz.artemis.engconsole;
 import java.util.List;
 import java.util.Map;
 
-import com.brindyblitz.artemis.engconsole.ui.damcon.Damcon;
-
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
 import net.dhleong.acl.util.GridCoord;
@@ -12,6 +10,9 @@ import net.dhleong.acl.vesseldata.VesselNode;
 import net.dhleong.acl.vesseldata.VesselNodeConnection;
 
 public interface EngineeringConsoleManager {
+	
+	GameState getGameState();
+	
 	int getTotalShipCoolant();
 
 	int getSystemEnergyAllocated(ShipSystem system);
@@ -42,7 +43,7 @@ public interface EngineeringConsoleManager {
 	
 	void moveDamconTeam(int teamId, GridCoord coord);
 
-	void addChangeListener(EngineeringConsoleChangeListener listener);
+	void addChangeListener(Runnable listener);
 	
 	public static interface EngineeringConsoleChangeListener {
 		public void onChange();
@@ -51,6 +52,10 @@ public interface EngineeringConsoleManager {
 	void resetEnergy();
 
 	void resetCoolant();
+	
+	public enum GameState {
+		DISCONNECTED, PREGAME, INGAME
+	}
 	
 	public class EnhancedDamconStatus {
 		private DamconStatus damconStatus;
