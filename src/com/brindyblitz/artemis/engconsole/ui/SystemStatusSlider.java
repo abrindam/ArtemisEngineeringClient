@@ -20,17 +20,6 @@ import net.dhleong.acl.enums.ShipSystem;
 public abstract class SystemStatusSlider extends JPanel {
     private static final long serialVersionUID = 1L;
 
-    protected boolean isHealth;
-
-    protected static final int
-            WIDGET_HEIGHT = 20,
-            WIDGET_WIDTH = 100,
-            SLIDER_WIDTH = WIDGET_WIDTH / 2,
-            SLIDER_TOP = 0,
-            SLIDER_LEFT = SLIDER_WIDTH,
-            SLIDER_HEIGHT = WIDGET_HEIGHT - SLIDER_TOP,
-            SLIDER_BOTTOM = SLIDER_TOP + SLIDER_HEIGHT;
-
     private static Point statusImageDimensions = new Point(16, 16);
 
     protected Font statusFont = new Font("Courier New", Font.BOLD, 14);
@@ -39,12 +28,19 @@ public abstract class SystemStatusSlider extends JPanel {
 
     protected ShipSystem system;
 
-    public SystemStatusSlider(ShipSystem system, EngineeringConsoleManager engineeringConsoleManager, boolean is_health) {
+    protected int widgetWidth, widgetHeight, sliderWidth, sliderHeight;
+
+    public SystemStatusSlider(ShipSystem system, EngineeringConsoleManager engineeringConsoleManager,
+                              int widget_width, int widget_height, int slider_width, int slider_height) {
+        widgetWidth = widget_width;
+        widgetHeight = widget_height;
+        sliderWidth = slider_width;
+        sliderHeight = slider_height;
+
         this.system = system;
         this.engineeringConsoleManager = engineeringConsoleManager;
-        this.isHealth = is_health;
 
-        this.setSize(WIDGET_WIDTH, WIDGET_HEIGHT);
+        this.setSize(widget_width, widget_height);
         this.setBackground(new Color(0, 0, 0, 0));
 
         loadIcons();
@@ -63,16 +59,16 @@ public abstract class SystemStatusSlider extends JPanel {
 
     private void drawSlider(Graphics2D g) {
         g.setColor(Color.WHITE);
-        g.fillRect(SLIDER_LEFT, SLIDER_TOP, SLIDER_WIDTH, SLIDER_HEIGHT);
+        g.fillRect(sliderWidth, 0, sliderWidth, sliderHeight);
 
-        int fill_width = (int)(SLIDER_WIDTH * getStatusScaleFactor()),
-                fill_right = SLIDER_LEFT + fill_width;
+        int fill_width = (int)(sliderWidth * getStatusScaleFactor()),
+                fill_right = sliderWidth + fill_width;
 
         g.setColor(getStatusColor());
-        g.fillRect(SLIDER_LEFT, SLIDER_TOP, fill_width, SLIDER_HEIGHT);
+        g.fillRect(sliderWidth, 0, fill_width, sliderHeight);
 
-        int image_left = SLIDER_LEFT + SLIDER_WIDTH / 2 - statusImageDimensions.x / 2,
-                image_top = SLIDER_TOP + SLIDER_HEIGHT / 2 - statusImageDimensions.y / 2,
+        int image_left = sliderWidth + sliderWidth / 2 - statusImageDimensions.x / 2,
+                image_top = sliderHeight / 2 - statusImageDimensions.y / 2,
                 image_right = image_left + statusImageDimensions.x;
 
         BufferedImage status_image_with_color = getStatusImageWithColor(), status_image_white = getStatusImageWhite();
@@ -113,17 +109,17 @@ public abstract class SystemStatusSlider extends JPanel {
         Rectangle font_size = gv.getPixelBounds(null, 0, 0);
 
         // This should be dividing font height by 2f, not 4f, but for some reason everything is twice as tall as I expect.  SLIDER_HEIGHT is 20 but it's rendering as 40.  It makes no sense, but this works for now.
-        g.drawString(status_pct_str, SLIDER_LEFT - (int) font_size.getWidth(), (int) (SLIDER_BOTTOM - SLIDER_HEIGHT / 2f + font_size.getHeight() / 4f));
+        g.drawString(status_pct_str, sliderWidth - (int) font_size.getWidth(), (int) (sliderHeight - sliderHeight / 2f + font_size.getHeight() / 4f));
     }
 
     private float getStatusScaleFactor() {
         return getStatusPctInt() / 100f;
     }
 
-    private Color getStatusColor() {
+    protected Color getStatusColor() {
         float factor = getStatusScaleFactor();
         return factor == 0f ? Color.GRAY :
-                Color.getHSBColor(getEmptyHue(isHealth) - (getEmptyHue(isHealth) - getFullHue(isHealth)) * getStatusScaleFactor(), 1, 1);
+                Color.getHSBColor(getEmptyHue() - (getEmptyHue() - getFullHue()) * getStatusScaleFactor(), 1, 1);
     }
 
     protected abstract int getStatusPctInt();
@@ -131,19 +127,6 @@ public abstract class SystemStatusSlider extends JPanel {
     protected abstract BufferedImage getStatusImageWithColor();
     protected abstract BufferedImage getStatusImageWhite();
 
-    public static float getFullHue(boolean health) {
-        if (health) {
-            return 120f / 360f;
-        } else {
-            return 0f;
-        }
-    }
-
-    public static float getEmptyHue(boolean health) {
-        if (health) {
-            return 0f;
-        } else {
-            return 60f / 360f;
-        }
-    }
+    protected abstract float getFullHue();
+    protected abstract float getEmptyHue();
 }

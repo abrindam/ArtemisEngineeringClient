@@ -12,10 +12,16 @@ public class SystemHeatSlider extends SystemStatusSlider {
 
     private static final long serialVersionUID = 1L;
 
+    protected static final int
+            WIDGET_HEIGHT = 20,
+            WIDGET_WIDTH = 100,
+            SLIDER_WIDTH = WIDGET_WIDTH / 2,
+            SLIDER_HEIGHT = WIDGET_HEIGHT;
+
     private static BufferedImage statusImageWithColor = null, statusImageWhite = null;
 
     public SystemHeatSlider(ShipSystem system, EngineeringConsoleManager engineeringConsoleManager) {
-        super(system, engineeringConsoleManager, false);
+        super(system, engineeringConsoleManager, WIDGET_WIDTH, WIDGET_HEIGHT, SLIDER_WIDTH, SLIDER_HEIGHT);
     }
 
     @Override
@@ -45,5 +51,15 @@ public class SystemHeatSlider extends SystemStatusSlider {
     @Override
     protected BufferedImage getStatusImageWhite() {
         return statusImageWhite;
+    }
+
+    @Override
+    protected float getFullHue() {
+        return 0f;
+    }
+
+    @Override
+    protected float getEmptyHue() {
+        return 60f / 360f;
     }
 }

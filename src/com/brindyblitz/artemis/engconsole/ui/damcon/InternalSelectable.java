@@ -68,8 +68,7 @@ public abstract class InternalSelectable extends Internal {
     }
 
     protected Color3f getColorFromHealth(float pct) {
-        Color color = Color.getHSBColor(
-                SystemStatusSlider.getEmptyHue(true) - (SystemStatusSlider.getEmptyHue(true) - SystemStatusSlider.getFullHue(true)) * pct, 1, 1);
+        Color color = Color.getHSBColor(getEmptyHue() - (getEmptyHue() - getFullHue()) * pct, 1, 1);
         return new Color3f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f);
     }
 
@@ -84,5 +83,13 @@ public abstract class InternalSelectable extends Internal {
 
     public Shape3D getShape() {
         return this.sphere.getShape(Sphere.BODY);
+    }
+
+    protected float getFullHue() {
+        return 120f / 360f;
+    }
+
+    protected float getEmptyHue() {
+        return 0f;
     }
 }
