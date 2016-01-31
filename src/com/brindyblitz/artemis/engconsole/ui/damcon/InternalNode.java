@@ -8,13 +8,13 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.media.j3d.*;
 import javax.vecmath.*;
-import java.util.Objects;
 
 public class InternalNode extends InternalSelectable {
     private VesselNode vesselNode;
 
     public InternalNode(VesselNode vessel_node) {
         alpha = 0.4f;
+        radius = 0.05f;
 
         this.vesselNode = vessel_node;
 
@@ -23,7 +23,7 @@ public class InternalNode extends InternalSelectable {
         Vector3f pos = new Vector3f(-vessel_node.getX(), vessel_node.getY(), vessel_node.getZ());
         pos.scale(SCALE);
 
-        sphere = new Sphere(RADIUS, appearanceFromHealthPercentage());
+        sphere = new Sphere(radius, appearanceFromHealthPercentage());
         sphere.getShape(Sphere.BODY).setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
 
         Transform3D transform = new Transform3D();

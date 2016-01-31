@@ -14,16 +14,19 @@ public class InternalTeam extends InternalSelectable {
     private EnhancedDamconStatus status;
     protected boolean selected = false;
 
+    private Color3f DAMCON_COLOR = new Color3f(0f, 0f, 1f);
+
     // TODO: use a Box instead of a sphere or something (set every side to be pickable or use billboards)
 
     public InternalTeam(EngineeringConsoleManager.EnhancedDamconStatus damcon_status) {
         this.status = damcon_status;
 
         alpha = 0.25f;
+        radius = 0.075f;
 
         this.branchGroup = new BranchGroup();
 
-        this.sphere = new Sphere(RADIUS, appearanceFromHealthPercentage());
+        this.sphere = new Sphere(radius, appearanceFromHealthPercentage());
 
         Shape3D shape = this.sphere.getShape(Sphere.BODY);
         shape.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
@@ -48,6 +51,11 @@ public class InternalTeam extends InternalSelectable {
     public void updateHealth(float pct) {
         super.updateHealth(pct);
         sphere.setAppearance(appearanceFromHealthPercentage());
+    }
+
+    @Override
+    protected Color3f getColorFromHealth(float pct) {
+        return DAMCON_COLOR;
     }
 
     @Override

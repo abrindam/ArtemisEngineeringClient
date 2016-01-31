@@ -8,7 +8,6 @@ import javax.vecmath.Color3f;
 import java.awt.*;
 
 public abstract class InternalSelectable extends Internal {
-    protected static final float RADIUS = 0.05f;
     protected static final float SHININESS = 0f;
     protected static final Color3f BLACK = new Color3f(0f, 0f, 0f), WHITE = new Color3f(1f, 1f, 1f);
     private static final float TRANSPARENT = 1f, OPAQUE = 0f;
@@ -16,6 +15,7 @@ public abstract class InternalSelectable extends Internal {
     protected boolean hovered = false;
     protected float healthPct = 1f;
 
+    protected float radius;
     protected Sphere sphere;
     protected BranchGroup branchGroup;
 
