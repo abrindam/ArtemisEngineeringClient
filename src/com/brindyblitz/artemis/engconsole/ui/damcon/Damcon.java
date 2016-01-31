@@ -1,6 +1,8 @@
 package com.brindyblitz.artemis.engconsole.ui.damcon;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.GraphicsConfiguration;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -8,12 +10,35 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.TimerTask;
 
-import javax.media.j3d.*;
-import javax.swing.JFrame;
+import javax.media.j3d.Appearance;
+import javax.media.j3d.BoundingSphere;
+import javax.media.j3d.BranchGroup;
+import javax.media.j3d.Canvas3D;
+import javax.media.j3d.ColoringAttributes;
+import javax.media.j3d.LineAttributes;
+import javax.media.j3d.Node;
+import javax.media.j3d.PickInfo;
+import javax.media.j3d.PointLight;
+import javax.media.j3d.PolygonAttributes;
+import javax.media.j3d.Shape3D;
+import javax.media.j3d.Transform3D;
+import javax.media.j3d.TransformGroup;
+import javax.media.j3d.TransparencyAttributes;
 import javax.swing.SwingUtilities;
-import javax.vecmath.*;
+import javax.vecmath.AxisAngle4d;
+import javax.vecmath.Color3f;
+import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector2d;
+import javax.vecmath.Vector3d;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 // See: http://download.java.net/media/java3d/javadoc/1.5.1/
@@ -23,8 +48,6 @@ import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.loaders.objectfile.ObjectFile;
 import com.sun.j3d.utils.pickfast.PickCanvas;
 import com.sun.j3d.utils.universe.SimpleUniverse;
-import com.sun.j3d.utils.universe.Viewer;
-import com.sun.j3d.utils.universe.ViewingPlatform;
 
 import net.dhleong.acl.util.GridCoord;
 import net.dhleong.acl.vesseldata.VesselNode;
@@ -48,7 +71,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private SimpleUniverse universe;
     private Scene scene = null;
     private PointLight light;
-    private static final boolean WINDOW_HACK = true;
+  
 
     private static final double
             ZOOM_FACTOR = 0.25d,
@@ -78,18 +101,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         this.engineeringConsoleManager = engineeringConsoleManager;
 
         loadAndWireframeifyModel();
-
-        if (WINDOW_HACK) {
-            createUniverseAndScene_HACK();
-            // TODO: HACK > This is a hack to get rid of the extra window. The reason this creates a new window is explained here:
-            // http://download.java.net/media/java3d/javadoc/1.3.2/com/sun/j3d/utils/universe/Viewer.html
-            // This might help: https://community.oracle.com/thread/1274674?start=0&tstart=0
-            JFrame unused_frame = universe.getViewer().getJFrame(0);
-            unused_frame.setVisible(false);
-            unused_frame.dispose();
-        } else {
-            createUniverseAndScene();
-        }
+        createUniverseAndScene();        
 
         addLighting();
 
@@ -179,16 +191,10 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     }
 
     private void createUniverseAndScene() {
-        // This is an attempt to give the Viewer a canvas so it doesn't create its own window (it doesn't render properly)
+        // This should give the Viewer a canvas so it doesn't create its own window
         GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
         Canvas3D canvas = new Canvas3D(config);
-        Viewer viewer = new Viewer(canvas);
-        ViewingPlatform viewingPlatform = new ViewingPlatform();
-        this.universe = new SimpleUniverse(viewingPlatform, viewer);
-    }
-
-    private void createUniverseAndScene_HACK() {
-        this.universe = new SimpleUniverse();
+        this.universe = new SimpleUniverse(canvas);
         this.universe.addBranchGraph(this.scene.getSceneGroup());
     }
 
@@ -219,7 +225,6 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     }
 
     private void setCameraPresets() {
-        ViewingPlatform vp = this.universe.getViewingPlatform();
         getCamera().setTransform(DEFAULT_CAMERA_VIEW);
     }
 
