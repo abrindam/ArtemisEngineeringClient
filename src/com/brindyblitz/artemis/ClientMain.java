@@ -1,15 +1,15 @@
 package com.brindyblitz.artemis;
 
+import java.io.IOException;
+
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.FakeEngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.RealEngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.ui.UserInterfaceFrame;
-import com.brindyblitz.artemis.engconsole.ui.damcon.Damcon;
 import com.brindyblitz.artemis.protocol.WorldAwareRobustProxyListener;
 
-import java.io.IOException;
-
 public class ClientMain {
+	
 	public static void main(String[] args) throws IOException {
 		String host = "localhost";
 		int port = 2010;
@@ -43,19 +43,19 @@ public class ClientMain {
 
 	public ClientMain() {
 		EngineeringConsoleManager engineeringConsoleManager = new FakeEngineeringConsoleManager();
-		Damcon damcon = new Damcon(engineeringConsoleManager);
-		buildUIFrame(engineeringConsoleManager, damcon);
+		buildUIFrame(engineeringConsoleManager);
 	}
 
 	public ClientMain(String host, int port) throws IOException {
 		WorldAwareRobustProxyListener worldAwareRobustProxyListener = new WorldAwareRobustProxyListener(host, port, port);
 		EngineeringConsoleManager engineeringConsoleManager = new RealEngineeringConsoleManager(worldAwareRobustProxyListener);
-		Damcon damcon = new Damcon(engineeringConsoleManager);
-		buildUIFrame(engineeringConsoleManager, damcon);
+		buildUIFrame(engineeringConsoleManager);		
 	}
 
-	private static void buildUIFrame(EngineeringConsoleManager engineeringConsoleManager, Damcon damcon) {
-		new UserInterfaceFrame(engineeringConsoleManager, damcon).setVisible(true);
+	private static UserInterfaceFrame buildUIFrame(EngineeringConsoleManager engineeringConsoleManager) {
+		UserInterfaceFrame userInterfaceFrame = new UserInterfaceFrame(engineeringConsoleManager);
+		userInterfaceFrame.setVisible(true);
+		return userInterfaceFrame;
 	}
 
 	private static void printUsage() {
