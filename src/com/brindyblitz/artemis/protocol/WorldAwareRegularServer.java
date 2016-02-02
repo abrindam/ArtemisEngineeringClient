@@ -36,6 +36,7 @@ public class WorldAwareRegularServer implements WorldAwareServer {
 	@Listener
     public void onConnectSuccess(ConnectionSuccessEvent event) {
 		this.connected  = true;
+		System.out.println("Connected!");
 		eventEmitter.emit(Events.CONNECTION_STATE_CHANGE);
         server.send(new SetConsolePacket(Console.ENGINEERING, true));
         server.send(new ReadyPacket());

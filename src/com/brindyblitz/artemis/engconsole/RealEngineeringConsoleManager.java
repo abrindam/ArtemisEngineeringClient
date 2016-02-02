@@ -28,6 +28,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		this.worldAwareServer.onEvent(WorldAwareServer.Events.CONNECTION_STATE_CHANGE, () -> this.updateGameState());
 		this.worldAwareServer.getSystemManager().events.on(NotifyingSystemManager.Events.CHANGE, () -> this.systemManagerChange());
 		this.worldAwareServer.getSystemManager().setSystemGrid(getShipSystemGrid());
+		updateGameState();
 	}
 	
 	private void systemManagerChange() {

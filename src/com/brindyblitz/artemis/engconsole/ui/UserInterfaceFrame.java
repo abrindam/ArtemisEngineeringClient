@@ -17,6 +17,7 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 
 	private static final long serialVersionUID = 1L;
 	private EngineeringConsoleManager engineeringConsoleManager;
+	private PreGamePanel preGamePanel;
 	private InGamePanel inGamePanel;
 	
 	private static final int
@@ -56,20 +57,43 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 	}
 	
 	private void updateCurrentPanel() {
-		if (engineeringConsoleManager.getGameState() == GameState.INGAME) {
+		if (engineeringConsoleManager.getGameState() == GameState.PREGAME) {
+			switchToPreGamePanel();
+		}
+		else if (engineeringConsoleManager.getGameState() == GameState.INGAME) {
 			switchToInGamePanel();			
 		}
 	}
 	
+	private void switchToPreGamePanel() {
+		System.out.println("Switch to PreGame");
+		removeExistingPanels();
+		loading.setVisible(true);
+		preGamePanel = new PreGamePanel(WINDOW_WIDTH, WINDOW_HEIGHT);
+		this.getContentPane().add(preGamePanel);
+		preGamePanel.setVisible(true);
+		loading.setVisible(false);
+	}
+	
 	private void switchToInGamePanel() {
-		if (inGamePanel != null) {
-			this.getContentPane().remove(inGamePanel);
-		}
+		System.out.println("Switch to InGame");
+		removeExistingPanels();
 		loading.setVisible(true);
 		inGamePanel = new InGamePanel(engineeringConsoleManager, WINDOW_WIDTH, WINDOW_HEIGHT);
 		this.getContentPane().add(inGamePanel);
 		inGamePanel.setVisible(true);
 		loading.setVisible(false);
+	}
+	
+	private void removeExistingPanels() {
+		if (inGamePanel != null) {
+			this.getContentPane().remove(inGamePanel);
+			this.inGamePanel = null;
+		}
+		if (preGamePanel != null) {
+			this.getContentPane().remove(preGamePanel);
+			this.preGamePanel = null;
+		}
 	}
 	
 	@Override
@@ -81,7 +105,9 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
          * As such, the UserInterfaceFrame redirects keys to relevant receivers that would normally implement
          * KeyListener.
          */
-        this.inGamePanel.handleKeyPress(e);
+		if (this.inGamePanel != null) {
+			this.inGamePanel.handleKeyPress(e);			
+		}
 	}
 
     @Override
