@@ -63,6 +63,19 @@ For each input that does not have a custom key binding specified in `input.cfg`,
 ### General
 The entry point to the program is located in the `ClientMain.java` file.
 
+### Developer Modes
+The client has two special modes that are useful only to developers.
+
+**Fake mode**: Fake mode runs a local simulation without actually connecting a real Artemis server. Highly recommended for basic UI development, as you
+will not need to continuously connect and reconnect to a real server, speeding cycle times. A lot of functionality is simulated (e.g. overheating a 
+system works), but some is not (damcon teams don't really work). You can put the client in this mode by passing the `--fake` command line flag.
+
+**Proxy mode**: Proxy mode allows a vanilla engineering client to connect to this client, which in turn connects to the server. With this setup, both clients will render the same data from the server, and either client can issue commands. This is a great way to check the behavior of the vanilla client
+against this improved client without running afoul of the "one engineering console per ship" limit. You can put the client in this mode by passing 
+the `--proxy` command line flag.
+
+You can also supply the server hostname/IP and optionally the port as command line arguments.
+
 ### IDE Configuration
 
 #### Dependencies

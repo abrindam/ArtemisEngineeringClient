@@ -30,7 +30,7 @@ public class EnergySlider extends SystemStatusSlider {
     @Override
     protected int getStatusPctInt() {
         // TODO: >>> TESTME
-        return 100 * (int)(this.engineeringConsoleManager.getTotalEnergyRemaining() / 1000f);
+        return (int)(100 * (this.engineeringConsoleManager.getTotalEnergyRemaining() / 1000f));
     }
 
     @Override

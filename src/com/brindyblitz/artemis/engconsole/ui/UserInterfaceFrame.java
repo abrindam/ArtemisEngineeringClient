@@ -11,6 +11,7 @@ import javax.swing.SwingConstants;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.Events;
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.GameState;
 
 public class UserInterfaceFrame extends JFrame implements KeyListener {
 
@@ -48,9 +49,16 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 		getContentPane().add(loading);		
 		this.setVisible(true);
 		
+		updateCurrentPanel();
 		engineeringConsoleManager.onEvent(Events.GAME_STATE_CHANGE, () -> {
-			switchToInGamePanel();
+			updateCurrentPanel();
 		});
+	}
+	
+	private void updateCurrentPanel() {
+		if (engineeringConsoleManager.getGameState() == GameState.INGAME) {
+			switchToInGamePanel();			
+		}
 	}
 	
 	private void switchToInGamePanel() {

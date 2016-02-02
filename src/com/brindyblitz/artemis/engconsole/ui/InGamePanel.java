@@ -122,6 +122,8 @@ public class InGamePanel extends JPanel {
 			for (EnhancedDamconStatus damconStatus : this.engineeringConsoleManager.getDamconTeams()) {
 				System.out.println(damconStatus);
 			}
+			
+			System.out.println("Energy remaining: " + this.engineeringConsoleManager.getTotalEnergyRemaining());
 
             System.out.println("\n\n\n");
 		} else if (kc == KeyEvent.VK_EQUALS) {
