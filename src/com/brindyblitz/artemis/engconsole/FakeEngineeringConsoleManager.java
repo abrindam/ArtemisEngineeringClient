@@ -40,6 +40,16 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	}
 	
 	@Override
+	public void connect(String host) {
+		//intentionally do nothing		
+	}
+	
+	@Override
+	public void connect(String host, int port) {
+		//intentionally do nothing
+	}
+	
+	@Override
 	public GameState getGameState() {
 		return this.gameState;
 	}

@@ -8,6 +8,8 @@ import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.Events;
@@ -17,6 +19,7 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 
 	private static final long serialVersionUID = 1L;
 	private EngineeringConsoleManager engineeringConsoleManager;
+	private ConnectPanel connectPanel;
 	private PreGamePanel preGamePanel;
 	private InGamePanel inGamePanel;
 	
@@ -29,6 +32,13 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 
 	public UserInterfaceFrame(EngineeringConsoleManager engineeringConsoleManager) {
 		this.engineeringConsoleManager = engineeringConsoleManager;
+		
+		try {
+			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
 		
         setTitle("Artemis: Engineering Console (Client)");
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -57,12 +67,26 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 	}
 	
 	private void updateCurrentPanel() {
-		if (engineeringConsoleManager.getGameState() == GameState.PREGAME) {
+		if (engineeringConsoleManager.getGameState() == GameState.DISCONNECTED) {
+			switchToConnectPanel();
+		}
+		else if (engineeringConsoleManager.getGameState() == GameState.PREGAME) {
 			switchToPreGamePanel();
 		}
 		else if (engineeringConsoleManager.getGameState() == GameState.INGAME) {
 			switchToInGamePanel();			
 		}
+//		switchToConnectPanel();
+	}
+	
+	private void switchToConnectPanel() {
+		System.out.println("Switch to Connect");
+		removeExistingPanels();
+		loading.setVisible(true);
+		connectPanel = new ConnectPanel(engineeringConsoleManager, WINDOW_WIDTH, WINDOW_HEIGHT);
+		this.getContentPane().add(connectPanel);
+		connectPanel.setVisible(true);
+		loading.setVisible(false);
 	}
 	
 	private void switchToPreGamePanel() {
@@ -86,6 +110,10 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 	}
 	
 	private void removeExistingPanels() {
+		if (connectPanel != null) {
+			this.getContentPane().remove(connectPanel);
+			this.connectPanel = null;
+		}
 		if (inGamePanel != null) {
 			this.getContentPane().remove(inGamePanel);
 			this.inGamePanel = null;

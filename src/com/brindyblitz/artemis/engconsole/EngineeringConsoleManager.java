@@ -11,6 +11,10 @@ import net.dhleong.acl.vesseldata.VesselNodeConnection;
 
 public interface EngineeringConsoleManager {
 	
+	void connect(String host);
+	
+	void connect(String host, int port);
+	
 	GameState getGameState();
 	
 	int getTotalShipCoolant();

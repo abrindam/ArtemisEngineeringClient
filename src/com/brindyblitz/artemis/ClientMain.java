@@ -9,15 +9,12 @@ import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.FakeEngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.RealEngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.ui.UserInterfaceFrame;
-import com.brindyblitz.artemis.protocol.WorldAwareRegularServer;
-import com.brindyblitz.artemis.protocol.WorldAwareRobustProxyListener;
-import com.brindyblitz.artemis.protocol.WorldAwareServer;
 
 public class ClientMain {
 	
 	public static void main(String[] args) throws IOException {
 		String host = null;
-		int port = 2010;
+		Integer port = null;
 
 		List<String> argList = new ArrayList<>(Arrays.asList(args));
 		
@@ -38,7 +35,7 @@ public class ClientMain {
 			return;
 		}
 		
-		if (!fake && (argList.size() > 2 || argList.size() < 1) || fake && argList.size() > 0) {
+		if (!fake && argList.size() > 2 || fake && argList.size() > 0) {
 			System.err.println("Incorrect number of arguments (" + args.length + ")");
 			printUsage();
 			return;
@@ -60,20 +57,21 @@ public class ClientMain {
 		new ClientMain(host, port, proxy, fake);
 	}
 
-	public ClientMain(String host, int port, boolean proxy, boolean fake) throws IOException {
+	public ClientMain(String host, Integer port, boolean proxy, boolean fake) throws IOException {
 		EngineeringConsoleManager engineeringConsoleManager;
 		if (fake) {
 			engineeringConsoleManager = new FakeEngineeringConsoleManager();
 		}
 		else {
-			WorldAwareServer worldAwareServer;
-			if (proxy) {
-				worldAwareServer = new WorldAwareRobustProxyListener(host, port, port);
+			engineeringConsoleManager = new RealEngineeringConsoleManager(proxy);
+			if (host != null) {
+				if (port != null) {
+					engineeringConsoleManager.connect(host, port);
+				}
+				else {
+					engineeringConsoleManager.connect(host);
+				}
 			}
-			else {
-				worldAwareServer = new WorldAwareRegularServer(host, port);			
-			}
-			engineeringConsoleManager = new RealEngineeringConsoleManager(worldAwareServer);
 		}
 		
 		buildUIFrame(engineeringConsoleManager);		
@@ -88,7 +86,7 @@ public class ClientMain {
 	private static void printUsage() {
 		System.err.println("\nUsage:\n" +
 				"  Normal Mode\n" +
-				"    engineeringClient <host> [<port]\n" +
+				"    engineeringClient [<host> [<port]]\n" +
 				"  Proxy Mode (a vanilla client must connect to this client and data can be seen on both clients)\n" +
 				"    engineeringClient --proxy <host> [<port]\n" +
 				"  Fake Mode (the client is set to local debug mode and where no network activity occurs)\n" +

@@ -1,5 +1,6 @@
 package com.brindyblitz.artemis.engconsole;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,6 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.brindyblitz.artemis.protocol.NotifyingSystemManager;
+import com.brindyblitz.artemis.protocol.WorldAwareRegularServer;
+import com.brindyblitz.artemis.protocol.WorldAwareRobustProxyListener;
 import com.brindyblitz.artemis.protocol.WorldAwareServer;
 
 import net.dhleong.acl.enums.ShipSystem;
@@ -22,9 +25,28 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 
 	private WorldAwareServer worldAwareServer;
 	private GameState gameState = GameState.DISCONNECTED;
+	private boolean proxy;
 
-	public RealEngineeringConsoleManager(WorldAwareServer worldAwareServer) {
-		this.worldAwareServer = worldAwareServer;
+	public RealEngineeringConsoleManager(boolean proxy) {
+		this.proxy = proxy;		
+	}
+	
+	public void connect(String host) {
+		this.connect(host, 2010);
+	}
+	
+	public void connect(String host, int port) {
+		if (proxy) {
+			this.worldAwareServer = new WorldAwareRobustProxyListener(host, port, port);
+		}
+		else {
+			try {
+				this.worldAwareServer = new WorldAwareRegularServer(host, port);
+			} catch (IOException e) {
+				//abort without updating state
+				return;
+			}			
+		}
 		this.worldAwareServer.onEvent(WorldAwareServer.Events.CONNECTION_STATE_CHANGE, () -> this.updateGameState());
 		this.worldAwareServer.getSystemManager().events.on(NotifyingSystemManager.Events.CHANGE, () -> this.systemManagerChange());
 		this.worldAwareServer.getSystemManager().setSystemGrid(getShipSystemGrid());

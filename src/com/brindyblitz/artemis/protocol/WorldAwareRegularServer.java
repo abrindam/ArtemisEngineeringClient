@@ -19,13 +19,10 @@ public class WorldAwareRegularServer implements WorldAwareServer {
 	private boolean connected = false;
 	private EventEmitter<Events> eventEmitter = new EventEmitter<>();
 	
-	public WorldAwareRegularServer(String host, int port) {
-		try {
-			server = new ThreadedArtemisNetworkInterface(host, port);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+	public WorldAwareRegularServer(String host, int port) throws IOException {
+		
+		server = new ThreadedArtemisNetworkInterface(host, port, 5*1000);
+		
 		this.systemManager = new NotifyingSystemManager();
         
 		server.addListener(this);
