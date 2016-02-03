@@ -11,6 +11,7 @@ import static net.dhleong.acl.enums.ShipSystem.WARP_JUMP_DRIVE;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -21,6 +22,7 @@ import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.EnhancedDamc
 import com.brindyblitz.artemis.engconsole.config.InputMapping;
 import com.brindyblitz.artemis.engconsole.ui.damcon.Damcon;
 
+import com.brindyblitz.artemis.utils.AudioManager;
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.util.GridCoord;
 
@@ -47,6 +49,8 @@ public class InGamePanel extends JPanel {
 
     private static HashMap<ShipSystem, String> SYSTEM_NAME_MAP = new HashMap<ShipSystem, String>();
 
+	public AudioManager audioManager;
+
 	public InGamePanel(EngineeringConsoleManager engineeringConsoleManager, int width, int height) {
 		this.setVisible(false);
 		this.engineeringConsoleManager = engineeringConsoleManager;
@@ -55,7 +59,8 @@ public class InGamePanel extends JPanel {
         this.setBackground(Color.BLACK);
 		setLayout(null);
 		this.setSize(width, height);
-		
+
+        AudioManager.initialize(new File(System.getProperty("user.dir"), "sfx").getPath());
 
         SYSTEM_NAME_MAP.put(BEAMS, "Primary Beam");
         SYSTEM_NAME_MAP.put(TORPEDOES, "Torpedoes");

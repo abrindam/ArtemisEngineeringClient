@@ -17,6 +17,7 @@ import com.brindyblitz.artemis.engconsole.config.InputMapping;
 import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer.Interval;
 import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer.IntervalType;
 
+import com.brindyblitz.artemis.utils.AudioManager;
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.world.Artemis;
 
@@ -231,6 +232,8 @@ public class SystemSlider extends JPanel implements MouseWheelListener {
 	}
 
     private void handleInput(boolean positive, boolean shift_down) {
+		AudioManager.playSound("beep.wav");
+
         if (shift_down) {
             this.engineeringConsoleManager.incrementSystemCoolantAllocated(this.system, positive ? COOLANT_INCREMENT : -COOLANT_INCREMENT);
         } else {
