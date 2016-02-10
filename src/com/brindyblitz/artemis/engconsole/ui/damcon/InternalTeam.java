@@ -1,62 +1,45 @@
 package com.brindyblitz.artemis.engconsole.ui.damcon;
 
-import javax.media.j3d.*;
-import javax.vecmath.Color3f;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
-
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
-import com.sun.j3d.utils.geometry.Sphere;
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.EnhancedDamconStatus;
 
+import javax.media.j3d.Appearance;
+import javax.media.j3d.QuadArray;
+import javax.media.j3d.Shape3D;
+import javax.media.j3d.Texture;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
 public class InternalTeam extends InternalSelectable {
-	private TransformGroup transformGroup;
     private EnhancedDamconStatus status;
     protected boolean selected = false;
 
-    private Color3f DAMCON_COLOR = new Color3f(0f, 0f, 1f);
+    private static final Color DAMCON_COLOR = new Color(230, 120, 0),
+                               DAMCON_SELECTION_BOX_COLOR = new Color(255, 255, 255, 200);
+    private static final int STANDARD_ALPHA = 175, HOVERED_ALPHA = 255;
+    private static final float ICON_DIM = 0.075f;
 
-    // TODO: use a Box instead of a sphere or something (set every side to be pickable or use billboards)
+    private Shape3D selectionShape;
+    private Texture selectionVisibleTexture, selectionInvisibleTexture;
 
     public InternalTeam(EngineeringConsoleManager.EnhancedDamconStatus damcon_status) {
+        super("hud/inner_diamond.png", DAMCON_COLOR, STANDARD_ALPHA, HOVERED_ALPHA, ICON_DIM);
+
         this.status = damcon_status;
 
-        alpha = 0.25f;
-        radius = 0.075f;
+        QuadArray selection_billboard = createBillboard();
+        BufferedImage selection_image = loadImage("hud/selection_diamond.png");
+        this.selectionVisibleTexture = loadTexture(selection_image, DAMCON_SELECTION_BOX_COLOR);
+        this.selectionInvisibleTexture = loadTexture(selection_image, INVISIBLE_COLOR);
+        Appearance appearance = generateAppearance(this.selectionInvisibleTexture);
+        this.selectionShape = new Shape3D(selection_billboard, appearance);
+        this.transformGroup.addChild(this.selectionShape);
 
-        this.branchGroup = new BranchGroup();
-
-        this.sphere = new Sphere(radius, appearanceFromHealthPercentage());
-
-        Shape3D shape = this.sphere.getShape(Sphere.BODY);
-        shape.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
-        setPickable(shape);
-
-        this.transformGroup = new TransformGroup();
-        this.transformGroup.addChild(sphere);
-        this.transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        this.branchGroup.addChild(transformGroup);
+        // TODO: ENHANCEMENT > add team number to DAMCON icon?  Also, list team statuses somewhere?  Add team health bar
+        // or member count?  At least show that on hover...
     }
 
-    public void updatePos(float x, float y, float z) {
-        Point3f pos = Internal.internalPositionToWorldSpace(x, y, z);
-        Transform3D transform = new Transform3D();
-        transform.setTranslation(new Vector3f(pos));
-        this.transformGroup.setTransform(transform);
-    }
-
-    // TODO: DAMCON API > DAMCON API needs to get health based on remaining / default team member counts
-
-    @Override
-    public void updateHealth(float pct) {
-        super.updateHealth(pct);
-        sphere.setAppearance(appearanceFromHealthPercentage());
-    }
-
-    @Override
-    protected Color3f getColorFromHealth(float pct) {
-        return DAMCON_COLOR;
-    }
+    // TODO: API > DAMCON API needs to get health based on remaining / default team member counts?
 
     @Override
     public void setSelected(boolean selected) {
@@ -65,7 +48,9 @@ public class InternalTeam extends InternalSelectable {
         }
 
         this.selected = selected;
-        this.sphere.setAppearance(appearanceFromHealthPercentage());
+
+        Appearance app = this.selectionShape.getAppearance();
+        app.setTexture(selected ? selectionVisibleTexture : selectionInvisibleTexture);
     }
 
     @Override

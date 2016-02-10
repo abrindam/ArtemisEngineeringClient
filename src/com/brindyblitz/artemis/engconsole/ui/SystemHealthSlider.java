@@ -33,8 +33,8 @@ public class SystemHealthSlider extends SystemStatusSlider {
     protected void loadIcons() {
         try {
             if (statusImageWithColor == null) {
-                statusImageWithColor = ImageIO.read(new File(System.getProperty("user.dir"), "/art/health_icon_with_color.png"));
-                statusImageWhite = ImageIO.read(new File(System.getProperty("user.dir"), "/art/health_icon_white.png"));
+                statusImageWithColor = ImageIO.read(new File(System.getProperty("user.dir"), "/art/textures/status/health/color.png"));
+                statusImageWhite = ImageIO.read(new File(System.getProperty("user.dir"), "/art/textures/status/health/white.png"));
             }
         } catch (IOException e) {
             System.err.println("Unable to locate system status icon(s)");

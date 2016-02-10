@@ -29,7 +29,7 @@ public class EnergySlider extends SystemStatusSlider {
 
     @Override
     protected int getStatusPctInt() {
-        // TODO: >>> TESTME
+        // TODO: TESTME
         return (int)(100 * (this.engineeringConsoleManager.getTotalEnergyRemaining() / 1000f));
     }
 
@@ -37,8 +37,8 @@ public class EnergySlider extends SystemStatusSlider {
     protected void loadIcons() {
         try {
             if (statusImageWithColor == null) {
-                statusImageWithColor = ImageIO.read(new File(System.getProperty("user.dir"), "/art/energy_icon_with_color.png"));
-                statusImageWhite = ImageIO.read(new File(System.getProperty("user.dir"), "/art/energy_icon_white.png"));
+                statusImageWithColor = ImageIO.read(new File(System.getProperty("user.dir"), "/art/textures/status/energy/color.png"));
+                statusImageWhite = ImageIO.read(new File(System.getProperty("user.dir"), "/art/textures/status/energy/white.png"));
             }
         } catch (IOException e) {
             System.err.println("Unable to locate system status icon(s)");

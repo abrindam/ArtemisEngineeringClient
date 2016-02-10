@@ -33,8 +33,8 @@ public class SystemHeatSlider extends SystemStatusSlider {
     protected void loadIcons() {
         try {
             if (statusImageWithColor == null) {
-                statusImageWithColor = ImageIO.read(new File(System.getProperty("user.dir"), "/art/heat_icon_with_color.png"));
-                statusImageWhite = ImageIO.read(new File(System.getProperty("user.dir"), "/art/heat_icon_white.png"));
+                statusImageWithColor = ImageIO.read(new File(System.getProperty("user.dir"), "/art/textures/status/heat/color.png"));
+                statusImageWhite = ImageIO.read(new File(System.getProperty("user.dir"), "/art/textures/status/heat/white.png"));
             }
         } catch (IOException e) {
             System.err.println("Unable to locate system status icon(s)");

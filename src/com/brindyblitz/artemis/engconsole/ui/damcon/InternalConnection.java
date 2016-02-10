@@ -8,13 +8,12 @@ import javax.vecmath.Color3f;
 public class InternalConnection extends Internal {
     private VesselNodeConnection vesselNodeConnection;
     private LineArray lineArray;
-    private Shape3D shape;
 
     private static final Color3f LINE_COLOR = new Color3f(0f, 1f, 0f);
+    private static final float ALPHA_STANDARD = 0.1F, ALPHA_HOVERED = 0.9f;
+    // TODO: > need to do this for hallway selection as well, for picking even if they're not visible?
 
     public InternalConnection(VesselNodeConnection vessel_node_connection) {
-        alpha = 0.1f;
-
         this.vesselNodeConnection = vessel_node_connection;
 
         lineArray = new LineArray(2, LineArray.COORDINATES);
@@ -25,7 +24,7 @@ public class InternalConnection extends Internal {
         Appearance appearance = new Appearance();
 
         // Set transparency
-        TransparencyAttributes transparency =  new TransparencyAttributes(TransparencyAttributes.NICEST, alpha);
+        TransparencyAttributes transparency =  new TransparencyAttributes(TransparencyAttributes.NICEST, ALPHA_STANDARD);
         appearance.setTransparencyAttributes(transparency);
 
         // Enable automatic anti-aliasing
@@ -41,9 +40,5 @@ public class InternalConnection extends Internal {
 
         this.shape = new Shape3D(lineArray, appearance);
         this.shape.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
-    }
-
-    public Shape3D getShape() {
-        return this.shape;
     }
 }

@@ -10,23 +10,15 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.TimerTask;
+import java.util.*;
 
 import javax.media.j3d.Appearance;
-import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.ColoringAttributes;
 import javax.media.j3d.LineAttributes;
 import javax.media.j3d.Node;
 import javax.media.j3d.PickInfo;
-import javax.media.j3d.PointLight;
 import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Transform3D;
@@ -36,12 +28,12 @@ import javax.swing.SwingUtilities;
 import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.Events;
+
 // See: http://download.java.net/media/java3d/javadoc/1.5.1/
 import com.sun.j3d.loaders.IncorrectFormatException;
 import com.sun.j3d.loaders.ParsingErrorException;
@@ -58,7 +50,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private static final int WIDTH = 400, HEIGHT = 300;
 
     private static final Color WIREFRAME_COLOR = Color.BLUE;
-    private static final float WIREFRAME_ALPHA = 0.95f;
+    private static final float WIREFRAME_ALPHA = 0.9f;
 
     private static final Transform3D DEFAULT_CAMERA_VIEW = new Transform3D(new double[] {
             0.6954015757171349d, 0.4658852009660681d, -0.5471449789689495d, -2.0244364221851137d,
@@ -71,8 +63,6 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private PickCanvas pickCanvas;
     private SimpleUniverse universe;
     private Scene scene = null;
-    private PointLight light;
-  
 
     private static final double
             ZOOM_FACTOR = 0.25d,
@@ -92,7 +82,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private Map<GridCoord, InternalNode> internalNodes = new HashMap<>();
     private Set<InternalConnection> internalConnections = new HashSet<>();
     private Map<Integer, InternalTeam> internalTeams = new HashMap<>();
-    private Map<Node, InternalSelectable> nodesToSelectables = new HashMap<>();  // TODO: use setUserData() on nodes rather than table lookup?
+    private Map<Node, InternalSelectable> nodesToSelectables = new HashMap<>();  // TODO: REFACTOR > use setUserData() on nodes rather than table lookup?
     private static final float PICK_TOLERANCE = 0.1f;
 
     private BranchGroup damconBranchGroup;
@@ -103,8 +93,6 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
         loadAndWireframeifyModel();
         createUniverseAndScene();        
-
-        addLighting();
 
         loadInternalNodesAndDamconTeams();
         loadCorridors();
@@ -141,7 +129,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         node_branchgroup.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
 
         for (VesselNode vn : this.engineeringConsoleManager.getGrid()) {
-            InternalNode in = new InternalNode(vn);
+            InternalNode in = new InternalNode(vn, InternalNode.isSystemNode(vn));
             internalNodes.put(vn.getGridCoord(), in);
             nodesToSelectables.put(in.getShape(), in);
             node_branchgroup.addChild(in.getBranchGroup());
@@ -155,7 +143,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         this.universe.addBranchGraph(damconBranchGroup);
 
         this.engineeringConsoleManager.onEvent(Events.CHANGE, () -> {
-           
+
             for (Map.Entry<GridCoord, Float> entry : engineeringConsoleManager.getGridHealth().entrySet()) {
                 InternalNode node = internalNodes.get(entry.getKey());
                 node.updateHealth(entry.getValue());
@@ -172,8 +160,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
                 }
 
                 it.updatePos(damconStatus.getX(), damconStatus.getY(), damconStatus.getZ());
-    		}
-            
+            }
+
         });
     }
 
@@ -196,19 +184,6 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         Canvas3D canvas = new Canvas3D(config);
         this.universe = new SimpleUniverse(canvas);
         this.universe.addBranchGraph(this.scene.getSceneGroup());
-    }
-
-    private void addLighting() {
-        BranchGroup group = new BranchGroup();
-        Color3f color = new Color3f(1.0f, 1.0f, 1.0f);
-        BoundingSphere bounds = new BoundingSphere(new Point3d(0d, 0d, 0d), 5d);
-
-        this.light = new PointLight(color, new Point3f(0f, 0f, 0f), new Point3f(1f, 0f, 0f));
-        this.light.setInfluencingBounds(bounds);
-        this.light.setCapability(PointLight.ALLOW_POSITION_WRITE);
-        group.addChild(this.light);
-
-        this.universe.addBranchGraph(group);
     }
 
     private void addMouseListeners() {
@@ -301,7 +276,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
             InternalSelectable i = nodesToSelectables.get(pi.getNode());
 
             if (i == null) {
-                continue;                           // TODO: BUG? > skip non-selectable nodes; this is necessary, but should it be?
+                continue;                           // TODO: BUG > skip non-selectable nodes; this is necessary, but should it be?
             } else if (i.getClass().equals(InternalTeam.class)) {
                 return i;                           // prioritize DAMCON teams
             } else { // if (i.getClass().equals(InternalNode.class))
@@ -311,6 +286,18 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
             }
         }
         return nearest_node; // if we didn't pick a DAMCON team, return picked node closest to camera (or null)
+    }
+
+    private static void clampRotation(Vector2d rotation_amount) {
+        rotation_amount.x = clampRotationAxis(rotation_amount.x, MAX_ROTATION_AMOUNT.x);
+        rotation_amount.y = clampRotationAxis(rotation_amount.y, MAX_ROTATION_AMOUNT.y);
+    }
+
+    private static double clampRotationAxis(double r, double max) {
+        if (Math.abs(r) > max) {
+            return max * Math.signum(r);
+        }
+        return r;
     }
 
     @Override
@@ -357,13 +344,6 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        // Note: an alternative is OrbitBehavior, but it won't really do what we want (we need axis-specific limits)
-        // http://download.java.net/media/java3d/javadoc/1.3.2/com/sun/j3d/utils/behaviors/vp/OrbitBehavior.html
-        // OrbitBehavior orbit = new OrbitBehavior(this.canvas, OrbitBehavior.PROPORTIONAL_ZOOM | OrbitBehavior.DISABLE_TRANSLATE);
-        // orbit.setSchedulingBounds(new BoundingSphere(new Point3d(0d, 0d, 0d), Double.MAX_VALUE));
-        // vp.setViewPlatformBehavior(orbit);
-        // vp.minRadius(...)
-
         if (SwingUtilities.isRightMouseButton(e)) {
             if (!rotating) {
                 rotating = true;
@@ -389,30 +369,31 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
                 Vector3d look = new Vector3d(-cam_pos.x, -cam_pos.y, -cam_pos.z);
                 look.normalize();
 
-                // Get right vector
-                Vector3d up = new Vector3d(0d, 1d, 0d);
-                Vector3d right = new Vector3d();
-                right.cross(look, up);
-                right.normalize();
+                // Get camRight vector
+                Vector3d camUp = new Vector3d(0d, 1d, 0d);
+                Vector3d camRight = new Vector3d();
+                camRight.cross(look, camUp);
+                camRight.normalize();
 
                 // Apply pitch
                 AxisAngle4d pitch_aa = new AxisAngle4d();
-                pitch_aa.set(right, rotation_amount.y);
+                pitch_aa.set(camRight, rotation_amount.y);
                 Transform3D pitch_xform = new Transform3D();
                 pitch_xform.set(pitch_aa);
                 Vector3d pitched_cam_pos = new Vector3d(cam_pos);
                 pitch_xform.transform(pitched_cam_pos);
 
-                // Calculate new up vector after pitch
+                // Calculate new camUp vector after pitch
                 Vector3d new_up = new Vector3d();
-                new_up.cross(pitched_cam_pos, right);
+                new_up.cross(pitched_cam_pos, camRight);
                 new_up.normalize();
 
                 // Ensure we don't get too close to looking directly up or down the Y axis
-                if (new_up.y < MIN_PITCH_Y) {
-                    new_up = new Vector3d(up);
+                if (Math.abs(new_up.y) < MIN_PITCH_Y) {
+                    new_up = new Vector3d(camUp);
                     pitched_cam_pos = new Vector3d(cam_pos);
                 }
+                camUp = new_up;
 
                 // Generate updated look vector
                 look = new Vector3d(pitched_cam_pos);
@@ -426,26 +407,22 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
                 Vector3d yawed_cam_pos = new Vector3d(pitched_cam_pos);
                 yaw_xform.transform(yawed_cam_pos);
 
-                // Using new camera position and new up vector, generate a new camera transformation pointing at the origin
-                xform.lookAt(new Point3d(yawed_cam_pos.x, yawed_cam_pos.y, yawed_cam_pos.z), new Point3d(0d, 0d, 0d), new_up);
-                xform.invert();             // Why do we have to invert this?!  Who knows?!
+                // Using new camera position and new camUp vector, generate a new camera transformation pointing at the origin
+                xform.lookAt(
+                        new Point3d(yawed_cam_pos.x, yawed_cam_pos.y, yawed_cam_pos.z),
+                        new Point3d(0d, 0d, 0d),
+                        new_up);
+                // See http://download.java.net/media/java3d/javadoc/1.5.1/javax/media/j3d/Transform3D.html#lookAt(javax.vecmath.Point3d, javax.vecmath.Point3d, javax.vecmath.Vector3d)
+                xform.invert();
                 camera.setTransform(xform);
 
-                this.light.setPosition((float)yawed_cam_pos.x, (float)yawed_cam_pos.y, (float)yawed_cam_pos.z);
+                // Billboardify visible nodes
+                Vector3d billboard_cam_target = new Vector3d(-yawed_cam_pos.z, yawed_cam_pos.y, -yawed_cam_pos.x);
+                for (InternalSelectable is : nodesToSelectables.values()) {
+                    is.billboardify(billboard_cam_target);
+                }
             }
         }
-    }
-
-    private static void clampRotation(Vector2d rotation_amount) {
-        rotation_amount.x = clampRotationAxis(rotation_amount.x, MAX_ROTATION_AMOUNT.x);
-        rotation_amount.y = clampRotationAxis(rotation_amount.y, MAX_ROTATION_AMOUNT.y);
-    }
-
-    private static double clampRotationAxis(double r, double max) {
-        if (Math.abs(r) > max) {
-            return max * Math.signum(r);
-        }
-        return r;
     }
 
     @Override
@@ -456,6 +433,9 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         for (InternalSelectable i : nodesToSelectables.values()) {
             i.setHovered(internal != null && i.equals(internal));
         }
+
+        // TODO: BUG > Transparency of something is jumping on first node selection after launch.  Investigate.
+        // Same if I select a damcon team too, something in depth buffer/render order is changing with pick
     }
 
     @Override
@@ -489,8 +469,6 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         // Apply new position to transformation and transformation back to camera
         xform.setTranslation(new_cam_pos);
         camera.setTransform(xform);
-
-        this.light.setPosition((float) new_cam_pos.x, (float) new_cam_pos.y, (float) new_cam_pos.z);
     }
 
     //////////////////
