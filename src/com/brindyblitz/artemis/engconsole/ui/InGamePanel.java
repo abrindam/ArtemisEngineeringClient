@@ -60,7 +60,7 @@ public class InGamePanel extends JPanel {
 		setLayout(null);
 		this.setSize(width, height);
 
-        AudioManager.initialize(new File(System.getProperty("user.dir"), "sfx").getPath());
+        AudioManager.initialize(new File(System.getProperty("user.dir"), "assets/sfx").getPath());
 
         SYSTEM_NAME_MAP.put(BEAMS, "Primary Beam");
         SYSTEM_NAME_MAP.put(TORPEDOES, "Torpedoes");

@@ -37,8 +37,8 @@ public class EnergySlider extends SystemStatusSlider {
     protected void loadIcons() {
         try {
             if (statusImageWithColor == null) {
-                statusImageWithColor = ImageIO.read(new File(System.getProperty("user.dir"), "/art/textures/status/energy/color.png"));
-                statusImageWhite = ImageIO.read(new File(System.getProperty("user.dir"), "/art/textures/status/energy/white.png"));
+                statusImageWithColor = ImageIO.read(new File(System.getProperty("user.dir"), "assets/art/textures/status/energy/color.png"));
+                statusImageWhite = ImageIO.read(new File(System.getProperty("user.dir"), "assets/art/textures/status/energy/white.png"));
             }
         } catch (IOException e) {
             System.err.println("Unable to locate system status icon(s)");

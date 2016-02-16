@@ -80,7 +80,7 @@ public abstract class InternalSelectable extends Internal {
 
     protected static BufferedImage loadImage(String relative_texture_path) {
         try {
-            BufferedImage bi = ImageIO.read(new File(System.getProperty("user.dir"), "/art/textures/" + relative_texture_path));
+            BufferedImage bi = ImageIO.read(new File(System.getProperty("user.dir"), "assets/art/textures/" + relative_texture_path));
             return bi;
         } catch (IOException e) {
             System.err.println("Unable to locate system team icon(s)");

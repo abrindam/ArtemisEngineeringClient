@@ -113,7 +113,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     }
 
     private void loadAndWireframeifyModel() {
-        String OBJ_PATH = new File(System.getProperty("user.dir"), "art/models/obj-from-blender/artemis2.obj").getPath();
+        String OBJ_PATH = new File(System.getProperty("user.dir"), "assets/art/models/obj-from-blender/artemis2.obj").getPath();
         try {
             this.scene = new ObjectFile(ObjectFile.RESIZE).load(OBJ_PATH);
             wireframeifyNonPickableScene(scene, LineAttributes.PATTERN_SOLID);
