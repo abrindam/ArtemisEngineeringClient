@@ -8,10 +8,16 @@ public abstract class AudioManager {
     private static HashMap<String, File> soundBank = new HashMap<>();
 
     public static void initialize(String path) {
-        File sfx = new File(path);
-        // TODO: SFX > make this recursive so I can better organize assets
-        for (File f : sfx.listFiles()) {
-            soundBank.put(f.getName(), f);
+        loadAssetsInDirectory(path, "");
+    }
+
+    private static void loadAssetsInDirectory(String path, String prefix) {
+        for (File f : new File(path).listFiles()) {
+            if (f.isDirectory()) {
+                loadAssetsInDirectory(f.getPath(), new File(prefix, f.getName()).getPath());
+            } else {
+                soundBank.put(new File(prefix, f.getName()).getPath().substring(1), f);
+            }
         }
     }
 

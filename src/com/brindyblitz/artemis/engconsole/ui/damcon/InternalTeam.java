@@ -48,7 +48,7 @@ public class InternalTeam extends InternalSelectable {
     public void setSelected(boolean selected) {
         if (selected) {
             System.out.println("Selecting " + this);
-            AudioManager.playSound("test_2amr4.75k_16b.wav");
+            AudioManager.playSound("voice/test_2amr4.75k_16b.wav");
         }
 
         this.selected = selected;
