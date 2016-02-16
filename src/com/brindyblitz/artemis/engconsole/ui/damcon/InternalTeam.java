@@ -2,6 +2,7 @@ package com.brindyblitz.artemis.engconsole.ui.damcon;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.EnhancedDamconStatus;
+import com.brindyblitz.artemis.utils.AudioManager;
 
 import javax.media.j3d.Appearance;
 import javax.media.j3d.QuadArray;
@@ -14,6 +15,8 @@ public class InternalTeam extends InternalSelectable {
     private EnhancedDamconStatus status;
     protected boolean selected = false;
 
+    private static final String HUD_ICON = "hud/inner_diamond.png",
+                                SELECTION_ICON = "hud/selection_diamond.png";
     private static final Color DAMCON_COLOR = new Color(230, 120, 0),
                                DAMCON_SELECTION_BOX_COLOR = new Color(255, 255, 255, 200);
     private static final int STANDARD_ALPHA = 175, HOVERED_ALPHA = 255;
@@ -23,12 +26,12 @@ public class InternalTeam extends InternalSelectable {
     private Texture selectionVisibleTexture, selectionInvisibleTexture;
 
     public InternalTeam(EngineeringConsoleManager.EnhancedDamconStatus damcon_status) {
-        super("hud/inner_diamond.png", DAMCON_COLOR, STANDARD_ALPHA, HOVERED_ALPHA, ICON_DIM);
+        super(HUD_ICON, DAMCON_COLOR, STANDARD_ALPHA, HOVERED_ALPHA, ICON_DIM);
 
         this.status = damcon_status;
 
         QuadArray selection_billboard = createBillboard();
-        BufferedImage selection_image = loadImage("hud/selection_diamond.png");
+        BufferedImage selection_image = loadImage(SELECTION_ICON);
         this.selectionVisibleTexture = loadTexture(selection_image, DAMCON_SELECTION_BOX_COLOR);
         this.selectionInvisibleTexture = loadTexture(selection_image, INVISIBLE_COLOR);
         Appearance appearance = generateAppearance(this.selectionInvisibleTexture);
@@ -45,6 +48,7 @@ public class InternalTeam extends InternalSelectable {
     public void setSelected(boolean selected) {
         if (selected) {
             System.out.println("Selecting " + this);
+            AudioManager.playSound("test_2amr4.75k_16b.wav");
         }
 
         this.selected = selected;

@@ -7,12 +7,9 @@ import java.util.HashMap;
 public abstract class AudioManager {
     private static HashMap<String, File> soundBank = new HashMap<>();
 
-    public AudioManager(String path) {
-        initialize(path);
-    }
-
     public static void initialize(String path) {
         File sfx = new File(path);
+        // TODO: SFX > make this recursive so I can better organize assets
         for (File f : sfx.listFiles()) {
             soundBank.put(f.getName(), f);
         }
