@@ -60,7 +60,7 @@ public class InGamePanel extends JPanel {
 		setLayout(null);
 		this.setSize(width, height);
 
-        AudioManager.initialize(new File(System.getProperty("user.dir"), "assets/sfx").getPath());
+        audioManager = new AudioManager(new File(System.getProperty("user.dir"), "assets/sfx").getPath());
 
         SYSTEM_NAME_MAP.put(BEAMS, "Primary Beam");
         SYSTEM_NAME_MAP.put(TORPEDOES, "Torpedoes");
@@ -86,7 +86,7 @@ public class InGamePanel extends JPanel {
 		PresetPanel presetPanel = new PresetPanel(this.presetManager);
 		this.add(presetPanel).setLocation(this.getWidth() - presetPanel.getWidth(), PRESET_Y);
 		
-		this.damcon = new Damcon(engineeringConsoleManager);
+		this.damcon = new Damcon(engineeringConsoleManager, this.audioManager);
 		this.add(damcon.getCanvas()).setLocation(10, DAMCON_Y);
 
 		EnergySlider energy_slider = new EnergySlider(null, engineeringConsoleManager);
@@ -94,7 +94,7 @@ public class InGamePanel extends JPanel {
 	}
 
 	private void addSlider(ShipSystem system, String label, InputMapping mapping) {
-		SystemSlider slider = new SystemSlider(system, label, mapping, this.engineeringConsoleManager);
+		SystemSlider slider = new SystemSlider(system, label, mapping, this.engineeringConsoleManager, this.audioManager);
 		this.add(slider).setLocation(this.numSliders * SLIDER_OFFSET_MULTIPLIER + SLIDER_OFFSET_ADDITIONAL, MAIN_SLIDER_Y);
 
 		SystemHeatSlider systemHeatSlider = new SystemHeatSlider(system, this.engineeringConsoleManager);

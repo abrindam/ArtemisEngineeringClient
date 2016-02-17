@@ -3,15 +3,21 @@ package com.brindyblitz.artemis.utils;
 import javax.sound.sampled.*;
 import java.io.File;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
-public abstract class AudioManager {
-    private static HashMap<String, File> soundBank = new HashMap<>();
+public class AudioManager {
+    private HashMap<String, File> soundBank = new HashMap<>();
+    private SoundQueue soundQueue;
 
-    public static void initialize(String path) {
+    public AudioManager(String path) {
         loadAssetsInDirectory(path, "");
+
+        soundQueue = new SoundQueue();
+        new Thread(soundQueue).start();
     }
 
-    private static void loadAssetsInDirectory(String path, String prefix) {
+    private void loadAssetsInDirectory(String path, String prefix) {
         for (File f : new File(path).listFiles()) {
             if (f.isDirectory()) {
                 loadAssetsInDirectory(f.getPath(), new File(prefix, f.getName()).getPath());
@@ -21,20 +27,63 @@ public abstract class AudioManager {
         }
     }
 
-    public static void playSound(String name) {
+    private File lookupSound(String name) {
+        File sound = soundBank.get(name);
+        if (sound == null) {
+            throw new RuntimeException("Unable to locate sound effect '" + name + "'");
+        }
+        return sound;
+    }
+
+    public void playSound(String name) {
         try
         {
-            File sound = soundBank.get(name);
-            if (sound == null) {
-                throw new RuntimeException("Unable to locate sound effect '" + name + "'");
-            }
-
+            File sound = lookupSound(name);
             AudioInputStream ais = AudioSystem.getAudioInputStream(sound);
             Clip clip = AudioSystem.getClip();
             clip.open(ais);
             clip.start();
         } catch (Exception e) {  // LineUnavailableException, IOException, UnsupportedAudioFileException
             e.printStackTrace(System.err);
+        }
+    }
+
+    public void queueSound(String name) {
+        this.soundQueue.queueSound(name);
+    }
+
+    private class SoundQueue implements Runnable {
+        private Queue<File> queue = new LinkedList<>();
+        private Clip playing = null;
+
+        public void queueSound(String name) {
+            queue.add(lookupSound(name));
+        }
+
+        public void run() {
+            while (true) {
+                if (!queue.isEmpty()) {
+                    if (playing == null || !playing.isActive()) {
+                        File next = queue.poll();
+                        try {
+                            AudioInputStream ais = AudioSystem.getAudioInputStream(next);
+                            playing = AudioSystem.getClip();
+                            playing.open(ais);
+                            playing.start();
+                        } catch (Exception e) { // LineUnavailableException, IOException, UnsupportedAudioFileException
+                            e.printStackTrace(System.err);
+                            break;
+                        }
+                    }
+                }
+
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace(System.err);
+                    break;
+                }
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.brindyblitz.artemis.engconsole.ui.damcon;
 
+import com.brindyblitz.artemis.utils.AudioManager;
 import com.sun.j3d.utils.geometry.Primitive;
 import com.sun.j3d.utils.image.TextureLoader;
 
@@ -36,7 +37,10 @@ public abstract class InternalSelectable extends Internal {
     private int standardAlpha, hoveredAlpha;
 
     public InternalSelectable(String relative_texture_path, Color color,
-                              int standard_alpha, int hovered_alpha, float icon_dimension) {
+                              int standard_alpha, int hovered_alpha, float icon_dimension,
+                              AudioManager audio_manager) {
+        super(audio_manager);
+
         this.standardAlpha = standard_alpha;
         this.hoveredAlpha = hovered_alpha;
         this.iconDimension = icon_dimension;

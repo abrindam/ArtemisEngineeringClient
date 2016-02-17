@@ -25,8 +25,8 @@ public class InternalTeam extends InternalSelectable {
     private Shape3D selectionShape;
     private Texture selectionVisibleTexture, selectionInvisibleTexture;
 
-    public InternalTeam(EngineeringConsoleManager.EnhancedDamconStatus damcon_status) {
-        super(HUD_ICON, DAMCON_COLOR, STANDARD_ALPHA, HOVERED_ALPHA, ICON_DIM);
+    public InternalTeam(EngineeringConsoleManager.EnhancedDamconStatus damcon_status, AudioManager audio_manager) {
+        super(HUD_ICON, DAMCON_COLOR, STANDARD_ALPHA, HOVERED_ALPHA, ICON_DIM, audio_manager);
 
         this.status = damcon_status;
 
@@ -48,7 +48,7 @@ public class InternalTeam extends InternalSelectable {
     public void setSelected(boolean selected) {
         if (selected) {
             System.out.println("Selecting " + this);
-            AudioManager.playSound("voice/test_2amr4.75k_16b.wav");
+            audioManager.queueSound("voice/on_select/" + (this.getTeamID() + 1) + ".wav");
         }
 
         this.selected = selected;

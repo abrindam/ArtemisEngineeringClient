@@ -35,6 +35,7 @@ import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.Events;
 
 // See: http://download.java.net/media/java3d/javadoc/1.5.1/
+import com.brindyblitz.artemis.utils.AudioManager;
 import com.sun.j3d.loaders.IncorrectFormatException;
 import com.sun.j3d.loaders.ParsingErrorException;
 import com.sun.j3d.loaders.Scene;
@@ -88,8 +89,11 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     private BranchGroup damconBranchGroup;
     private InternalTeam selected = null;
 
-    public Damcon(EngineeringConsoleManager engineeringConsoleManager) {
+    private AudioManager audioManager;
+
+    public Damcon(EngineeringConsoleManager engineeringConsoleManager, AudioManager audio_manager) {
         this.engineeringConsoleManager = engineeringConsoleManager;
+        this.audioManager = audio_manager;
 
         loadAndWireframeifyModel();
         createUniverseAndScene();        
@@ -129,7 +133,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         node_branchgroup.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
 
         for (VesselNode vn : this.engineeringConsoleManager.getGrid()) {
-            InternalNode in = new InternalNode(vn, InternalNode.isSystemNode(vn));
+            InternalNode in = new InternalNode(vn, InternalNode.isSystemNode(vn), audioManager);
             internalNodes.put(vn.getGridCoord(), in);
             nodesToSelectables.put(in.getShape(), in);
             node_branchgroup.addChild(in.getBranchGroup());
@@ -153,7 +157,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
                 InternalTeam it = internalTeams.get(damconStatus.getTeamNumber());
 
                 if (it == null) {
-                    it = new InternalTeam(damconStatus);
+                    it = new InternalTeam(damconStatus, audioManager);
                     internalTeams.put(damconStatus.getTeamNumber(), it);
                     nodesToSelectables.put(it.getShape(), it);
                     damconBranchGroup.addChild(it.getBranchGroup());
@@ -169,7 +173,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         BranchGroup corridor_bg = new BranchGroup();
 
         for (VesselNodeConnection vnc : this.engineeringConsoleManager.getGridConnections()) {
-            InternalConnection ih = new InternalConnection(vnc);
+            InternalConnection ih = new InternalConnection(vnc, audioManager);
             internalConnections.add(ih);
             Node node = ih.getShape();
             corridor_bg.addChild(node);

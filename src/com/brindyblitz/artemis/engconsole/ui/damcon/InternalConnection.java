@@ -1,5 +1,6 @@
 package com.brindyblitz.artemis.engconsole.ui.damcon;
 
+import com.brindyblitz.artemis.utils.AudioManager;
 import net.dhleong.acl.vesseldata.VesselNodeConnection;
 
 import javax.media.j3d.*;
@@ -13,7 +14,9 @@ public class InternalConnection extends Internal {
     private static final float ALPHA_STANDARD = 0.1F, ALPHA_HOVERED = 0.9f;
     // TODO: > need to do this for hallway selection as well, for picking even if they're not visible?
 
-    public InternalConnection(VesselNodeConnection vessel_node_connection) {
+    public InternalConnection(VesselNodeConnection vessel_node_connection, AudioManager audio_manager) {
+        super(audio_manager);
+
         this.vesselNodeConnection = vessel_node_connection;
 
         lineArray = new LineArray(2, LineArray.COORDINATES);

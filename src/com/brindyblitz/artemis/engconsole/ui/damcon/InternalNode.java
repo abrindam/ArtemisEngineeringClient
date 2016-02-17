@@ -1,5 +1,6 @@
 package com.brindyblitz.artemis.engconsole.ui.damcon;
 
+import com.brindyblitz.artemis.utils.AudioManager;
 import net.dhleong.acl.util.GridCoord;
 import net.dhleong.acl.vesseldata.VesselNode;
 
@@ -19,12 +20,13 @@ public class InternalNode extends InternalSelectable {
     private static final float ICON_DIM_SYSTEM_NODE = 0.05f,
                                ICON_DIM_NON_SYSTEM_NODE = 0.03f;
 
-    public InternalNode(VesselNode vessel_node, boolean is_system_node) {
+    public InternalNode(VesselNode vessel_node, boolean is_system_node, AudioManager audio_manager) {
         super(HUD_ICON,
               is_system_node ? SYSTEM_NODE_COLOR : NON_SYSTEM_NODE_COLOR,
               is_system_node ? SYSTEM_NODE_STANDARD_ALPHA : NON_SYSTEM_NODE_STANDARD_ALPHA,
               is_system_node ? SYSTEM_NODE_HOVERED_ALPHA : NON_SYSTEM_NODE_HOVERED_ALPHA,
-              is_system_node ? ICON_DIM_SYSTEM_NODE : ICON_DIM_NON_SYSTEM_NODE);
+              is_system_node ? ICON_DIM_SYSTEM_NODE : ICON_DIM_NON_SYSTEM_NODE,
+              audio_manager);
 
         this.vesselNode = vessel_node;
         this.isSystemNode = is_system_node;

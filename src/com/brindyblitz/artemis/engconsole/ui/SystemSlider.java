@@ -32,6 +32,8 @@ public class SystemSlider extends JPanel implements MouseWheelListener {
 
     private long lastScrollTime = System.currentTimeMillis();
 
+	private AudioManager audioManager;
+
 	private static final Color
             SLIDER_BACKGROUND = Color.BLACK,
             DIVIDER = Color.LIGHT_GRAY,
@@ -75,12 +77,15 @@ public class SystemSlider extends JPanel implements MouseWheelListener {
 
 	private static final Color[] NOTCH_COLORS = new Color[]{Color.GREEN, new Color(255, 180, 0), Color.RED};
 
-	public SystemSlider(ShipSystem system, String label, InputMapping input_mapping, EngineeringConsoleManager engineeringConsoleManager) {
+	public SystemSlider(ShipSystem system, String label, InputMapping input_mapping,
+						EngineeringConsoleManager engineeringConsoleManager,
+						AudioManager audio_manager) {
 		this.system = system;
 		this.label = label;
 		this.inputMapping = input_mapping;
 		this.engineeringConsoleManager = engineeringConsoleManager;
 		this.systemStatusRenderer = new SystemStatusRenderer(engineeringConsoleManager);
+		this.audioManager = audio_manager;
 
 		this.setSize(WIDGET_WIDTH, WIDGET_HEIGHT);
 		this.setBackground(new Color(0, 0, 0, 0));
@@ -232,7 +237,7 @@ public class SystemSlider extends JPanel implements MouseWheelListener {
 	}
 
     private void handleInput(boolean positive, boolean shift_down) {
-		AudioManager.playSound("beep.wav");
+		audioManager.playSound("beep.wav");
 
         if (shift_down) {
             this.engineeringConsoleManager.incrementSystemCoolantAllocated(this.system, positive ? COOLANT_INCREMENT : -COOLANT_INCREMENT);
