@@ -1,5 +1,8 @@
 package com.brindyblitz.artemis.utils;
 
+import com.brindyblitz.artemis.engconsole.ui.damcon.Internal;
+import com.brindyblitz.artemis.engconsole.ui.damcon.InternalTeam;
+
 import javax.sound.sampled.*;
 import java.io.File;
 import java.util.HashMap;
@@ -22,7 +25,12 @@ public class AudioManager {
             if (f.isDirectory()) {
                 loadAssetsInDirectory(f.getPath(), new File(prefix, f.getName()).getPath());
             } else {
-                soundBank.put(new File(prefix, f.getName()).getPath().substring(1), f);
+                String name = new File(prefix, f.getName()).getPath().substring(1);
+                soundBank.put(name, f);
+
+                if (path.endsWith("/voice/on_order")) {
+                    InternalTeam.ON_ORDER_RESPONSES.put(new Integer(InternalTeam.ON_ORDER_RESPONSES.size()), name);
+                }
             }
         }
     }

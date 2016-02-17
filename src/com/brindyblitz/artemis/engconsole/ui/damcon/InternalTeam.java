@@ -10,6 +10,10 @@ import javax.media.j3d.Shape3D;
 import javax.media.j3d.Texture;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class InternalTeam extends InternalSelectable {
     private EnhancedDamconStatus status;
@@ -24,6 +28,8 @@ public class InternalTeam extends InternalSelectable {
 
     private Shape3D selectionShape;
     private Texture selectionVisibleTexture, selectionInvisibleTexture;
+
+    public static Map<Integer, String> ON_ORDER_RESPONSES = new HashMap<>();
 
     public InternalTeam(EngineeringConsoleManager.EnhancedDamconStatus damcon_status, AudioManager audio_manager) {
         super(HUD_ICON, DAMCON_COLOR, STANDARD_ALPHA, HOVERED_ALPHA, ICON_DIM, audio_manager);
