@@ -55,6 +55,10 @@ public class InternalTeam extends InternalSelectable {
         if (selected) {
             System.out.println("Selecting " + this);
             audioManager.queueSound("voice/on_select/" + (this.getTeamID() + 1) + ".wav");
+
+            // Use this if you want to hear all of the responses at random
+            // int random = 1 + (int)(Math.random() * 9d);
+            // audioManager.queueSound("voice/on_select/" + random + ".wav");
         }
 
         this.selected = selected;
