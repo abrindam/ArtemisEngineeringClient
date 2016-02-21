@@ -100,7 +100,7 @@ public abstract class SystemStatusSlider extends JPanel {
         // g.setColor(Color.WHITE);
         g.setColor(getStatusColor());
 
-        String status_pct_str = "" + getStatusPctInt() + "%";    // This won't pad zeroes
+        String status_pct_str = "" + getStatusPctStr() + "%";    // This won't pad zeroes
         // String status_pct_str = String.format("%03d%%", getStatusPctInt());
 
         // g.getFontMetrics().getStringBounds() produces unreliable height values for some reason
@@ -122,6 +122,10 @@ public abstract class SystemStatusSlider extends JPanel {
                 Color.getHSBColor(getEmptyHue() - (getEmptyHue() - getFullHue()) * getStatusScaleFactor(), 1, 1);
     }
 
+    protected String getStatusPctStr() {
+    	return String.valueOf(this.getStatusPctInt());
+    }
+    
     protected abstract int getStatusPctInt();
     protected abstract void loadIcons();
     protected abstract BufferedImage getStatusImageWithColor();
