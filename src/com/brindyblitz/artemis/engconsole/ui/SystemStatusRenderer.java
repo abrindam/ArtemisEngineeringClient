@@ -17,8 +17,8 @@ public class SystemStatusRenderer {
 	}
 	
 	public List<Interval> getSystemStatusAsIntervals(ShipSystem system) {
-		int energy = engineeringConsoleManager.getSystemEnergyAllocated(system);
-		int coolant = engineeringConsoleManager.getSystemCoolantAllocated(system);
+		int energy = engineeringConsoleManager.getSystemEnergyAllocated().get().get(system);
+		int coolant = engineeringConsoleManager.getSystemCoolantAllocated().get().get(system);
 		
 		int cooledEnergyThreshold = SystemStatusRenderer.getCooledEnergyThreshold(coolant);
 		

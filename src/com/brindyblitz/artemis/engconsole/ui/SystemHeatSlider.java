@@ -22,11 +22,12 @@ public class SystemHeatSlider extends SystemStatusSlider {
 
     public SystemHeatSlider(ShipSystem system, EngineeringConsoleManager engineeringConsoleManager) {
         super(system, engineeringConsoleManager, WIDGET_WIDTH, WIDGET_HEIGHT, SLIDER_WIDTH, SLIDER_HEIGHT);
+        this.engineeringConsoleManager.getSystemHeat().onChange(() -> this.repaint());
     }
 
     @Override
     protected int getStatusPctInt() {
-        return this.engineeringConsoleManager.getSystemHeat(this.system);
+        return this.engineeringConsoleManager.getSystemHeat().get().get(this.system);
     }
 
     @Override

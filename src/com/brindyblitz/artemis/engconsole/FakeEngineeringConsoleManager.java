@@ -8,6 +8,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer;
+import com.brindyblitz.artemis.utils.newton.DerivedProperty;
+import com.brindyblitz.artemis.utils.newton.Property;
+import com.brindyblitz.artemis.utils.newton.SettableProperty;
 
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
@@ -15,29 +18,32 @@ import net.dhleong.acl.util.GridCoord;
 
 public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager {
 	private static final int MAX_COOLANT = 8;
-	private Map<ShipSystem, Integer> energyAllocated = new HashMap<>();
-	private Map<ShipSystem, Integer> coolantAllocated = new HashMap<>();
-	private Map<ShipSystem, Integer> heat = new HashMap<>();
-	private Map<GridCoord, Float> gridHealth = new HashMap<>();
-	private GameState gameState = GameState.PREGAME;
+	
+	private static final Map<ShipSystem, Integer> DEFAULT_ENERGY_ALLOCATED = new HashMap<>();
+	private static final Map<ShipSystem, Integer> DEFAULT_COOLANT_ALLOCATED = new HashMap<>();
+	private static final Map<ShipSystem, Integer> DEFAULT_HEAT = new HashMap<>();
+	static {
+		for (ShipSystem system: ShipSystem.values()) {
+			DEFAULT_ENERGY_ALLOCATED.put(system, 100);
+			DEFAULT_COOLANT_ALLOCATED.put(system, 0);
+			DEFAULT_HEAT.put(system, 0);
+		}
+	}
 	
 	public FakeEngineeringConsoleManager() {
-		for (ShipSystem system: ShipSystem.values()) {
-			energyAllocated.put(system, 100);
-			coolantAllocated.put(system, 0);
-			heat.put(system, 0);
-		}
 		
+		Map<GridCoord, Float> gridHealth = new HashMap<>();
 		for (GridCoord gridCoord : this.getShipSystemGrid().getCoords()) {
 			gridHealth.put(gridCoord, 1.0f);
 		}
+		this.gridHealth.set(gridHealth);
 		
 		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new HeatAndDamageGenerator(), 0, 1, TimeUnit.SECONDS);
 		Executors.newSingleThreadScheduledExecutor().schedule(() -> {
-			this.gameState = GameState.INGAME;
-			eventEmitter.emit(Events.GAME_STATE_CHANGE);
+			this.gameState.set(GameState.INGAME);
 		}, 2, TimeUnit.SECONDS);
 	}
+	
 	
 	@Override
 	public void connect(String host) {
@@ -49,71 +55,102 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		//intentionally do nothing
 	}
 	
-	@Override
-	public GameState getGameState() {
-		return this.gameState;
-	}
+	
 	
 	@Override
-	public int getSystemEnergyAllocated(ShipSystem system) {
-		return energyAllocated.get(system);
+	public Property<GameState> getGameState() {
+		return gameState;
 	}
-
-	@Override
-	public int getSystemCoolantAllocated(ShipSystem system) {
-		return coolantAllocated.get(system);
-	}
+	private final SettableProperty<GameState> gameState = new SettableProperty<>(GameState.PREGAME);
+	
 	
 	@Override
-	public int getSystemHeat(ShipSystem system) {
-		return heat.get(system);
+	public Property<Map<ShipSystem, Integer>> getSystemEnergyAllocated() {
+		return systemEnergyAllocated;
 	}
+	private final SettableProperty<Map<ShipSystem, Integer>> systemEnergyAllocated = new SettableProperty<>(DEFAULT_ENERGY_ALLOCATED);
 	
 	@Override
-	public int getSystemHealth(ShipSystem system) {
-		float maxHealth = 0f;
-		float currentHealth = 0f;
-		for (GridCoord gridCoord : this.getShipSystemGrid().getCoordsFor(system)) {
-			maxHealth += 1.0;
-			currentHealth += gridHealth.get(gridCoord);
+	public Property<Map<ShipSystem, Integer>> getSystemCoolantAllocated() {
+		return systemCoolantAllocated;
+	}
+	private final SettableProperty<Map<ShipSystem, Integer>> systemCoolantAllocated = new SettableProperty<>(DEFAULT_COOLANT_ALLOCATED);
+	
+	@Override
+	public Property<Map<ShipSystem, Integer>> getSystemHeat() {
+		return systemHeat;
+	}
+	private final SettableProperty<Map<ShipSystem, Integer>> systemHeat = new SettableProperty<>(DEFAULT_HEAT);
+	
+	@Override
+	public Property<Map<GridCoord, Float>> getGridHealth() {
+		return gridHealth;
+	}
+	private final SettableProperty<Map<GridCoord, Float>> gridHealth = new SettableProperty<>(new HashMap<>());
+	
+	@Override
+	public Property<Map<ShipSystem, Integer>> getSystemHealth() {
+		return systemHealth;
+	}
+	private final DerivedProperty<Map<ShipSystem, Integer>> systemHealth = new DerivedProperty<>( () -> {
+		
+		Map<ShipSystem, Integer> result = new HashMap<>();
+		for(ShipSystem system: ShipSystem.values()) {
+			float maxHealth = 0f;
+			float currentHealth = 0f;
+			for (GridCoord gridCoord : this.getShipSystemGrid().getCoordsFor(system)) {
+				maxHealth += 1.0;
+				Float gridCoordHealth = gridHealth.get().get(gridCoord);
+				currentHealth += (gridCoordHealth != null) ? gridCoordHealth : 1.0f;
+			}
+			
+			result.put(system, (int) (currentHealth/maxHealth * 100));
 		}
 		
-		return (int) (currentHealth/maxHealth * 100);
-	}
-	
-	@Override
-	public int getTotalCoolantRemaining() {
-		return MAX_COOLANT - coolantAllocated.values().stream().mapToInt(Integer::intValue).sum();
-	}
-	
-	@Override
-	public Map<GridCoord, Float> getGridHealth() {
-		return this.gridHealth;
-	}
-	
-	
+		return result;
+	}, gridHealth);
 
 	@Override
-	protected List<DamconStatus> getRawDamconStatus() {
-		// return Arrays.asList(new DamconStatus(0, 6, 2, 2, 2, 2, 2, 3, 0.3f));
-		return Arrays.asList(new DamconStatus(0, 6, 2, 0, 6, 2, 0, 6, 0f));
+	public Property<Integer> getTotalShipCoolant() {
+		return totalShipCoolant;
 	}
+	private final SettableProperty<Integer> totalShipCoolant =  new SettableProperty<>(MAX_COOLANT);	
 	
 	@Override
-	public float getTotalEnergyRemaining() {
-		return 1000;
+	public Property<Integer> getTotalCoolantRemaining() {
+		return totalCoolantRemaining;
 	}
+	private final DerivedProperty<Integer> totalCoolantRemaining = new DerivedProperty<>( () -> {
+		return totalShipCoolant.get() - systemCoolantAllocated.get().values().stream().mapToInt(Integer::intValue).sum();
+	}, systemCoolantAllocated, totalShipCoolant);
 
+	
+	
+	@Override
+	protected Property<List<DamconStatus>> getRawDamconStatus() {
+		return damconStatus;
+	}
+	private final SettableProperty<List<DamconStatus>> damconStatus = new SettableProperty<>(Arrays.asList(new DamconStatus(0, 6, 2, 0, 6, 2, 0, 6, 0f)));
+	
+	@Override
+	public Property<Float> getTotalEnergyRemaining() {
+		return totalEnergyRemaining;
+	}
+	private final SettableProperty<Float> totalEnergyRemaining = new SettableProperty<>(1000f);
+	
+	
 	@Override
 	protected void updateSystemEnergyAllocated(ShipSystem system, int amount) {
+		Map<ShipSystem, Integer> energyAllocated = new HashMap<>(FakeEngineeringConsoleManager.this.systemEnergyAllocated.get());
 		energyAllocated.put(system, amount);
-		fireChange();		
+		systemEnergyAllocated.set(energyAllocated);
 	}
 	
 	@Override
 	protected void updateSystemCoolantAllocated(ShipSystem system, int amount) {
+		Map<ShipSystem, Integer> coolantAllocated = new HashMap<>(FakeEngineeringConsoleManager.this.systemCoolantAllocated.get());
 		coolantAllocated.put(system, amount);
-		fireChange();
+		systemCoolantAllocated.set(coolantAllocated);
 		
 	}
 	
@@ -122,24 +159,22 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		System.out.println("Moving DAMCON team " + teamId + " to grid " + coord);
 		// Not supported for now		
 	}
-
-	@Override
-	public int getTotalShipCoolant() {
-		return MAX_COOLANT;
-	}
 	
 	public class HeatAndDamageGenerator implements Runnable {
 		@Override
 		public void run() {
+			Map<ShipSystem, Integer> heat = new HashMap<>(FakeEngineeringConsoleManager.this.systemHeat.get());
+			Map<GridCoord, Float> gridHealth = new HashMap<>(FakeEngineeringConsoleManager.this.gridHealth.get());
 			for (ShipSystem system: ShipSystem.values()) {
-				int energyAllocated = getSystemEnergyAllocated(system);
-				int energyCompensated = SystemStatusRenderer.getCooledEnergyThreshold(getSystemCoolantAllocated(system));
+				int energyAllocated = getSystemEnergyAllocated().get().get(system);
+				int energyCompensated = SystemStatusRenderer.getCooledEnergyThreshold(getSystemCoolantAllocated().get().get(system));
 				int effectiveEnergy = energyAllocated - 100 - (energyCompensated - 100);
 				
 				if (effectiveEnergy != 0) {
-					int currentHeat = getSystemHeat(system);
+					int currentHeat = getSystemHeat().get().get(system);
 					int newHeat = Math.max(0, Math.min(100, (int) (currentHeat + effectiveEnergy * 0.05)));
 					if (newHeat == 100) {
+						
 						for (GridCoord gridCoord : getShipSystemGrid().getCoordsFor(system)) {
 							if (gridHealth.get(gridCoord) != 0f) {
 								gridHealth.put(gridCoord, 0f);
@@ -149,9 +184,10 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 						}
 					}
 					heat.put(system, newHeat);
-					fireChange();						
 				}
 			}
+			FakeEngineeringConsoleManager.this.systemHeat.set(heat);
+			FakeEngineeringConsoleManager.this.gridHealth.set(gridHealth);
 		}
 	}
 }

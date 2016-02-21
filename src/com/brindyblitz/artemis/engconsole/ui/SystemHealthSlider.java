@@ -22,11 +22,12 @@ public class SystemHealthSlider extends SystemStatusSlider {
 
     public SystemHealthSlider(ShipSystem system, EngineeringConsoleManager engineeringConsoleManager) {
         super(system, engineeringConsoleManager, WIDGET_WIDTH, WIDGET_HEIGHT, SLIDER_WIDTH, SLIDER_HEIGHT);
+        this.engineeringConsoleManager.getSystemHealth().onChange(() -> this.repaint());
     }
 
     @Override
     protected int getStatusPctInt() {
-        return this.engineeringConsoleManager.getSystemHealth(this.system);
+        return this.engineeringConsoleManager.getSystemHealth().get().get(this.system);
     }
 
     @Override

@@ -9,7 +9,6 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
-import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.Events;
 
 public class CoolantRemainingSlider extends JPanel {
 
@@ -36,7 +35,9 @@ public class CoolantRemainingSlider extends JPanel {
 
         this.setBackground(new Color(0, 0, 0, 0));
 
-        this.engineeringConsoleManager.onEvent(Events.CHANGE, () -> this.repaint());
+        this.engineeringConsoleManager.getTotalShipCoolant().onChange(() -> this.repaint());
+        this.engineeringConsoleManager.getTotalCoolantRemaining().onChange(() -> this.repaint());
+        
 	}
 	
 	@Override
@@ -59,12 +60,12 @@ public class CoolantRemainingSlider extends JPanel {
 	}
 
 	private void drawSlider(Graphics2D g) {
-		int total_coolant = this.engineeringConsoleManager.getTotalShipCoolant();
+		int total_coolant = this.engineeringConsoleManager.getTotalShipCoolant().get();
 		if (total_coolant <= 0) {
 			return;
 		}
 
-		int remaining_coolant = this.engineeringConsoleManager.getTotalCoolantRemaining();
+		int remaining_coolant = this.engineeringConsoleManager.getTotalCoolantRemaining().get();
         int used_coolant = total_coolant - remaining_coolant;
 		int bubbleOffset = this.height / total_coolant;
 

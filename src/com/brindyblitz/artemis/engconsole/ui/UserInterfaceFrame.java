@@ -61,19 +61,19 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 		this.setVisible(true);
 		
 		updateCurrentPanel();
-		engineeringConsoleManager.onEvent(Events.GAME_STATE_CHANGE, () -> {
-			updateCurrentPanel();
-		});
+		
+		engineeringConsoleManager.getGameState().onChange(() -> this.updateCurrentPanel());
+		
 	}
 	
 	private void updateCurrentPanel() {
-		if (engineeringConsoleManager.getGameState() == GameState.DISCONNECTED) {
+		if (engineeringConsoleManager.getGameState().get() == GameState.DISCONNECTED) {
 			switchToConnectPanel();
 		}
-		else if (engineeringConsoleManager.getGameState() == GameState.PREGAME) {
+		else if (engineeringConsoleManager.getGameState().get() == GameState.PREGAME) {
 			switchToPreGamePanel();
 		}
-		else if (engineeringConsoleManager.getGameState() == GameState.INGAME) {
+		else if (engineeringConsoleManager.getGameState().get() == GameState.INGAME) {
 			switchToInGamePanel();			
 		}
 //		switchToConnectPanel();

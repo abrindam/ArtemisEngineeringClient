@@ -25,17 +25,18 @@ public class EnergySlider extends SystemStatusSlider {
 
     public EnergySlider(ShipSystem system, EngineeringConsoleManager engineeringConsoleManager) {
         super(system, engineeringConsoleManager, WIDGET_WIDTH, WIDGET_HEIGHT, SLIDER_WIDTH, SLIDER_HEIGHT);
+        this.engineeringConsoleManager.getTotalEnergyRemaining().onChange(() -> this.repaint());
     }
 
     @Override
     protected int getStatusPctInt() {
         // TODO: TESTME
-        return (int)(100 * (this.engineeringConsoleManager.getTotalEnergyRemaining() / 1000f));
+        return (int)(100 * (this.engineeringConsoleManager.getTotalEnergyRemaining().get() / 1000f));
     }
     
     @Override
     protected String getStatusPctStr() {
-    	return String.format("%.1f", 100 * (this.engineeringConsoleManager.getTotalEnergyRemaining() / 1000f));
+    	return String.format("%.1f", 100 * (this.engineeringConsoleManager.getTotalEnergyRemaining().get() / 1000f));
     }
 
     @Override

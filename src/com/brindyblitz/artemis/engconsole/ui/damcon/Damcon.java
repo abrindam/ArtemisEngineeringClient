@@ -10,9 +10,13 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.TimerTask;
 
 import javax.media.j3d.Appearance;
 import javax.media.j3d.BranchGroup;
@@ -34,8 +38,6 @@ import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
-import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.Events;
-
 // See: http://download.java.net/media/java3d/javadoc/1.5.1/
 import com.brindyblitz.artemis.utils.AudioManager;
 import com.sun.j3d.loaders.IncorrectFormatException;
@@ -150,25 +152,25 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         damconBranchGroup.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
         this.universe.addBranchGraph(damconBranchGroup);
 
-        this.engineeringConsoleManager.onEvent(Events.CHANGE, () -> {
-            this.dirty  = true;
+        this.engineeringConsoleManager.getGridHealth().onChange(() -> {
+        	doUpdateHealth();
         });
         
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
-        	if (this.dirty) {
-        		this.dirty = false;
-        		this.doUpdate();
-        	}
-        }, 0, 100, TimeUnit.MILLISECONDS);
+        this.engineeringConsoleManager.getDamconTeams().onChange(() -> {
+        	doUpdateTeams();
+        });
     }
     
-    private void doUpdate() {
-    	for (Map.Entry<GridCoord, Float> entry : engineeringConsoleManager.getGridHealth().entrySet()) {
+    private void doUpdateHealth() {
+    	for (Map.Entry<GridCoord, Float> entry : engineeringConsoleManager.getGridHealth().get().entrySet()) {
             InternalNode node = internalNodes.get(entry.getKey());
             node.updateHealth(entry.getValue());
         }
+    }
+    
+    private void doUpdateTeams() {
 
-        for (EngineeringConsoleManager.EnhancedDamconStatus damconStatus : engineeringConsoleManager.getDamconTeams()) {
+        for (EngineeringConsoleManager.EnhancedDamconStatus damconStatus : engineeringConsoleManager.getDamconTeams().get()) {
             InternalTeam it = internalTeams.get(damconStatus.getTeamNumber());
 
             if (it == null) {

@@ -44,8 +44,6 @@ public abstract class SystemStatusSlider extends JPanel {
         this.setBackground(new Color(0, 0, 0, 0));
 
         loadIcons();
-
-        this.engineeringConsoleManager.onEvent(Events.CHANGE, () -> this.repaint());
     }
 
     @Override

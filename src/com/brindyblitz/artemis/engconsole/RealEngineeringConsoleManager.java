@@ -12,6 +12,9 @@ import com.brindyblitz.artemis.protocol.NotifyingSystemManager;
 import com.brindyblitz.artemis.protocol.WorldAwareRegularServer;
 import com.brindyblitz.artemis.protocol.WorldAwareRobustProxyListener;
 import com.brindyblitz.artemis.protocol.WorldAwareServer;
+import com.brindyblitz.artemis.utils.newton.DerivedProperty;
+import com.brindyblitz.artemis.utils.newton.ObservableAdapter;
+import com.brindyblitz.artemis.utils.newton.Property;
 
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
@@ -24,8 +27,9 @@ import net.dhleong.acl.world.Artemis;
 public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager {
 
 	private WorldAwareServer worldAwareServer;
-	private GameState gameState = GameState.DISCONNECTED;
 	private boolean proxy;
+	private ObservableAdapter connectionStateChangeObservable = new ObservableAdapter();
+	private ObservableAdapter systemManagerChangeObservable = new ObservableAdapter();
 
 	public RealEngineeringConsoleManager(boolean proxy) {
 		this.proxy = proxy;		
@@ -47,122 +51,190 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 				return;
 			}			
 		}
-		this.worldAwareServer.onEvent(WorldAwareServer.Events.CONNECTION_STATE_CHANGE, () -> this.updateGameState());
-		this.worldAwareServer.getSystemManager().events.on(NotifyingSystemManager.Events.CHANGE, () -> this.systemManagerChange());
+		connectionStateChangeObservable.triggerChange();
+		this.worldAwareServer.onEvent(WorldAwareServer.Events.CONNECTION_STATE_CHANGE, () -> connectionStateChangeObservable.triggerChange());
+		this.worldAwareServer.getSystemManager().events.on(NotifyingSystemManager.Events.CHANGE, () -> systemManagerChangeObservable.triggerChange());
 		this.worldAwareServer.getSystemManager().setSystemGrid(getShipSystemGrid());
-		updateGameState();
-	}
-	
-	private void systemManagerChange() {
-		this.fireChange();
-		this.updateGameState();
-	}
-	
-	private void updateGameState() {
-		GameState oldGameState = gameState;
-		if (!worldAwareServer.isConnected()) {
-			gameState = GameState.DISCONNECTED;
-		}
-		else if ( this.worldAwareServer.getSystemManager().getPlayerShip(0) != null) {
-			gameState = GameState.INGAME;
-		}
-		else {
-			gameState = GameState.PREGAME;
-		}
 		
-		if (oldGameState != gameState) {
-			eventEmitter.emit(Events.GAME_STATE_CHANGE);
-		}
 	}
 	
 	@Override
-	public GameState getGameState() {
+	public Property<GameState> getGameState() {
 		return gameState;
 	}
+	private final DerivedProperty<GameState> gameState = new DerivedProperty<>(() -> {
+		if (worldAwareServer == null || !worldAwareServer.isConnected()) {
+			return GameState.DISCONNECTED;
+		}
+		else if ( this.worldAwareServer.getSystemManager().getPlayerShip(0) != null) {
+			return GameState.INGAME;
+		}
+		else {
+			return GameState.PREGAME;
+		}
+	}, systemManagerChangeObservable, connectionStateChangeObservable);
+	
 	
 	@Override
-	public int getSystemEnergyAllocated(ShipSystem system) {
-		if (this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
-			return 100;
-		}
-		return (int)(this.worldAwareServer.getSystemManager().getPlayerShip(0).getSystemEnergy(system) * 300);
+	public Property<Map<ShipSystem, Integer>> getSystemEnergyAllocated() {
+		return systemEnergyAllocated;
 	}
+	private final DerivedProperty<Map<ShipSystem, Integer>> systemEnergyAllocated = new DerivedProperty<>( () -> {
+		
+		Map<ShipSystem, Integer> result = new HashMap<>();
+		for(ShipSystem system: ShipSystem.values()) {
+			if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+				result.put(system, 100);
+			}
+			else {
+				result.put(system, (int)(this.worldAwareServer.getSystemManager().getPlayerShip(0).getSystemEnergy(system) * 300));							
+			}
+		}
+		
+		return result;
+	}, systemManagerChangeObservable);
 	
 	@Override
-	public int getSystemCoolantAllocated(ShipSystem system) {
-		if (this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
-			return 0;
-		}
-		return this.worldAwareServer.getSystemManager().getPlayerShip(0).getSystemCoolant(system);
+	public Property<Map<ShipSystem, Integer>> getSystemCoolantAllocated() {
+		return systemCoolantAllocated;
 	}
+	private final DerivedProperty<Map<ShipSystem, Integer>> systemCoolantAllocated = new DerivedProperty<>( () -> {
+		
+		Map<ShipSystem, Integer> result = new HashMap<>();
+		for(ShipSystem system: ShipSystem.values()) {
+			if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+				result.put(system, 0);
+			}
+			else {
+				result.put(system, this.worldAwareServer.getSystemManager().getPlayerShip(0).getSystemCoolant(system));							
+			}
+		}
+		
+		return result;
+	}, systemManagerChangeObservable);
 	
 	@Override
-	public int getSystemHeat(ShipSystem system) {
-		if (this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
-			return 0;
-		}
+	public Property<Map<ShipSystem, Integer>> getSystemHeat() {
+		return systemHeat;
+	}
+	private final DerivedProperty<Map<ShipSystem, Integer>> systemHeat = new DerivedProperty<>( () -> {
+		
+		Map<ShipSystem, Integer> result = new HashMap<>();
+		for(ShipSystem system: ShipSystem.values()) {
+			if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+				result.put(system, 0);
+			}
+			else {
+				result.put(system, (int) (this.worldAwareServer.getSystemManager().getPlayerShip(0).getSystemHeat(system) * 100));							
+			}
 
-		return (int) (this.worldAwareServer.getSystemManager().getPlayerShip(0).getSystemHeat(system) * 100);
-	}
+		}
+		
+		return result;
+	}, systemManagerChangeObservable);
 	
 	@Override
-	public int getSystemHealth(ShipSystem system) {
-		if (this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
-			return 100;
-		}
-		return (int) (this.worldAwareServer.getSystemManager().getHealthOfSystem(system) * 100);
+	public Property<Map<ShipSystem, Integer>> getSystemHealth() {
+		return systemHealth;
 	}
-	
-	@Override
-	public int getTotalCoolantRemaining() {
-		if (this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
-			return Artemis.DEFAULT_COOLANT;
+	private final DerivedProperty<Map<ShipSystem, Integer>> systemHealth = new DerivedProperty<>( () -> {
+		
+		Map<ShipSystem, Integer> result = new HashMap<>();
+		for(ShipSystem system: ShipSystem.values()) {
+			if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+				result.put(system, 100);
+			}
+			else {
+				result.put(system, (int) (this.worldAwareServer.getSystemManager().getHealthOfSystem(system) * 100));							
+			}
 		}
-		final int totalCoolantUsed = Arrays.stream(ShipSystem.values()).mapToInt(system -> this.getSystemCoolantAllocated(system)).sum();
-		return getTotalShipCoolant() - totalCoolantUsed;
-	}
+		
+		return result;
+	}, systemManagerChangeObservable);
 
 	@Override
-	public int getTotalShipCoolant() {
-		if (this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+	public Property<Integer> getTotalShipCoolant() {
+		return totalShipCoolant;
+	}
+	private final DerivedProperty<Integer> totalShipCoolant = new DerivedProperty<>( () -> {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
 			return 8;
 		}
 		return this.worldAwareServer.getSystemManager().getPlayerShip(0).getAvailableCoolant();
-	}
+	}, systemManagerChangeObservable);
+	
 	
 	@Override
-	public Map<GridCoord, Float> getGridHealth() {
+	public Property<Integer> getTotalCoolantRemaining() {
+		return totalCoolantRemaining;
+	}
+	private final DerivedProperty<Integer> totalCoolantRemaining = new DerivedProperty<>( () -> {
+		
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+			return Artemis.DEFAULT_COOLANT;
+		}
+		Map<ShipSystem, Integer> systemCoolantAllocated = this.getSystemCoolantAllocated().get();
+		final int totalCoolantUsed = Arrays.stream(ShipSystem.values()).mapToInt(system -> systemCoolantAllocated.get(system)).sum();
+		return getTotalShipCoolant().get() - totalCoolantUsed;
+	}, systemManagerChangeObservable, systemCoolantAllocated, totalShipCoolant);
+
+			
+		
+	@Override
+	public Property<Map<GridCoord, Float>> getGridHealth() {
+		return gridHealth;
+	}
+	private final DerivedProperty<Map<GridCoord, Float>> gridHealth = new DerivedProperty<>( () -> {
 		Map<GridCoord, Float> result = new HashMap<>();
-		for (Entry<GridCoord, Float> entry : this.worldAwareServer.getSystemManager().getGridDamages()) {
-			result.put(entry.getKey(), 1.0f - entry.getValue());
+		if (this.worldAwareServer != null) {
+			for (Entry<GridCoord, Float> entry : this.worldAwareServer.getSystemManager().getGridDamages()) {
+				result.put(entry.getKey(), 1.0f - entry.getValue());
+			}			
 		}
 		return result;
-	}
+	}, systemManagerChangeObservable);
+	
 	
 	@Override
-	public List<DamconStatus> getRawDamconStatus() {
+	protected Property<List<DamconStatus>> getRawDamconStatus() {
+		return damconStatus;
+	}
+	private final DerivedProperty<List<DamconStatus>> damconStatus = new DerivedProperty<>( () -> {
 		List<DamconStatus> teams = new ArrayList<>();
-		for(int teamNumber = 0; teamNumber < 16; teamNumber++) {
-			DamconStatus damcon = this.worldAwareServer.getSystemManager().getDamcon(teamNumber);
-			if (damcon != null) {
-				teams.add(damcon);
+		if (this.worldAwareServer != null) {
+			for(int teamNumber = 0; teamNumber < 16; teamNumber++) {
+				DamconStatus damcon = this.worldAwareServer.getSystemManager().getDamcon(teamNumber);
+				if (damcon != null) {
+					teams.add(cloneDamconStatus(damcon)); //DRAGONS: framework internally reuses damcon instances which messes up equality checking
+				}
 			}
 		}
 		return teams;
+	}, systemManagerChangeObservable);
+	
+	private static DamconStatus cloneDamconStatus(DamconStatus damcon) {
+		return new DamconStatus(damcon.getTeamNumber(), damcon.getMembers(), 
+				damcon.getGoal().getX(), damcon.getGoal().getY(), damcon.getGoal().getZ(), 
+				damcon.getPosition().getX(), damcon.getPosition().getY(), damcon.getPosition().getZ(), 
+				damcon.getProgress());
 	}
 	
+	
 	@Override
-	public float getTotalEnergyRemaining() {
-		if (this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
-			return 0;
+	public Property<Float> getTotalEnergyRemaining() {
+		return totalEnergyRemaining;
+	}
+	private final DerivedProperty<Float> totalEnergyRemaining = new DerivedProperty<>( () -> {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+			return 0f;
 		}
 		
 		return this.worldAwareServer.getSystemManager().getPlayerShip(0).getEnergy();
-	}
+	}, systemManagerChangeObservable);
 	
 	@Override
 	public void incrementSystemEnergyAllocated(ShipSystem system, int amount) {
-		if (this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
 			return;
 		}
 		super.incrementSystemEnergyAllocated(system, amount);
@@ -170,7 +242,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	
 	@Override
 	public void incrementSystemCoolantAllocated(ShipSystem system, int amount) {
-		if (this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
 			return;
 		}
 		super.incrementSystemCoolantAllocated(system, amount);

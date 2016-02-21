@@ -12,12 +12,11 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
-import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.Events;
 import com.brindyblitz.artemis.engconsole.config.InputMapping;
 import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer.Interval;
 import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer.IntervalType;
-
 import com.brindyblitz.artemis.utils.AudioManager;
+
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.world.Artemis;
 
@@ -92,7 +91,8 @@ public class SystemSlider extends JPanel implements MouseWheelListener {
 
         this.addMouseWheelListener(this);
 
-        this.engineeringConsoleManager.onEvent(Events.CHANGE, () -> this.repaint());
+        this.engineeringConsoleManager.getSystemEnergyAllocated().onChange(() -> this.repaint());
+        this.engineeringConsoleManager.getSystemCoolantAllocated().onChange(() -> this.repaint());
 	}
 
 	@Override
@@ -128,7 +128,7 @@ public class SystemSlider extends JPanel implements MouseWheelListener {
 
         /* Fill coolant bar */
         g.setColor(Color.BLUE);
-        int coolant_start_y = percentToY(SystemStatusRenderer.getCooledEnergyThreshold(this.engineeringConsoleManager.getSystemCoolantAllocated(this.system)) / 100f);
+        int coolant_start_y = percentToY(SystemStatusRenderer.getCooledEnergyThreshold(this.engineeringConsoleManager.getSystemCoolantAllocated().get().get(this.system)) / 100f);
         g.fillRect(COOLANT_LEFT, coolant_start_y, COOLANT_WIDTH, percentToY(1f) - coolant_start_y);
 
         /* Draw coolant level indicator marks */

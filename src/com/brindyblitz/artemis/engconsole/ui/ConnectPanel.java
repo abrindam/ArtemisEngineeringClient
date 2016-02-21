@@ -75,7 +75,7 @@ public class ConnectPanel extends JPanel {
 				error.setVisible(false);
 				executor.submit(() -> {
 					engineeringConsoleManager.connect(input.getText());
-					if (engineeringConsoleManager.getGameState() == GameState.DISCONNECTED) {
+					if (engineeringConsoleManager.getGameState().get() == GameState.DISCONNECTED) {
 						error.setVisible(true);
 					}
 				});

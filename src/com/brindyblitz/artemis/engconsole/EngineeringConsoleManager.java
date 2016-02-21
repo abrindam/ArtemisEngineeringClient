@@ -3,6 +3,8 @@ package com.brindyblitz.artemis.engconsole;
 import java.util.List;
 import java.util.Map;
 
+import com.brindyblitz.artemis.utils.newton.Property;
+
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
 import net.dhleong.acl.util.GridCoord;
@@ -15,29 +17,29 @@ public interface EngineeringConsoleManager {
 	
 	void connect(String host, int port);
 	
-	GameState getGameState();
+	Property<GameState> getGameState();
 	
-	int getTotalShipCoolant();
+	Property<Integer> getTotalShipCoolant();
 
-	int getSystemEnergyAllocated(ShipSystem system);
+	Property<Map<ShipSystem, Integer>> getSystemEnergyAllocated();
 
-	int getSystemCoolantAllocated(ShipSystem system);
+	Property<Map<ShipSystem, Integer>> getSystemCoolantAllocated();
 	
-	int getSystemHeat(ShipSystem system);
+	Property<Map<ShipSystem, Integer>> getSystemHeat();
 	
-	int getSystemHealth(ShipSystem system);
+	Property<Map<ShipSystem, Integer>> getSystemHealth();
 
-	int getTotalCoolantRemaining();
+	Property<Integer> getTotalCoolantRemaining();
 	
-	float getTotalEnergyRemaining(); 
+	Property<Float> getTotalEnergyRemaining(); 
 	
-	Map<GridCoord, Float> getGridHealth();
+	Property<Map<GridCoord, Float>> getGridHealth();
 
 	List<VesselNode> getGrid();
 	
 	List<VesselNodeConnection> getGridConnections();
 	
-	List<EnhancedDamconStatus> getDamconTeams();
+	Property<List<EnhancedDamconStatus>> getDamconTeams();
 
 	void setSystemEnergyAllocated(ShipSystem system, int amount);
 
@@ -52,8 +54,6 @@ public interface EngineeringConsoleManager {
 	void resetEnergy();
 
 	void resetCoolant();
-	
-	void onEvent(Events event, Runnable listener);
 	
 	public enum GameState {
 		DISCONNECTED, PREGAME, INGAME
