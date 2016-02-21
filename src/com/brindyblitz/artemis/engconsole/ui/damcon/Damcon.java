@@ -11,6 +11,8 @@ import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.media.j3d.Appearance;
 import javax.media.j3d.BranchGroup;
@@ -91,6 +93,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private AudioManager audioManager;
 
+	private boolean dirty = false;
+
     public Damcon(EngineeringConsoleManager engineeringConsoleManager, AudioManager audio_manager) {
         this.engineeringConsoleManager = engineeringConsoleManager;
         this.audioManager = audio_manager;
@@ -147,26 +151,35 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         this.universe.addBranchGraph(damconBranchGroup);
 
         this.engineeringConsoleManager.onEvent(Events.CHANGE, () -> {
-
-            for (Map.Entry<GridCoord, Float> entry : engineeringConsoleManager.getGridHealth().entrySet()) {
-                InternalNode node = internalNodes.get(entry.getKey());
-                node.updateHealth(entry.getValue());
-            }
-
-            for (EngineeringConsoleManager.EnhancedDamconStatus damconStatus : engineeringConsoleManager.getDamconTeams()) {
-                InternalTeam it = internalTeams.get(damconStatus.getTeamNumber());
-
-                if (it == null) {
-                    it = new InternalTeam(damconStatus, audioManager);
-                    internalTeams.put(damconStatus.getTeamNumber(), it);
-                    nodesToSelectables.put(it.getShape(), it);
-                    damconBranchGroup.addChild(it.getBranchGroup());
-                }
-
-                it.updatePos(damconStatus.getX(), damconStatus.getY(), damconStatus.getZ());
-            }
-
+            this.dirty  = true;
         });
+        
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+        	if (this.dirty) {
+        		this.dirty = false;
+        		this.doUpdate();
+        	}
+        }, 0, 100, TimeUnit.MILLISECONDS);
+    }
+    
+    private void doUpdate() {
+    	for (Map.Entry<GridCoord, Float> entry : engineeringConsoleManager.getGridHealth().entrySet()) {
+            InternalNode node = internalNodes.get(entry.getKey());
+            node.updateHealth(entry.getValue());
+        }
+
+        for (EngineeringConsoleManager.EnhancedDamconStatus damconStatus : engineeringConsoleManager.getDamconTeams()) {
+            InternalTeam it = internalTeams.get(damconStatus.getTeamNumber());
+
+            if (it == null) {
+                it = new InternalTeam(damconStatus, audioManager);
+                internalTeams.put(damconStatus.getTeamNumber(), it);
+                nodesToSelectables.put(it.getShape(), it);
+                damconBranchGroup.addChild(it.getBranchGroup());
+            }
+
+            it.updatePos(damconStatus.getX(), damconStatus.getY(), damconStatus.getZ());
+        }
     }
 
     private void loadCorridors() {
