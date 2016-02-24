@@ -31,7 +31,7 @@ public class InternalNode extends InternalSelectable {
         this.vesselNode = vessel_node;
         this.isSystemNode = is_system_node;
 
-        updatePos(-vessel_node.getX(), vessel_node.getY(), vessel_node.getZ());
+        updatePos(vessel_node.getX(), vessel_node.getY(), vessel_node.getZ());
     }
 
     @Override
