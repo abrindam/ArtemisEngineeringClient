@@ -1,13 +1,17 @@
 package com.brindyblitz.artemis.utils;
 
-import com.brindyblitz.artemis.engconsole.ui.damcon.Internal;
-import com.brindyblitz.artemis.engconsole.ui.damcon.InternalTeam;
-
-import javax.sound.sampled.*;
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
+
+import com.brindyblitz.artemis.engconsole.ui.damcon.InternalTeam;
 
 public class AudioManager {
     private HashMap<String, File> soundBank = new HashMap<>();
@@ -17,7 +21,7 @@ public class AudioManager {
         loadAssetsInDirectory(path, "");
 
         soundQueue = new SoundQueue();
-        new Thread(soundQueue).start();
+        new Thread(soundQueue, "Sound Queue Thread").start();
     }
 
     private void loadAssetsInDirectory(String path, String prefix) {
@@ -50,7 +54,15 @@ public class AudioManager {
             AudioInputStream ais = AudioSystem.getAudioInputStream(sound);
             Clip clip = AudioSystem.getClip();
             clip.open(ais);
+            clip.addLineListener(new LineListener() {
+            	public void update(LineEvent myLineEvent) {
+            		if (myLineEvent.getType() == LineEvent.Type.STOP) {
+            			clip.close();            			
+            		}
+            	}
+            });
             clip.start();
+            
         } catch (Exception e) {  // LineUnavailableException, IOException, UnsupportedAudioFileException
             e.printStackTrace(System.err);
         }
