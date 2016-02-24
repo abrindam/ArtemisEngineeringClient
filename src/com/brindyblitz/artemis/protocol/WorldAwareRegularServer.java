@@ -10,6 +10,7 @@ import net.dhleong.acl.iface.ConnectionSuccessEvent;
 import net.dhleong.acl.iface.Listener;
 import net.dhleong.acl.iface.ThreadedArtemisNetworkInterface;
 import net.dhleong.acl.protocol.core.setup.ReadyPacket;
+import net.dhleong.acl.protocol.core.setup.ReadyPacket2;
 import net.dhleong.acl.protocol.core.setup.SetConsolePacket;
 
 public class WorldAwareRegularServer implements WorldAwareServer {
@@ -37,6 +38,7 @@ public class WorldAwareRegularServer implements WorldAwareServer {
 		eventEmitter.emit(Events.CONNECTION_STATE_CHANGE);
         server.send(new SetConsolePacket(Console.ENGINEERING, true));
         server.send(new ReadyPacket());
+        server.send(new ReadyPacket2());
     }
 
 	@Override
