@@ -83,13 +83,13 @@ Dependencies should be checked in, so you shouldn't have to download anything ex
 
 #### Eclipse
 
-These instruction assume you are using Eclipse Mars (4.5.1).
+These instruction assume you are using Eclipse Mars (4.5.2).
+
+First, clone this repository into the root of your Eclipse workspace.
     
-Open Eclipse and choose `File -> New Project`. Enter the name of this repository exactly as the name of the project. If done correctly, Eclipse will realize this folder already exists and will configure automatically.
+Open Eclipse and choose `File -> New Java Project`. Enter the name of this repository exactly as the name of the project. You'll see text on the bottom of the window explaining that the wizard will automatically configure the JRE etc.  Make sure Java SE 8 or later is selected (we're currently using 1.8.0_51).  Click `Finish`.
 
-Then, right click on the `lib/artclientlib-2.6.0.jar` file and choose `Build Path -> Add to Build Path`. At this point, the project should build correctly with no errors.
-
-Finally, to attach the source, once again right-click the jar file and choose `Build Path -> Configure Build Path`. Navigate to the `Library` tab. Locate `artclientlib-2.6.0.jar` in the list and click the triangle to see more details. Click the `Source Attachment` entry and then click the `Edit` button on the right. Now point to the folder containing the source files. You should now be able to click on library classes such as `ShipSystem` and see their source.
+Then, right click on the project and select `Build Path -> Configure Build Path`. Under the `Libraries` tab, you should see `artclientlib-2.6.0.jar`; if you don't, click `Add JARs` and locate it under `lib`.  On the entry for that JAR, expand the triangle to see more details. Double-click the `Source Attachment` entry and navigate to `lib/ArtClientLib-2.6.0`. You should now be able to click on library classes such as `ShipSystem` and see their source and JavaDoc comments.
 
 
 #### IntelliJ IDEA
