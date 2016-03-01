@@ -40,6 +40,16 @@ public interface EngineeringConsoleManager {
 	List<VesselNodeConnection> getGridConnections();
 	
 	Property<List<EnhancedDamconStatus>> getDamconTeams();
+	
+	Property<Integer> getFrontShieldStrength();
+
+	Property<Integer> getRearShieldStrength();
+	
+	Property<Integer> getFrontShieldMaxStrength();
+
+	Property<Integer> getRearShieldMaxStrength();
+	
+	Property<Boolean> getShieldsActive();
 
 	void setSystemEnergyAllocated(ShipSystem system, int amount);
 

@@ -123,8 +123,6 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	private final DerivedProperty<Integer> totalCoolantRemaining = new DerivedProperty<>( () -> {
 		return totalShipCoolant.get() - systemCoolantAllocated.get().values().stream().mapToInt(Integer::intValue).sum();
 	}, systemCoolantAllocated, totalShipCoolant);
-
-	
 	
 	@Override
 	protected Property<List<DamconStatus>> getRawDamconStatus() {
@@ -138,6 +136,36 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	}
 	private final SettableProperty<Float> totalEnergyRemaining = new SettableProperty<>(1000f);
 	
+	@Override
+	public Property<Integer> getFrontShieldStrength() {
+		return frontShieldStrength;
+	}
+	private final SettableProperty<Integer> frontShieldStrength = new SettableProperty<>(80);
+	
+	@Override
+	public Property<Integer> getRearShieldStrength() {
+		return rearShieldStrength;
+	}
+	private final SettableProperty<Integer> rearShieldStrength = new SettableProperty<>(60);
+	
+	@Override
+	public Property<Integer> getFrontShieldMaxStrength() {
+		return frontShieldMaxStrength;
+	}
+	private final SettableProperty<Integer> frontShieldMaxStrength = new SettableProperty<>(80);
+	
+	@Override
+	public Property<Integer> getRearShieldMaxStrength() {
+		return rearShieldMaxStrength;
+	}
+	private final SettableProperty<Integer> rearShieldMaxStrength = new SettableProperty<>(80);
+	
+	@Override
+	public Property<Boolean> getShieldsActive() {
+		return shieldsActive;
+	}
+	
+	private final SettableProperty<Boolean> shieldsActive = new SettableProperty<>(false);
 	
 	@Override
 	protected void updateSystemEnergyAllocated(ShipSystem system, int amount) {

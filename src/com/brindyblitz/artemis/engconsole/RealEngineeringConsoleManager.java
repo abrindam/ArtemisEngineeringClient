@@ -233,6 +233,73 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	}, systemManagerChangeObservable);
 	
 	@Override
+	public Property<Integer> getFrontShieldStrength() {
+		return frontShieldStrength;
+	}
+	private final DerivedProperty<Integer> frontShieldStrength = new DerivedProperty<>( () -> {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+			return 0;
+		}
+		
+		return (int) this.worldAwareServer.getSystemManager().getPlayerShip(0).getShieldsFront();
+	}, systemManagerChangeObservable);
+	
+	
+	@Override
+	public Property<Integer> getRearShieldStrength() {
+		return rearShieldStrength;
+		
+	}
+	private final DerivedProperty<Integer> rearShieldStrength = new DerivedProperty<>( () -> {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+			return 0;
+		}
+		
+		return (int) this.worldAwareServer.getSystemManager().getPlayerShip(0).getShieldsFront();
+	}, systemManagerChangeObservable);
+	
+	@Override
+	public Property<Integer> getFrontShieldMaxStrength() {
+		return frontShieldMaxStrength;
+	}
+	private final DerivedProperty<Integer> frontShieldMaxStrength = new DerivedProperty<>( () -> {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+			return 0;
+		}
+		
+		return (int) this.worldAwareServer.getSystemManager().getPlayerShip(0).getShieldsFront();
+	}, systemManagerChangeObservable);
+	
+	
+	@Override
+	public Property<Integer> getRearShieldMaxStrength() {
+		return rearShieldMaxStrength;
+		
+	}
+	private final DerivedProperty<Integer> rearShieldMaxStrength = new DerivedProperty<>( () -> {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+			return 0;
+		}
+		
+		return (int) this.worldAwareServer.getSystemManager().getPlayerShip(0).getShieldsFront();
+	}, systemManagerChangeObservable);
+	
+	@Override
+	public Property<Boolean> getShieldsActive() {
+		return shieldsActive;		
+	}
+	
+	private final DerivedProperty<Boolean> shieldsActive = new DerivedProperty<>( () -> {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+			return false;
+		}
+		
+		return this.worldAwareServer.getSystemManager().getPlayerShip(0).getShieldsState().getBooleanValue();
+	}, systemManagerChangeObservable);
+
+	
+	
+	@Override
 	public void incrementSystemEnergyAllocated(ShipSystem system, int amount) {
 		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
 			return;

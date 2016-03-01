@@ -123,12 +123,16 @@ public class InGamePanel extends JPanel {
 //			for (Entry<GridCoord, Float> entry : this.engineeringConsoleManager.getGridHealth().entrySet()) {
 //				System.out.println(entry.getKey() + " = " + entry.getValue());
 //			}
+//			
+//			for (EnhancedDamconStatus damconStatus : this.engineeringConsoleManager.getDamconTeams().get()) {
+//				System.out.println(damconStatus);
+//			}
 			
-			for (EnhancedDamconStatus damconStatus : this.engineeringConsoleManager.getDamconTeams().get()) {
-				System.out.println(damconStatus);
-			}
-			
-			System.out.println("Energy remaining: " + this.engineeringConsoleManager.getTotalEnergyRemaining());
+			System.out.println("Energy remaining: " + this.engineeringConsoleManager.getTotalEnergyRemaining().get());
+			System.out.println("Front shields: " + this.engineeringConsoleManager.getFrontShieldStrength().get());
+			System.out.println("Rear shields: " + this.engineeringConsoleManager.getRearShieldStrength().get());
+			System.out.println("Front shields max: " + this.engineeringConsoleManager.getFrontShieldMaxStrength().get());
+			System.out.println("Rear shields max: " + this.engineeringConsoleManager.getRearShieldMaxStrength().get());
 
             System.out.println("\n\n\n");
 		} else if (kc == KeyEvent.VK_EQUALS) {
