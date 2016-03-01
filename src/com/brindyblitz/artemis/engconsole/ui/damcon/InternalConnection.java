@@ -11,8 +11,7 @@ public class InternalConnection extends Internal {
     private LineArray lineArray;
 
     private static final Color3f LINE_COLOR = new Color3f(0f, 1f, 0f);
-    private static final float ALPHA_STANDARD = 0.1F, ALPHA_HOVERED = 0.9f;
-    // TODO: > need to do this for hallway selection as well, for picking even if they're not visible?
+    private static final float ALPHA_STANDARD = 0.7f;
 
     public InternalConnection(VesselNodeConnection vessel_node_connection, AudioManager audio_manager) {
         super(audio_manager);

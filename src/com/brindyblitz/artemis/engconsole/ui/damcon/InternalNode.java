@@ -13,8 +13,8 @@ public class InternalNode extends InternalSelectable {
     private static final String HUD_ICON = "hud/inner_circle.png";
     private static final Color SYSTEM_NODE_COLOR = new Color(0, 255, 0, 100),
                                NON_SYSTEM_NODE_COLOR = new Color(255, 255, 255);
-    private static final int SYSTEM_NODE_STANDARD_ALPHA = 100,
-                             SYSTEM_NODE_HOVERED_ALPHA = 225,
+    private static final int SYSTEM_NODE_STANDARD_ALPHA = 175,
+                             SYSTEM_NODE_HOVERED_ALPHA = 250,
                              NON_SYSTEM_NODE_STANDARD_ALPHA = 0,
                              NON_SYSTEM_NODE_HOVERED_ALPHA = 200;
     private static final float ICON_DIM_SYSTEM_NODE = 0.05f,
