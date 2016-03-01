@@ -16,6 +16,7 @@ import com.brindyblitz.artemis.utils.newton.DerivedProperty;
 import com.brindyblitz.artemis.utils.newton.ObservableAdapter;
 import com.brindyblitz.artemis.utils.newton.Property;
 
+import net.dhleong.acl.enums.OrdnanceType;
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
 import net.dhleong.acl.protocol.core.eng.EngSendDamconPacket;
@@ -286,7 +287,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	
 	@Override
 	public Property<Boolean> getShieldsActive() {
-		return shieldsActive;		
+		return shieldsActive;
 	}
 	
 	private final DerivedProperty<Boolean> shieldsActive = new DerivedProperty<>( () -> {
@@ -297,6 +298,24 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		return this.worldAwareServer.getSystemManager().getPlayerShip(0).getShieldsState().getBooleanValue();
 	}, systemManagerChangeObservable);
 
+	@Override
+	public Property<Map<OrdnanceType, Integer>> getOrdnanceCount() {
+		return ordnanceCount;
+	}
+	private final DerivedProperty<Map<OrdnanceType, Integer>> ordnanceCount = new DerivedProperty<>( () -> {
+		
+		Map<OrdnanceType, Integer> result = new HashMap<>();
+		for(OrdnanceType type: OrdnanceType.values()) {
+			if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+				result.put(type, 0);
+			}
+			else { 
+				result.put(type, this.worldAwareServer.getSystemManager().getPlayerShip(0).getTorpedoCount(type));							
+			}
+		}
+		
+		return result;
+	}, systemManagerChangeObservable);
 	
 	
 	@Override

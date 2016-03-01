@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.brindyblitz.artemis.utils.newton.Property;
 
+import net.dhleong.acl.enums.OrdnanceType;
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
 import net.dhleong.acl.util.GridCoord;
@@ -50,6 +51,8 @@ public interface EngineeringConsoleManager {
 	Property<Integer> getRearShieldMaxStrength();
 	
 	Property<Boolean> getShieldsActive();
+	
+	Property<Map<OrdnanceType, Integer>> getOrdnanceCount();
 
 	void setSystemEnergyAllocated(ShipSystem system, int amount);
 

@@ -12,6 +12,7 @@ import com.brindyblitz.artemis.utils.newton.DerivedProperty;
 import com.brindyblitz.artemis.utils.newton.Property;
 import com.brindyblitz.artemis.utils.newton.SettableProperty;
 
+import net.dhleong.acl.enums.OrdnanceType;
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
 import net.dhleong.acl.util.GridCoord;
@@ -22,12 +23,19 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	private static final Map<ShipSystem, Integer> DEFAULT_ENERGY_ALLOCATED = new HashMap<>();
 	private static final Map<ShipSystem, Integer> DEFAULT_COOLANT_ALLOCATED = new HashMap<>();
 	private static final Map<ShipSystem, Integer> DEFAULT_HEAT = new HashMap<>();
+	private static final Map<OrdnanceType, Integer> DEFAULT_ORDNANCE_COUNT = new HashMap<>();
+	
 	static {
 		for (ShipSystem system: ShipSystem.values()) {
 			DEFAULT_ENERGY_ALLOCATED.put(system, 100);
 			DEFAULT_COOLANT_ALLOCATED.put(system, 0);
 			DEFAULT_HEAT.put(system, 0);
 		}
+		DEFAULT_ORDNANCE_COUNT.put(OrdnanceType.EMP, 4);
+		DEFAULT_ORDNANCE_COUNT.put(OrdnanceType.NUKE, 2);
+		DEFAULT_ORDNANCE_COUNT.put(OrdnanceType.HOMING, 8);
+		DEFAULT_ORDNANCE_COUNT.put(OrdnanceType.PSHOCK, 2);
+		DEFAULT_ORDNANCE_COUNT.put(OrdnanceType.MINE, 6);
 	}
 	
 	public FakeEngineeringConsoleManager() {
@@ -164,8 +172,13 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	public Property<Boolean> getShieldsActive() {
 		return shieldsActive;
 	}
-	
 	private final SettableProperty<Boolean> shieldsActive = new SettableProperty<>(false);
+	
+	@Override
+	public Property<Map<OrdnanceType, Integer>> getOrdnanceCount() {
+		return ordnanceCount;
+	}
+	private final SettableProperty<Map<OrdnanceType, Integer>> ordnanceCount = new SettableProperty<>(DEFAULT_ORDNANCE_COUNT);
 	
 	@Override
 	protected void updateSystemEnergyAllocated(ShipSystem system, int amount) {

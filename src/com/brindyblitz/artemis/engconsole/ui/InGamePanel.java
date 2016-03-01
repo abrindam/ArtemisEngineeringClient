@@ -14,6 +14,8 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.JPanel;
 
@@ -23,6 +25,8 @@ import com.brindyblitz.artemis.engconsole.config.InputMapping;
 import com.brindyblitz.artemis.engconsole.ui.damcon.Damcon;
 
 import com.brindyblitz.artemis.utils.AudioManager;
+
+import net.dhleong.acl.enums.OrdnanceType;
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.util.GridCoord;
 
@@ -133,6 +137,13 @@ public class InGamePanel extends JPanel {
 			System.out.println("Rear shields: " + this.engineeringConsoleManager.getRearShieldStrength().get());
 			System.out.println("Front shields max: " + this.engineeringConsoleManager.getFrontShieldMaxStrength().get());
 			System.out.println("Rear shields max: " + this.engineeringConsoleManager.getRearShieldMaxStrength().get());
+			
+			Map<OrdnanceType, Integer> ordnanceCount = this.engineeringConsoleManager.getOrdnanceCount().get();
+			for (Entry<OrdnanceType, Integer> entry : ordnanceCount.entrySet()) {
+				System.out.println(entry.getKey() + ": " + entry.getValue());
+			}
+			
+			
 
             System.out.println("\n\n\n");
 		} else if (kc == KeyEvent.VK_EQUALS) {
