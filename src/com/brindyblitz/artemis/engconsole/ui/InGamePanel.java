@@ -93,8 +93,14 @@ public class InGamePanel extends JPanel {
 		this.damcon = new Damcon(engineeringConsoleManager, this.audioManager);
 		this.add(damcon.getCanvas()).setLocation(10, DAMCON_Y);
 
-		EnergySlider energy_slider = new EnergySlider(null, engineeringConsoleManager);
+		EnergySlider energy_slider = new EnergySlider(engineeringConsoleManager);
         this.add(energy_slider).setLocation(400, 50);
+        
+		ForeShieldSlider fore_shield_slider = new ForeShieldSlider(engineeringConsoleManager);
+        this.add(fore_shield_slider).setLocation(400, 80);
+        
+		AftShieldSlider aft_shield_slider = new AftShieldSlider(engineeringConsoleManager);
+        this.add(aft_shield_slider).setLocation(400, 110);
 	}
 
 	private void addSlider(ShipSystem system, String label, InputMapping mapping) {

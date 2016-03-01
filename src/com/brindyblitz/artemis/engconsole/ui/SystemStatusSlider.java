@@ -20,7 +20,7 @@ import net.dhleong.acl.enums.ShipSystem;
 public abstract class SystemStatusSlider extends JPanel {
     private static final long serialVersionUID = 1L;
 
-    private static Point statusImageDimensions = new Point(16, 16);
+    protected Point statusImageDimensions = new Point(16, 16);
 
     protected Font statusFont = new Font("Courier New", Font.BOLD, 14);
 

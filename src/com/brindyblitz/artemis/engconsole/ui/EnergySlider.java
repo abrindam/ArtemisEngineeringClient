@@ -21,16 +21,15 @@ public class EnergySlider extends SystemStatusSlider {
             SLIDER_WIDTH = WIDGET_WIDTH / 2,
             SLIDER_HEIGHT = WIDGET_HEIGHT;
 
-    private static final Color ENERGY_COLOR = Color.BLUE;
+    private static final Color ENERGY_COLOR = new Color(10, 210, 210);
 
-    public EnergySlider(ShipSystem system, EngineeringConsoleManager engineeringConsoleManager) {
-        super(system, engineeringConsoleManager, WIDGET_WIDTH, WIDGET_HEIGHT, SLIDER_WIDTH, SLIDER_HEIGHT);
+    public EnergySlider(EngineeringConsoleManager engineeringConsoleManager) {
+        super(null, engineeringConsoleManager, WIDGET_WIDTH, WIDGET_HEIGHT, SLIDER_WIDTH, SLIDER_HEIGHT);
         this.engineeringConsoleManager.getTotalEnergyRemaining().onChange(() -> this.repaint());
     }
 
     @Override
     protected int getStatusPctInt() {
-        // TODO: TESTME
         return (int)(100 * (this.engineeringConsoleManager.getTotalEnergyRemaining().get() / 1000f));
     }
     

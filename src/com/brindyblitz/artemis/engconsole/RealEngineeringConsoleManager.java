@@ -242,9 +242,10 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 			return 0;
 		}
 		
-		return (int) this.worldAwareServer.getSystemManager().getPlayerShip(0).getShieldsFront();
+		// When shields are knocked offline, they go to a negative value and come back online once they reach 1 again.
+		int strength = (int) this.worldAwareServer.getSystemManager().getPlayerShip(0).getShieldsFront();
+		return strength > 0 ? strength : 0;
 	}, systemManagerChangeObservable);
-	
 	
 	@Override
 	public Property<Integer> getRearShieldStrength() {
@@ -256,7 +257,9 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 			return 0;
 		}
 		
-		return (int) this.worldAwareServer.getSystemManager().getPlayerShip(0).getShieldsFront();
+		// When shields are knocked offline, they go to a negative value and come back online once they reach 1 again.
+		int strength = (int) this.worldAwareServer.getSystemManager().getPlayerShip(0).getShieldsRear();
+		return strength > 0 ? strength : 0;
 	}, systemManagerChangeObservable);
 	
 	@Override
@@ -268,7 +271,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 			return 0;
 		}
 		
-		return (int) this.worldAwareServer.getSystemManager().getPlayerShip(0).getShieldsFront();
+		return (int) this.worldAwareServer.getSystemManager().getPlayerShip(0).getShieldsFrontMax();
 	}, systemManagerChangeObservable);
 	
 	
@@ -282,7 +285,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 			return 0;
 		}
 		
-		return (int) this.worldAwareServer.getSystemManager().getPlayerShip(0).getShieldsFront();
+		return (int) this.worldAwareServer.getSystemManager().getPlayerShip(0).getShieldsRearMax();
 	}, systemManagerChangeObservable);
 	
 	@Override
