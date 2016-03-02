@@ -21,7 +21,8 @@ public class InternalNode extends InternalSelectable {
                                ICON_DIM_NON_SYSTEM_NODE = 0.03f;
 
     public InternalNode(VesselNode vessel_node, boolean is_system_node, AudioManager audio_manager) {
-        super(HUD_ICON,
+        super(is_system_node ? "System Node" : "Non-System Node",
+        	  HUD_ICON,
               is_system_node ? SYSTEM_NODE_COLOR : NON_SYSTEM_NODE_COLOR,
               is_system_node ? SYSTEM_NODE_STANDARD_ALPHA : NON_SYSTEM_NODE_STANDARD_ALPHA,
               is_system_node ? SYSTEM_NODE_HOVERED_ALPHA : NON_SYSTEM_NODE_HOVERED_ALPHA,
@@ -37,6 +38,7 @@ public class InternalNode extends InternalSelectable {
     @Override
     protected boolean visible() {
         return this.isSystemNode;
+        // TODO: Make damaged non-system nodes visible at all times, and maybe add a checkbox to hide them, or show only damaged nodes
     }
 
     @Override

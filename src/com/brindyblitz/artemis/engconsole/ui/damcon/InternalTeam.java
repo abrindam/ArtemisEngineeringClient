@@ -32,7 +32,7 @@ public class InternalTeam extends InternalSelectable {
     public static Map<Integer, String> ON_ORDER_RESPONSES = new HashMap<>();
 
     public InternalTeam(EngineeringConsoleManager.EnhancedDamconStatus damcon_status, AudioManager audio_manager) {
-        super(HUD_ICON, DAMCON_COLOR, STANDARD_ALPHA, HOVERED_ALPHA, ICON_DIM, audio_manager);
+        super("DAMCON Team", HUD_ICON, DAMCON_COLOR, STANDARD_ALPHA, HOVERED_ALPHA, ICON_DIM, audio_manager);
 
         this.status = damcon_status;
 

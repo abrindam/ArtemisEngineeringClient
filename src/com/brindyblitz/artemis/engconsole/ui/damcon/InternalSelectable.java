@@ -13,6 +13,9 @@ import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 public abstract class InternalSelectable extends Internal {
     protected boolean hovered = false;
@@ -35,12 +38,19 @@ public abstract class InternalSelectable extends Internal {
     private BufferedImage image;
     private Texture standardTexture, hoveredTexture;
     private int standardAlpha, hoveredAlpha;
-
-    public InternalSelectable(String relative_texture_path, Color color,
+    
+    private static final int HEALTH_QUANTA = 10;
+    private static final float HEALTH_QUANTUM_PCT = (1f / HEALTH_QUANTA);
+    private static Map<String, Texture[]> nodeTypeToStandardColorizedTextures = new HashMap<>(), nodeTypeToHoveredColorizedTextures = new HashMap<>();
+    private String selectableType;
+    
+    public InternalSelectable(String selectable_type,
+    						  String relative_texture_path, Color color,
                               int standard_alpha, int hovered_alpha, float icon_dimension,
                               AudioManager audio_manager) {
         super(audio_manager);
 
+        this.selectableType = selectable_type;
         this.standardAlpha = standard_alpha;
         this.hoveredAlpha = hovered_alpha;
         this.iconDimension = icon_dimension;
@@ -49,8 +59,22 @@ public abstract class InternalSelectable extends Internal {
 
         this.image = loadImage(relative_texture_path);
 
-        standardTexture = loadTexture(this.image, new Color(color.getRed(), color.getGreen(), color.getBlue(), standard_alpha));
-        hoveredTexture = loadTexture(this.image, new Color(color.getRed(), color.getGreen(), color.getBlue(), hovered_alpha));
+        // Load an array of the same texture colored for health values from 0% to 100%
+        // with HEALTH_QUANTA steps, where 0 is 0% and HEALTH_QUANTA-1 is 100%
+        if (nodeTypeToStandardColorizedTextures.get(this.selectableType) == null) {
+        	Texture[] standard_textures = new Texture[HEALTH_QUANTA], hovered_textures = new Texture[HEALTH_QUANTA];
+        	nodeTypeToStandardColorizedTextures.put(this.selectableType, standard_textures);
+        	nodeTypeToHoveredColorizedTextures.put(this.selectableType, hovered_textures);
+        	
+			for (int i = 0; i < HEALTH_QUANTA; i++) {
+				float health_pct = HEALTH_QUANTUM_PCT * (float) i;
+				standard_textures[i] = loadTexture(this.image, getColorFromHealth(health_pct, standardAlpha));
+				hovered_textures[i] = loadTexture(this.image, getColorFromHealth(health_pct, hoveredAlpha));
+			}
+        }
+
+        standardTexture = nodeTypeToStandardColorizedTextures.get(this.selectableType)[HEALTH_QUANTA - 1];
+        hoveredTexture = nodeTypeToHoveredColorizedTextures.get(this.selectableType)[HEALTH_QUANTA - 1];
 
         Appearance appearance = generateAppearance(standardTexture);
 
@@ -215,14 +239,18 @@ public abstract class InternalSelectable extends Internal {
     // Health/Color //
     //////////////////
 
-    public void updateHealth(float pct) {
-        this.healthPct = pct;
+    public void updateHealth(float pct) {    	
+    	if (this.healthPct == pct)
+    		return;
 
-        standardTexture = loadTexture(this.image, getColorFromHealth(this.healthPct, this.standardAlpha));
-        hoveredTexture = loadTexture(this.image, getColorFromHealth(this.healthPct, this.hoveredAlpha));
+		this.healthPct = pct;
 
-        Appearance app = this.shape.getAppearance();
-        app.setTexture(this.hovered ? hoveredTexture : standardTexture);
+		int texture_index = (int) (HEALTH_QUANTA * pct);		
+        standardTexture = nodeTypeToStandardColorizedTextures.get(this.selectableType)[texture_index];
+        hoveredTexture = nodeTypeToHoveredColorizedTextures.get(this.selectableType)[texture_index];
+
+		Appearance app = this.shape.getAppearance();
+		app.setTexture(this.hovered ? hoveredTexture : standardTexture);
     }
 
     protected Color getColorFromHealth(float pct, int alpha) {

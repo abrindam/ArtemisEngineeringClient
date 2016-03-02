@@ -120,7 +120,7 @@ public class InGamePanel extends JPanel {
 	public void handleKeyPress(KeyEvent e) {
         int kc = e.getKeyCode();
 
-		if (kc == KeyEvent.VK_BACK_SLASH) {
+		if (kc == KeyEvent.VK_BACK_SLASH) {			
 			System.out.println("Beams: " + this.engineeringConsoleManager.getSystemEnergyAllocated().get().get(BEAMS) + "%");
 			System.out.println("Torpedoes: " + this.engineeringConsoleManager.getSystemEnergyAllocated().get().get(TORPEDOES) + "%");
 			System.out.println("Sensors: " + this.engineeringConsoleManager.getSystemEnergyAllocated().get().get(SENSORS) + "%");
@@ -148,8 +148,6 @@ public class InGamePanel extends JPanel {
 			for (Entry<OrdnanceType, Integer> entry : ordnanceCount.entrySet()) {
 				System.out.println(entry.getKey() + ": " + entry.getValue());
 			}
-			
-			
 
             System.out.println("\n\n\n");
 		} else if (kc == KeyEvent.VK_EQUALS) {
