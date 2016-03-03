@@ -171,7 +171,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
     }
     
     private void doUpdateTeams() {
-
+    	boolean new_team = false;
+    	
         for (EngineeringConsoleManager.EnhancedDamconStatus damconStatus : engineeringConsoleManager.getDamconTeams().get()) {
             InternalTeam it = internalTeams.get(damconStatus.getTeamNumber());
 
@@ -180,9 +181,15 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
                 internalTeams.put(damconStatus.getTeamNumber(), it);
                 nodesToSelectables.put(it.getShape(), it);
                 damconBranchGroup.addChild(it.getBranchGroup());
+                
+                new_team = true;
             }
 
             it.updatePos(damconStatus.getX(), damconStatus.getY(), damconStatus.getZ());
+        }
+        
+        if (new_team) {
+        	this.billboardifyNodes();
         }
     }
 
