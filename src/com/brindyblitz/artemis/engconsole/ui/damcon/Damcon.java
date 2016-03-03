@@ -96,8 +96,6 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private AudioManager audioManager;
 
-	private boolean dirty = false;
-
     public Damcon(EngineeringConsoleManager engineeringConsoleManager, AudioManager audio_manager) {
         this.engineeringConsoleManager = engineeringConsoleManager;
         this.audioManager = audio_manager;
@@ -121,7 +119,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         this.canvas.setFocusable(false);
 
         this.canvas.setSize(WIDTH, HEIGHT);
-        
+
         DEFAULT_CAMERA_VIEW.get(this.cameraPosition);
         this.billboardifyNodes();
     }
@@ -322,7 +320,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         }
         return r;
     }
-
+    
     private void billboardifyNodes() {
         for (InternalSelectable is : nodesToSelectables.values()) {
             is.billboardify(this.cameraPosition);

@@ -1,19 +1,18 @@
 package com.brindyblitz.artemis.engconsole.ui.damcon;
 
-import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
-import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.EnhancedDamconStatus;
-import com.brindyblitz.artemis.utils.AudioManager;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.media.j3d.Appearance;
 import javax.media.j3d.QuadArray;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Texture;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.EnhancedDamconStatus;
+import com.brindyblitz.artemis.utils.AudioManager;
 
 public class InternalTeam extends InternalSelectable {
     private EnhancedDamconStatus status;

@@ -1,13 +1,11 @@
 package com.brindyblitz.artemis.engconsole.ui;
 
-import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
-import net.dhleong.acl.enums.ShipSystem;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 
 public class ForeShieldSlider extends ShieldSlider {
 	private static final long serialVersionUID = 1L;

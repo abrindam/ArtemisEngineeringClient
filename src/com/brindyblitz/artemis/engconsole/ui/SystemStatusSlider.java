@@ -13,7 +13,6 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
-import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.Events;
 
 import net.dhleong.acl.enums.ShipSystem;
 

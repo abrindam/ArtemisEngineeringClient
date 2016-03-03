@@ -12,7 +12,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
-import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.Events;
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.GameState;
 
 public class UserInterfaceFrame extends JFrame implements KeyListener {

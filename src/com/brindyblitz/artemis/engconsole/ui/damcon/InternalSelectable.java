@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 public abstract class InternalSelectable extends Internal {
     protected boolean hovered = false;
@@ -38,12 +37,12 @@ public abstract class InternalSelectable extends Internal {
     private BufferedImage image;
     private Texture standardTexture, hoveredTexture;
     private int standardAlpha, hoveredAlpha;
-    
+
     private static final int HEALTH_QUANTA = 10;
     private static final float HEALTH_QUANTUM_PCT = (1f / HEALTH_QUANTA);
     private static Map<String, Texture[]> nodeTypeToStandardColorizedTextures = new HashMap<>(), nodeTypeToHoveredColorizedTextures = new HashMap<>();
     private String selectableType;
-    
+
     public InternalSelectable(String selectable_type,
     						  String relative_texture_path, Color color,
                               int standard_alpha, int hovered_alpha, float icon_dimension,
@@ -65,7 +64,7 @@ public abstract class InternalSelectable extends Internal {
         	Texture[] standard_textures = new Texture[HEALTH_QUANTA], hovered_textures = new Texture[HEALTH_QUANTA];
         	nodeTypeToStandardColorizedTextures.put(this.selectableType, standard_textures);
         	nodeTypeToHoveredColorizedTextures.put(this.selectableType, hovered_textures);
-        	
+
 			for (int i = 0; i < HEALTH_QUANTA; i++) {
 				float health_pct = HEALTH_QUANTUM_PCT * (float) i;
 				standard_textures[i] = loadTexture(this.image, getColorFromHealth(health_pct, standardAlpha));
@@ -239,13 +238,13 @@ public abstract class InternalSelectable extends Internal {
     // Health/Color //
     //////////////////
 
-    public void updateHealth(float pct) {    	
+    public void updateHealth(float pct) {
     	if (this.healthPct == pct)
     		return;
 
 		this.healthPct = pct;
 
-		int texture_index = (int) (HEALTH_QUANTA * pct);		
+		int texture_index = (int) (HEALTH_QUANTA * pct);
         standardTexture = nodeTypeToStandardColorizedTextures.get(this.selectableType)[texture_index];
         hoveredTexture = nodeTypeToHoveredColorizedTextures.get(this.selectableType)[texture_index];
 

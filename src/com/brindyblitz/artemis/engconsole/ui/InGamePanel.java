@@ -20,10 +20,8 @@ import java.util.Map.Entry;
 import javax.swing.JPanel;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
-import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.EnhancedDamconStatus;
 import com.brindyblitz.artemis.engconsole.config.InputMapping;
 import com.brindyblitz.artemis.engconsole.ui.damcon.Damcon;
-
 import com.brindyblitz.artemis.utils.AudioManager;
 
 import net.dhleong.acl.enums.OrdnanceType;
@@ -120,7 +118,7 @@ public class InGamePanel extends JPanel {
 	public void handleKeyPress(KeyEvent e) {
         int kc = e.getKeyCode();
 
-		if (kc == KeyEvent.VK_BACK_SLASH) {			
+		if (kc == KeyEvent.VK_BACK_SLASH) {
 			System.out.println("Beams: " + this.engineeringConsoleManager.getSystemEnergyAllocated().get().get(BEAMS) + "%");
 			System.out.println("Torpedoes: " + this.engineeringConsoleManager.getSystemEnergyAllocated().get().get(TORPEDOES) + "%");
 			System.out.println("Sensors: " + this.engineeringConsoleManager.getSystemEnergyAllocated().get().get(SENSORS) + "%");
