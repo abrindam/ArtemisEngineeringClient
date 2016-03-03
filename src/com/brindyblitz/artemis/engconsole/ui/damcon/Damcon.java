@@ -62,6 +62,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
             -0.0, 0.7613814659810991d, 0.648304144102498d, 2.3987253331792435d,
             0.7186213526539035d, -0.45083172335282545d, 0.5294658711650786d, 1.9590237233107914d,
             0.0d, 0.0d, 0.0d, 1.0d });
+    private Vector3d cameraPosition = new Vector3d();
 
     private EngineeringConsoleManager engineeringConsoleManager;
     private Canvas3D canvas;
@@ -120,6 +121,9 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         this.canvas.setFocusable(false);
 
         this.canvas.setSize(WIDTH, HEIGHT);
+        
+        DEFAULT_CAMERA_VIEW.get(this.cameraPosition);
+        this.billboardifyNodes();
     }
 
     private void loadAndWireframeifyModel() {
@@ -319,6 +323,12 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
         return r;
     }
 
+    private void billboardifyNodes() {
+        for (InternalSelectable is : nodesToSelectables.values()) {
+            is.billboardify(this.cameraPosition);
+        }
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
         InternalSelectable internal = pick(e);
@@ -436,11 +446,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
                 xform.invert();
                 camera.setTransform(xform);
 
-                // Billboardify visible nodes
-                Vector3d billboard_cam_target = new Vector3d(-yawed_cam_pos.z, yawed_cam_pos.y, -yawed_cam_pos.x);
-                for (InternalSelectable is : nodesToSelectables.values()) {
-                    is.billboardify(billboard_cam_target);
-                }
+                this.cameraPosition = new Vector3d(-yawed_cam_pos.z, yawed_cam_pos.y, -yawed_cam_pos.x);
+                billboardifyNodes();
             }
         }
     }
