@@ -37,7 +37,7 @@ public class InGamePanel extends JPanel {
 
     private ArrayList<SystemSlider> sliders = new ArrayList<>();
     private Damcon damcon;
-	
+
 	private static final int
             SLIDER_OFFSET_MULTIPLIER = 110,
             SLIDER_OFFSET_ADDITIONAL = 25,
@@ -82,21 +82,21 @@ public class InGamePanel extends JPanel {
         }
 
 		SystemSlider last_slider = sliders.get(sliders.size() - 1);
-		this.add(new CoolantRemainingSlider(engineeringConsoleManager, last_slider.getWidth(), last_slider.getHeight())).setLocation(
+		this.add(new CoolantRemainingSlider(last_slider.getWidth(), last_slider.getHeight(), engineeringConsoleManager, audioManager)).setLocation(
 				this.numSliders * SLIDER_OFFSET_MULTIPLIER + SLIDER_OFFSET_ADDITIONAL, MAIN_SLIDER_Y);
-		
+
 		PresetPanel presetPanel = new PresetPanel(this.presetManager);
 		this.add(presetPanel).setLocation(this.getWidth() - presetPanel.getWidth(), PRESET_Y);
-		
+
 		this.damcon = new Damcon(engineeringConsoleManager, this.audioManager);
 		this.add(damcon.getCanvas()).setLocation(10, DAMCON_Y);
 
 		EnergySlider energy_slider = new EnergySlider(engineeringConsoleManager);
         this.add(energy_slider).setLocation(400, 50);
-        
+
 		ForeShieldSlider fore_shield_slider = new ForeShieldSlider(engineeringConsoleManager);
         this.add(fore_shield_slider).setLocation(400, 80);
-        
+
 		AftShieldSlider aft_shield_slider = new AftShieldSlider(engineeringConsoleManager);
         this.add(aft_shield_slider).setLocation(400, 110);
 	}
@@ -127,21 +127,21 @@ public class InGamePanel extends JPanel {
 			System.out.println("Warp: " + this.engineeringConsoleManager.getSystemEnergyAllocated().get().get(WARP_JUMP_DRIVE) + "%");
 			System.out.println("Front Shields: " + this.engineeringConsoleManager.getSystemEnergyAllocated().get().get(FORE_SHIELDS) + "%");
 			System.out.println("Rear Shields: " + this.engineeringConsoleManager.getSystemEnergyAllocated().get().get(AFT_SHIELDS) + "%");
-			
+
 //			for (Entry<GridCoord, Float> entry : this.engineeringConsoleManager.getGridHealth().entrySet()) {
 //				System.out.println(entry.getKey() + " = " + entry.getValue());
 //			}
-//			
+//
 //			for (EnhancedDamconStatus damconStatus : this.engineeringConsoleManager.getDamconTeams().get()) {
 //				System.out.println(damconStatus);
 //			}
-			
+
 			System.out.println("Energy remaining: " + this.engineeringConsoleManager.getTotalEnergyRemaining().get());
 			System.out.println("Front shields: " + this.engineeringConsoleManager.getFrontShieldStrength().get());
 			System.out.println("Rear shields: " + this.engineeringConsoleManager.getRearShieldStrength().get());
 			System.out.println("Front shields max: " + this.engineeringConsoleManager.getFrontShieldMaxStrength().get());
 			System.out.println("Rear shields max: " + this.engineeringConsoleManager.getRearShieldMaxStrength().get());
-			
+
 			Map<OrdnanceType, Integer> ordnanceCount = this.engineeringConsoleManager.getOrdnanceCount().get();
 			for (Entry<OrdnanceType, Integer> entry : ordnanceCount.entrySet()) {
 				System.out.println(entry.getKey() + ": " + entry.getValue());
@@ -154,7 +154,7 @@ public class InGamePanel extends JPanel {
 		} else if (kc == KeyEvent.VK_BACK_QUOTE) {
             if (e.isShiftDown()) {
             	if (this.damcon != null) {
-            		this.damcon.toggleDamageShake();            		
+            		this.damcon.toggleDamageShake();
             	}
             } else {
             	if (this.damcon != null) {

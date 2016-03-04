@@ -5,12 +5,15 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JPanel;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
+import com.brindyblitz.artemis.utils.AudioManager;
 
-public class CoolantRemainingSlider extends JPanel {
+public class CoolantRemainingSlider extends JPanel implements MouseListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -24,22 +27,26 @@ public class CoolantRemainingSlider extends JPanel {
     private int width, height, bubbleX;
 
     private EngineeringConsoleManager engineeringConsoleManager;
-	
-	public CoolantRemainingSlider(EngineeringConsoleManager engineeringConsoleManager, int width, int height) {
-		this.engineeringConsoleManager = engineeringConsoleManager;
 
+    private AudioManager audioManager;
+
+	public CoolantRemainingSlider(int width, int height, EngineeringConsoleManager engineeringConsoleManager, AudioManager audioManager) {
+		this.engineeringConsoleManager = engineeringConsoleManager;
+		this.audioManager = audioManager;
         this.width = width;
         this.height = height;
-        this.setSize(width, height);
-        this.bubbleX = width - (BUBBLE_DIMENSION + EMPTY_BUBBLE_THICKNESS);
+
+        this.setSize(this.width, this.height);
+        this.bubbleX = this.width - (BUBBLE_DIMENSION + EMPTY_BUBBLE_THICKNESS);
 
         this.setBackground(new Color(0, 0, 0, 0));
 
         this.engineeringConsoleManager.getTotalShipCoolant().onChange(() -> this.repaint());
         this.engineeringConsoleManager.getTotalCoolantRemaining().onChange(() -> this.repaint());
-        
+
+        this.addMouseListener(this);
 	}
-	
+
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
@@ -78,4 +85,22 @@ public class CoolantRemainingSlider extends JPanel {
             g.drawOval(bubbleX, (i - 1) * bubbleOffset + EMPTY_BUBBLE_THICKNESS, BUBBLE_DIMENSION, BUBBLE_DIMENSION);
         }
 	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		this.engineeringConsoleManager.resetCoolant();
+		audioManager.playSound("beep.wav");
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
 }
