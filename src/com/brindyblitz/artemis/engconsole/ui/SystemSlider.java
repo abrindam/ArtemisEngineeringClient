@@ -5,6 +5,9 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.List;
@@ -20,8 +23,7 @@ import com.brindyblitz.artemis.utils.AudioManager;
 import net.dhleong.acl.enums.ShipSystem;
 import net.dhleong.acl.world.Artemis;
 
-public class SystemSlider extends JPanel implements MouseWheelListener {
-
+public class SystemSlider extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
 	private static final long serialVersionUID = 1L;
 	private EngineeringConsoleManager engineeringConsoleManager;
 	private SystemStatusRenderer systemStatusRenderer;
@@ -72,6 +74,8 @@ public class SystemSlider extends JPanel implements MouseWheelListener {
 		NOTCH_HEIGHT_FOR_MINOR_PCTS = 2,
 		NOTCH_PRECISION_LEVELS_PER_100_PCT = Artemis.MAX_ENERGY_ALLOCATION_PERCENT / 100,
 
+		SLIDER_MOUSE_TOP_SPACER = 3,
+
         SHORTCUT_MAX_LENGTH = 4;
 
 	private static final Color[] NOTCH_COLORS = new Color[]{Color.GREEN, new Color(255, 180, 0), Color.RED};
@@ -89,11 +93,17 @@ public class SystemSlider extends JPanel implements MouseWheelListener {
 		this.setSize(WIDGET_WIDTH, WIDGET_HEIGHT);
 		this.setBackground(new Color(0, 0, 0, 0));
 
+		this.addMouseListener(this);
+		this.addMouseMotionListener(this);
         this.addMouseWheelListener(this);
 
         this.engineeringConsoleManager.getSystemEnergyAllocated().onChange(() -> this.repaint());
         this.engineeringConsoleManager.getSystemCoolantAllocated().onChange(() -> this.repaint());
 	}
+
+	//////////
+	// Draw //
+	//////////
 
 	@Override
 	public void paint(Graphics g) {
@@ -214,6 +224,21 @@ public class SystemSlider extends JPanel implements MouseWheelListener {
 		throw new RuntimeException("Unexpected Interval Type");
 	}
 
+	///////////
+	// Input //
+	///////////
+
+    private void handleInput(boolean positive, boolean shift_down) {
+		audioManager.playSound("beep.wav");
+
+        if (shift_down) {
+            this.engineeringConsoleManager.incrementSystemCoolantAllocated(this.system, positive ? COOLANT_INCREMENT : -COOLANT_INCREMENT);
+        } else {
+            this.engineeringConsoleManager.incrementSystemEnergyAllocated(this.system, positive ? ENERGY_INCREMENT : -ENERGY_INCREMENT);
+        }
+        this.repaint();
+    }
+
     /***
      * Only one Swing item seems to be able to receive keys at once probably due to the insane Java focus
      * model (see https://docs.oracle.com/javase/7/docs/api/java/awt/doc-files/FocusSpec.html).
@@ -236,14 +261,78 @@ public class SystemSlider extends JPanel implements MouseWheelListener {
         }
 	}
 
-    private void handleInput(boolean positive, boolean shift_down) {
-		audioManager.playSound("beep.wav");
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// Note: pressed seems to work better than clicked (due to lag?)
 
-        if (shift_down) {
-            this.engineeringConsoleManager.incrementSystemCoolantAllocated(this.system, positive ? COOLANT_INCREMENT : -COOLANT_INCREMENT);
-        } else {
-            this.engineeringConsoleManager.incrementSystemEnergyAllocated(this.system, positive ? ENERGY_INCREMENT : -ENERGY_INCREMENT);
-        }
-        this.repaint();
-    }
+		// Make coordinates relative to slider and check bounds
+		int x = e.getX() - SLIDER_LEFT, y = e.getY() - (SLIDER_TOP + SLIDER_MOUSE_TOP_SPACER);
+		if (x < 0 || y < 0 || x > WIDGET_WIDTH || y > SLIDER_HEIGHT) {
+			return;
+		}
+
+		if (x < POWER_WIDTH) {				// Set power directly...
+			int power = SLIDER_HEIGHT - y;	// Note: this relies on keeping the height of this widget equal to Artemis.MAX_ENERGY_ALLOCATION_PERCENT
+			this.engineeringConsoleManager.setSystemEnergyAllocated(this.system, power);
+		} else {							// Set coolant...
+			int coolant_relative_y = percentToY(1f) - e.getY();			// get y coordinate of mouse relative to bottom of 1-coolant block
+			int current_coolant_allocated = this.engineeringConsoleManager.getSystemCoolantAllocated().get().get(this.system);
+
+			if (coolant_relative_y < 0) {								// click under 1-coolant block: set coolant to 0
+				if (current_coolant_allocated != 0) {
+					this.engineeringConsoleManager.setSystemCoolantAllocated(this.system, 0);
+					audioManager.playSound("beep.wav");
+				}
+			} else {
+				for (int i = Artemis.MAX_COOLANT_PER_SYSTEM; i > 0; i--) {	// from the max-coolant block, find which block's bottom is below the mouse
+					int bottom_range_y = percentToY(1f) - (percentToY(SystemStatusRenderer.getCooledEnergyThreshold(i - 1) / 100f) + SLIDER_MOUSE_TOP_SPACER + NOTCH_HEIGHT_FOR_MINOR_PCTS);
+
+					if (coolant_relative_y > bottom_range_y) {				// if current block's bottom is below mouse, i.e. if mouse is inside this block
+						if (current_coolant_allocated != i) {				// ignore setting equal to current setting
+							int current_total_coolant_remaining = this.engineeringConsoleManager.getTotalCoolantRemaining().get();
+
+							// if increasing coolant allocated to this system...
+							if (i > current_coolant_allocated && i - current_coolant_allocated > current_total_coolant_remaining) {
+								int clamped_coolant = current_total_coolant_remaining + current_coolant_allocated;
+
+								if (current_total_coolant_remaining == 0) {									// coolant not changing because there's no more coolant to allocate (i.e. clamped_coolant = current_coolant_allocated)
+									// TODO: AUDIO > play error sound here (coolant value not changing)
+								} else  if (clamped_coolant > 0) {
+									// set coolant to remaining + amount currently allocated to this system
+									this.engineeringConsoleManager.setSystemCoolantAllocated(this.system, current_total_coolant_remaining + current_coolant_allocated);
+									audioManager.playSound("beep.wav");
+								} else {
+									// TODO: AUDIO > play error sound here (coolant depleted)
+								}
+							} else {
+								this.engineeringConsoleManager.setSystemCoolantAllocated(this.system, i);		// set to requested coolant level
+								audioManager.playSound("beep.wav");
+							}
+						} else {
+							// TODO: AUDIO > play error sound here (coolant value not changing)
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {}
 }

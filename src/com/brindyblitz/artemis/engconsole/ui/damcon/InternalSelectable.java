@@ -92,8 +92,6 @@ public abstract class InternalSelectable extends Internal {
         QuadArray qa;
         qa = new QuadArray(4, QuadArray.COORDINATES | GeometryArray.TEXTURE_COORDINATE_2 | Primitive.GENERATE_NORMALS);
         qa.setCapability(QuadArray.ALLOW_COORDINATE_WRITE);
-        // TODO: BUG > this starts off facing the wrong way; maybe just poke camera so it updates?
-        // Need update when damcons init too, so maybe just pass in cam pos and call billboardify?
         qa.setCoordinate(0, new Point3f(-iconDimension, -iconDimension, 0));
         qa.setCoordinate(1, new Point3f(iconDimension, -iconDimension, 0));
         qa.setCoordinate(2, new Point3f(iconDimension, iconDimension, 0));
