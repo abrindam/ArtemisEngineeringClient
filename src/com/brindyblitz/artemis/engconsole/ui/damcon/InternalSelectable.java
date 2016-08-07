@@ -278,7 +278,7 @@ public abstract class InternalSelectable extends Internal {
 
 		this.healthPct = pct;
 
-		int texture_index = (int) (HEALTH_QUANTA * pct);
+		int texture_index = Math.min((int) (HEALTH_QUANTA * pct), HEALTH_QUANTA -1);
 		standardTexture = nodeTypeToStandardColorizedTextures.get(this.selectableType)[texture_index];
 		hoveredTexture = nodeTypeToHoveredColorizedTextures.get(this.selectableType)[texture_index];
 
