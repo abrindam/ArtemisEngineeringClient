@@ -3,7 +3,7 @@ package com.brindyblitz.artemis.engconsole.config;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.dhleong.acl.enums.ShipSystem;
+import com.walkertribe.ian.enums.ShipSystem;
 
 public class EnergyCoolantPreset {
 	public static final int SAFE_ENERGY = -999;

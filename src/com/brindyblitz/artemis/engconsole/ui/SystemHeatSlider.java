@@ -1,7 +1,7 @@
 package com.brindyblitz.artemis.engconsole.ui;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
-import net.dhleong.acl.enums.ShipSystem;
+import com.walkertribe.ian.enums.ShipSystem;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

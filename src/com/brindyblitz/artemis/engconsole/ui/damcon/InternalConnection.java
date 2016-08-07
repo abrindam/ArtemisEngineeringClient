@@ -10,7 +10,7 @@ import javax.vecmath.Color3f;
 
 import com.brindyblitz.artemis.utils.AudioManager;
 
-import net.dhleong.acl.vesseldata.VesselNodeConnection;
+import com.walkertribe.ian.vesseldata.VesselNodeConnection;
 
 public class InternalConnection extends Internal {
 	private VesselNodeConnection vesselNodeConnection;

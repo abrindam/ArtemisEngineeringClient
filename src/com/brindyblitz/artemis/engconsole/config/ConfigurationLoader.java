@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import net.dhleong.acl.enums.ShipSystem;
+import com.walkertribe.ian.enums.ShipSystem;
 
 public class ConfigurationLoader {
 

@@ -4,14 +4,14 @@ import java.io.IOException;
 
 import com.brindyblitz.artemis.utils.EventEmitter;
 
-import net.dhleong.acl.enums.Console;
-import net.dhleong.acl.iface.ArtemisNetworkInterface;
-import net.dhleong.acl.iface.ConnectionSuccessEvent;
-import net.dhleong.acl.iface.Listener;
-import net.dhleong.acl.iface.ThreadedArtemisNetworkInterface;
-import net.dhleong.acl.protocol.core.setup.ReadyPacket;
-import net.dhleong.acl.protocol.core.setup.ReadyPacket2;
-import net.dhleong.acl.protocol.core.setup.SetConsolePacket;
+import com.walkertribe.ian.enums.Console;
+import com.walkertribe.ian.iface.ArtemisNetworkInterface;
+import com.walkertribe.ian.iface.ConnectionSuccessEvent;
+import com.walkertribe.ian.iface.Listener;
+import com.walkertribe.ian.iface.ThreadedArtemisNetworkInterface;
+import com.walkertribe.ian.protocol.core.setup.ReadyPacket;
+import com.walkertribe.ian.protocol.core.setup.ReadyPacket2;
+import com.walkertribe.ian.protocol.core.setup.SetConsolePacket;
 
 public class WorldAwareRegularServer implements WorldAwareServer {
 

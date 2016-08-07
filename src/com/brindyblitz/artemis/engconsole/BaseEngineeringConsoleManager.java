@@ -1,5 +1,6 @@
 package com.brindyblitz.artemis.engconsole;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,15 +11,15 @@ import com.brindyblitz.artemis.protocol.NonShittyShipSystemGrid;
 import com.brindyblitz.artemis.utils.newton.DerivedProperty;
 import com.brindyblitz.artemis.utils.newton.Property;
 
-import net.dhleong.acl.enums.ShipSystem;
-import net.dhleong.acl.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
-import net.dhleong.acl.util.GridCoord;
-import net.dhleong.acl.util.ShipSystemGrid;
-import net.dhleong.acl.vesseldata.Vessel;
-import net.dhleong.acl.vesseldata.VesselData;
-import net.dhleong.acl.vesseldata.VesselNode;
-import net.dhleong.acl.vesseldata.VesselNodeConnection;
-import net.dhleong.acl.world.Artemis;
+import com.walkertribe.ian.enums.ShipSystem;
+import com.walkertribe.ian.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
+import com.walkertribe.ian.util.GridCoord;
+import com.walkertribe.ian.util.ShipSystemGrid;
+import com.walkertribe.ian.vesseldata.Vessel;
+import com.walkertribe.ian.vesseldata.VesselData;
+import com.walkertribe.ian.vesseldata.VesselNode;
+import com.walkertribe.ian.vesseldata.VesselNodeConnection;
+import com.walkertribe.ian.world.Artemis;
 
 public abstract class BaseEngineeringConsoleManager implements EngineeringConsoleManager {
 
@@ -29,6 +30,8 @@ public abstract class BaseEngineeringConsoleManager implements EngineeringConsol
 	
 	
 	public BaseEngineeringConsoleManager() {
+		
+		VesselData.setArtemisInstallPath(new File(System.getProperty("user.dir"), "artemisData"));
 		
 		NonShittyShipSystemGrid shipSystemGrid = new NonShittyShipSystemGrid();
 		this.grid = new ArrayList<>();

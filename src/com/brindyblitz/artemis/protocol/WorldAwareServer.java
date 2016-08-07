@@ -1,6 +1,6 @@
 package com.brindyblitz.artemis.protocol;
 
-import net.dhleong.acl.iface.ArtemisNetworkInterface;
+import com.walkertribe.ian.iface.ArtemisNetworkInterface;
 
 public interface WorldAwareServer {
 

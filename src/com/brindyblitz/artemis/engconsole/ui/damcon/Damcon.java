@@ -47,9 +47,9 @@ import com.sun.j3d.loaders.objectfile.ObjectFile;
 import com.sun.j3d.utils.pickfast.PickCanvas;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
-import net.dhleong.acl.util.GridCoord;
-import net.dhleong.acl.vesseldata.VesselNode;
-import net.dhleong.acl.vesseldata.VesselNodeConnection;
+import com.walkertribe.ian.util.GridCoord;
+import com.walkertribe.ian.vesseldata.VesselNode;
+import com.walkertribe.ian.vesseldata.VesselNodeConnection;
 
 public class Damcon implements MouseListener, MouseMotionListener, MouseWheelListener {
 	private static final int WIDTH = 400, HEIGHT = 300;

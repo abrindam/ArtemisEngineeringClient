@@ -12,10 +12,10 @@ import com.brindyblitz.artemis.utils.newton.DerivedProperty;
 import com.brindyblitz.artemis.utils.newton.Property;
 import com.brindyblitz.artemis.utils.newton.SettableProperty;
 
-import net.dhleong.acl.enums.OrdnanceType;
-import net.dhleong.acl.enums.ShipSystem;
-import net.dhleong.acl.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
-import net.dhleong.acl.util.GridCoord;
+import com.walkertribe.ian.enums.OrdnanceType;
+import com.walkertribe.ian.enums.ShipSystem;
+import com.walkertribe.ian.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
+import com.walkertribe.ian.util.GridCoord;
 
 public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager {
 	private static final int MAX_COOLANT = 8;

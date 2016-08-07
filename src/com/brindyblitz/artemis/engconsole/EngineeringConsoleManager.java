@@ -5,12 +5,12 @@ import java.util.Map;
 
 import com.brindyblitz.artemis.utils.newton.Property;
 
-import net.dhleong.acl.enums.OrdnanceType;
-import net.dhleong.acl.enums.ShipSystem;
-import net.dhleong.acl.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
-import net.dhleong.acl.util.GridCoord;
-import net.dhleong.acl.vesseldata.VesselNode;
-import net.dhleong.acl.vesseldata.VesselNodeConnection;
+import com.walkertribe.ian.enums.OrdnanceType;
+import com.walkertribe.ian.enums.ShipSystem;
+import com.walkertribe.ian.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
+import com.walkertribe.ian.util.GridCoord;
+import com.walkertribe.ian.vesseldata.VesselNode;
+import com.walkertribe.ian.vesseldata.VesselNodeConnection;
 
 public interface EngineeringConsoleManager {
 	

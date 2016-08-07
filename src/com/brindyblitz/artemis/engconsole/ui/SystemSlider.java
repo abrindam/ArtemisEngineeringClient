@@ -20,8 +20,8 @@ import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer.Interval;
 import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer.IntervalType;
 import com.brindyblitz.artemis.utils.AudioManager;
 
-import net.dhleong.acl.enums.ShipSystem;
-import net.dhleong.acl.world.Artemis;
+import com.walkertribe.ian.enums.ShipSystem;
+import com.walkertribe.ian.world.Artemis;
 
 public class SystemSlider extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
 	private static final long serialVersionUID = 1L;

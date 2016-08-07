@@ -4,7 +4,7 @@ import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.config.ConfigurationLoader;
 import com.brindyblitz.artemis.engconsole.config.EnergyCoolantPreset;
 
-import net.dhleong.acl.enums.ShipSystem;
+import com.walkertribe.ian.enums.ShipSystem;
 
 public class PresetManager {
 	private EnergyCoolantPreset[] presets;

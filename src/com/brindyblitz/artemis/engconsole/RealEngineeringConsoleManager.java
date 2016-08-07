@@ -16,14 +16,14 @@ import com.brindyblitz.artemis.utils.newton.DerivedProperty;
 import com.brindyblitz.artemis.utils.newton.ObservableAdapter;
 import com.brindyblitz.artemis.utils.newton.Property;
 
-import net.dhleong.acl.enums.OrdnanceType;
-import net.dhleong.acl.enums.ShipSystem;
-import net.dhleong.acl.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
-import net.dhleong.acl.protocol.core.eng.EngSendDamconPacket;
-import net.dhleong.acl.protocol.core.eng.EngSetCoolantPacket;
-import net.dhleong.acl.protocol.core.eng.EngSetEnergyPacket;
-import net.dhleong.acl.util.GridCoord;
-import net.dhleong.acl.world.Artemis;
+import com.walkertribe.ian.enums.OrdnanceType;
+import com.walkertribe.ian.enums.ShipSystem;
+import com.walkertribe.ian.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
+import com.walkertribe.ian.protocol.core.eng.EngSendDamconPacket;
+import com.walkertribe.ian.protocol.core.eng.EngSetCoolantPacket;
+import com.walkertribe.ian.protocol.core.eng.EngSetEnergyPacket;
+import com.walkertribe.ian.util.GridCoord;
+import com.walkertribe.ian.world.Artemis;
 
 public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager {
 
@@ -67,7 +67,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		if (worldAwareServer == null || !worldAwareServer.isConnected()) {
 			return GameState.DISCONNECTED;
 		}
-		else if ( this.worldAwareServer.getSystemManager().getPlayerShip(0) != null) {
+		else if ( this.worldAwareServer.getSystemManager().getPlayerShip(1) != null) {
 			return GameState.INGAME;
 		}
 		else {
@@ -84,11 +84,11 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		
 		Map<ShipSystem, Integer> result = new HashMap<>();
 		for(ShipSystem system: ShipSystem.values()) {
-			if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+			if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(1) == null) {
 				result.put(system, 100);
 			}
 			else {
-				result.put(system, (int)(this.worldAwareServer.getSystemManager().getPlayerShip(0).getSystemEnergy(system) * 300));							
+				result.put(system, (int)(this.worldAwareServer.getSystemManager().getPlayerShip(1).getSystemEnergy(system) * 300));							
 			}
 		}
 		
@@ -103,11 +103,11 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		
 		Map<ShipSystem, Integer> result = new HashMap<>();
 		for(ShipSystem system: ShipSystem.values()) {
-			if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+			if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(1) == null) {
 				result.put(system, 0);
 			}
 			else {
-				result.put(system, this.worldAwareServer.getSystemManager().getPlayerShip(0).getSystemCoolant(system));							
+				result.put(system, this.worldAwareServer.getSystemManager().getPlayerShip(1).getSystemCoolant(system));							
 			}
 		}
 		
@@ -122,11 +122,11 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		
 		Map<ShipSystem, Integer> result = new HashMap<>();
 		for(ShipSystem system: ShipSystem.values()) {
-			if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+			if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(1) == null) {
 				result.put(system, 0);
 			}
 			else {
-				result.put(system, (int) (this.worldAwareServer.getSystemManager().getPlayerShip(0).getSystemHeat(system) * 100));							
+				result.put(system, (int) (this.worldAwareServer.getSystemManager().getPlayerShip(1).getSystemHeat(system) * 100));							
 			}
 
 		}
@@ -142,7 +142,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		
 		Map<ShipSystem, Integer> result = new HashMap<>();
 		for(ShipSystem system: ShipSystem.values()) {
-			if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+			if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(1) == null) {
 				result.put(system, 100);
 			}
 			else {
@@ -158,10 +158,10 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		return totalShipCoolant;
 	}
 	private final DerivedProperty<Integer> totalShipCoolant = new DerivedProperty<>( () -> {
-		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(1) == null) {
 			return 8;
 		}
-		return this.worldAwareServer.getSystemManager().getPlayerShip(0).getAvailableCoolant();
+		return this.worldAwareServer.getSystemManager().getPlayerShip(1).getAvailableCoolant();
 	}, systemManagerChangeObservable);
 	
 	
@@ -171,7 +171,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	}
 	private final DerivedProperty<Integer> totalCoolantRemaining = new DerivedProperty<>( () -> {
 		
-		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(1) == null) {
 			return Artemis.DEFAULT_COOLANT;
 		}
 		Map<ShipSystem, Integer> systemCoolantAllocated = this.getSystemCoolantAllocated().get();
@@ -226,11 +226,11 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		return totalEnergyRemaining;
 	}
 	private final DerivedProperty<Float> totalEnergyRemaining = new DerivedProperty<>( () -> {
-		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(1) == null) {
 			return 0f;
 		}
 		
-		return this.worldAwareServer.getSystemManager().getPlayerShip(0).getEnergy();
+		return this.worldAwareServer.getSystemManager().getPlayerShip(1).getEnergy();
 	}, systemManagerChangeObservable);
 	
 	@Override
@@ -238,12 +238,12 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		return frontShieldStrength;
 	}
 	private final DerivedProperty<Integer> frontShieldStrength = new DerivedProperty<>( () -> {
-		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(1) == null) {
 			return 0;
 		}
 		
 		// When shields are knocked offline, they go to a negative value and come back online once they reach 1 again.
-		int strength = (int) this.worldAwareServer.getSystemManager().getPlayerShip(0).getShieldsFront();
+		int strength = (int) this.worldAwareServer.getSystemManager().getPlayerShip(1).getShieldsFront();
 		return strength > 0 ? strength : 0;
 	}, systemManagerChangeObservable);
 	
@@ -253,12 +253,12 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		
 	}
 	private final DerivedProperty<Integer> rearShieldStrength = new DerivedProperty<>( () -> {
-		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(1) == null) {
 			return 0;
 		}
 		
 		// When shields are knocked offline, they go to a negative value and come back online once they reach 1 again.
-		int strength = (int) this.worldAwareServer.getSystemManager().getPlayerShip(0).getShieldsRear();
+		int strength = (int) this.worldAwareServer.getSystemManager().getPlayerShip(1).getShieldsRear();
 		return strength > 0 ? strength : 0;
 	}, systemManagerChangeObservable);
 	
@@ -267,11 +267,11 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		return frontShieldMaxStrength;
 	}
 	private final DerivedProperty<Integer> frontShieldMaxStrength = new DerivedProperty<>( () -> {
-		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(1) == null) {
 			return 0;
 		}
 		
-		return (int) this.worldAwareServer.getSystemManager().getPlayerShip(0).getShieldsFrontMax();
+		return (int) this.worldAwareServer.getSystemManager().getPlayerShip(1).getShieldsFrontMax();
 	}, systemManagerChangeObservable);
 	
 	
@@ -281,11 +281,11 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		
 	}
 	private final DerivedProperty<Integer> rearShieldMaxStrength = new DerivedProperty<>( () -> {
-		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(1) == null) {
 			return 0;
 		}
 		
-		return (int) this.worldAwareServer.getSystemManager().getPlayerShip(0).getShieldsRearMax();
+		return (int) this.worldAwareServer.getSystemManager().getPlayerShip(1).getShieldsRearMax();
 	}, systemManagerChangeObservable);
 	
 	@Override
@@ -294,11 +294,11 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	}
 	
 	private final DerivedProperty<Boolean> shieldsActive = new DerivedProperty<>( () -> {
-		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(1) == null) {
 			return false;
 		}
 		
-		return this.worldAwareServer.getSystemManager().getPlayerShip(0).getShieldsState().getBooleanValue();
+		return this.worldAwareServer.getSystemManager().getPlayerShip(1).getShieldsState().getBooleanValue();
 	}, systemManagerChangeObservable);
 
 	@Override
@@ -309,11 +309,11 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		
 		Map<OrdnanceType, Integer> result = new HashMap<>();
 		for(OrdnanceType type: OrdnanceType.values()) {
-			if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+			if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(1) == null) {
 				result.put(type, 0);
 			}
 			else { 
-				result.put(type, this.worldAwareServer.getSystemManager().getPlayerShip(0).getTorpedoCount(type));							
+				result.put(type, this.worldAwareServer.getSystemManager().getPlayerShip(1).getTorpedoCount(type));							
 			}
 		}
 		
@@ -323,7 +323,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	
 	@Override
 	public void incrementSystemEnergyAllocated(ShipSystem system, int amount) {
-		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(1) == null) {
 			return;
 		}
 		super.incrementSystemEnergyAllocated(system, amount);
@@ -331,7 +331,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	
 	@Override
 	public void incrementSystemCoolantAllocated(ShipSystem system, int amount) {
-		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(0) == null) {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(1) == null) {
 			return;
 		}
 		super.incrementSystemCoolantAllocated(system, amount);

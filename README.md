@@ -4,6 +4,15 @@ This is a Java client for [Artemis Space Bridge Simulator](http://artemis.eochu.
 
 More information on specific functionality will be available as development progresses.
 
+## Acknowledgments
+This is a client for Artemis Space Bridge Simulator created by Thom Robertson. You must have a legally purchased version of Artemis
+in order to play this game. Artemis is an awesome game and Thom has been kind enough to be supportive of third party clients. Please 
+do not pirate Artemis - thank him by buying a copy of the game!
+
+In order to talk to the Artemis server, this client uses IAN (Interface for Artemis Networking), created by Robert J. Walker (rjwut) 
+on top of the original ArtClientLib created by Daniel Leong (dhleong). None of this would be possible without their hard work! 
+
+
 ## Persistent Custom Presets
 TODO: document me!
 
@@ -89,7 +98,7 @@ First, clone this repository into the root of your Eclipse workspace.
     
 Open Eclipse and choose `File -> New Java Project`. Enter the name of this repository exactly as the name of the project. You'll see text on the bottom of the window explaining that the wizard will automatically configure the JRE etc.  Make sure Java SE 8 or later is selected (we're currently using 1.8.0_51).  Click `Finish`.
 
-Then, right click on the project and select `Build Path -> Configure Build Path`. Under the `Libraries` tab, you should see `artclientlib-2.6.0.jar`; if you don't, click `Add JARs` and locate it under `lib`.  On the entry for that JAR, expand the triangle to see more details. Double-click the `Source Attachment` entry and navigate to `lib/ArtClientLib-2.6.0`. You should now be able to click on library classes such as `ShipSystem` and see their source and JavaDoc comments.
+Then, right click on the project and select `Build Path -> Configure Build Path`. Under the `Libraries` tab, you should see `ian-UNRELEASED.jar`; if you don't, click `Add JARs` and locate it under `lib`.
 
 
 #### IntelliJ IDEA
@@ -100,13 +109,10 @@ These instructions assume you are using IntelliJ IDEA 14.1.4.
 1. Select `Create project from existing sources`.
 1. Continue selecting defaults until the project loads.
 1. In the project window's tree, locate the lib directory under `ArtemisEngineeringClient`.
-1. Right click on artclientlib-2.6.0.jar, select `Add as source...`, and select `Build -> Rebuild Project`.
+1. Right click on ian-UNRELEASED.jar, select `Add as source...`, and select `Build -> Rebuild Project`.
 	- You should now have no compilation errors.
-1. Right click on `ArtemisEngineeringClient`, select `Open module settings...`, and navigate to `Project Settings -> Libraries`
-1. Select `artclientlib-2.6.0`.  Select the `+` in the bottom of the UI (not the one at the top to add a new library) and select the `lib/ArtClientLib-2.6.0` directory.
-	- You should now be able to navigate directly to the ArtClientLib source code from within your source files and see no compilation errors in the `ArtClientLib` directory.
-1. In the project window's tree, right click on `lib` and select `Mark Directory As -> Excluded`.  This will cause any compilation errors in ArtClientLib to go away (you only need that directory for code navigation, not compilation).
-	- If you do wish to actually compile (or run the tests) for ArtClientLib, you'll probably have to do something like this: select the `+` at the top of the UI (to add a new library), select `Java`, and select `ArtemisEngineeringClient/lib/ArtClientLib-2.6.0/junitlib/junit-4.11.jar`.  Do the same for `hamcrest-core-1.3.jar` as well.
+	- You should now be able to navigate directly to the IAN source code from within your source files
+1. In the project window's tree, right click on `lib` and select `Mark Directory As -> Excluded`.  This will cause any compilation errors in any dependencies to go away (you only need that directory for code navigation, not compilation).
 	
 
 ### 3D DAMCON Models

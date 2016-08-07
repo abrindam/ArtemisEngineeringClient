@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 
-import net.dhleong.acl.enums.ShipSystem;
+import com.walkertribe.ian.enums.ShipSystem;
 
 public abstract class SystemStatusSlider extends JPanel {
     private static final long serialVersionUID = 1L;

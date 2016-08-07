@@ -4,8 +4,8 @@ import java.awt.Color;
 
 import com.brindyblitz.artemis.utils.AudioManager;
 
-import net.dhleong.acl.util.GridCoord;
-import net.dhleong.acl.vesseldata.VesselNode;
+import com.walkertribe.ian.util.GridCoord;
+import com.walkertribe.ian.vesseldata.VesselNode;
 
 public class InternalNode extends InternalSelectable {
 	private VesselNode vesselNode;

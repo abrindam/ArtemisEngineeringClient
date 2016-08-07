@@ -7,7 +7,7 @@ import java.util.Map;
 import com.brindyblitz.artemis.engconsole.config.ConfigurationLoader;
 import com.brindyblitz.artemis.engconsole.config.InputMapping;
 
-import net.dhleong.acl.enums.ShipSystem;
+import com.walkertribe.ian.enums.ShipSystem;
 
 public abstract class InputManager {
     public static Map<ShipSystem, InputMapping> mappings = new HashMap<ShipSystem, InputMapping>();

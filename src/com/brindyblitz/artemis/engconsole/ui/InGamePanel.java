@@ -1,13 +1,13 @@
 package com.brindyblitz.artemis.engconsole.ui;
 
-import static net.dhleong.acl.enums.ShipSystem.AFT_SHIELDS;
-import static net.dhleong.acl.enums.ShipSystem.BEAMS;
-import static net.dhleong.acl.enums.ShipSystem.FORE_SHIELDS;
-import static net.dhleong.acl.enums.ShipSystem.IMPULSE;
-import static net.dhleong.acl.enums.ShipSystem.MANEUVERING;
-import static net.dhleong.acl.enums.ShipSystem.SENSORS;
-import static net.dhleong.acl.enums.ShipSystem.TORPEDOES;
-import static net.dhleong.acl.enums.ShipSystem.WARP_JUMP_DRIVE;
+import static com.walkertribe.ian.enums.ShipSystem.AFT_SHIELDS;
+import static com.walkertribe.ian.enums.ShipSystem.BEAMS;
+import static com.walkertribe.ian.enums.ShipSystem.FORE_SHIELDS;
+import static com.walkertribe.ian.enums.ShipSystem.IMPULSE;
+import static com.walkertribe.ian.enums.ShipSystem.MANEUVERING;
+import static com.walkertribe.ian.enums.ShipSystem.SENSORS;
+import static com.walkertribe.ian.enums.ShipSystem.TORPEDOES;
+import static com.walkertribe.ian.enums.ShipSystem.WARP_JUMP_DRIVE;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -24,9 +24,9 @@ import com.brindyblitz.artemis.engconsole.config.InputMapping;
 import com.brindyblitz.artemis.engconsole.ui.damcon.Damcon;
 import com.brindyblitz.artemis.utils.AudioManager;
 
-import net.dhleong.acl.enums.OrdnanceType;
-import net.dhleong.acl.enums.ShipSystem;
-import net.dhleong.acl.util.GridCoord;
+import com.walkertribe.ian.enums.OrdnanceType;
+import com.walkertribe.ian.enums.ShipSystem;
+import com.walkertribe.ian.util.GridCoord;
 
 public class InGamePanel extends JPanel {
 

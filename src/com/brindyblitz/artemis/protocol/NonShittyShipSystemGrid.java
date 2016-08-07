@@ -5,9 +5,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
-import net.dhleong.acl.enums.ShipSystem;
-import net.dhleong.acl.util.GridCoord;
-import net.dhleong.acl.util.ShipSystemGrid;
+import com.walkertribe.ian.enums.ShipSystem;
+import com.walkertribe.ian.util.GridCoord;
+import com.walkertribe.ian.util.ShipSystemGrid;
 
 public class NonShittyShipSystemGrid extends ShipSystemGrid {
 	
