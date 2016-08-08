@@ -98,8 +98,9 @@ First, clone this repository into the root of your Eclipse workspace.
     
 Open Eclipse and choose `File -> New Java Project`. Enter the name of this repository exactly as the name of the project. You'll see text on the bottom of the window explaining that the wizard will automatically configure the JRE etc.  Make sure Java SE 8 or later is selected (we're currently using 1.8.0_51).  Click `Finish`.
 
-Then, right click on the project and select `Build Path -> Configure Build Path`. Under the `Libraries` tab, you should see `ian-UNRELEASED.jar`; if you don't, click `Add JARs` and locate it under `lib`.
+Next, right click on the project and select `Build Path -> Configure Build Path`. If you don't see that option, right click on the project, select `Properties` and then the `Java Build Path` entry. Under the `Libraries` tab, click `Add JARs`. Add all of the `.jar` files in `lib` and the `Java3D-1.5.1` subdirectory (there should be 5 in total).
 
+Lastly, navigate to `Run Configurations` and create two new configurations. Both should invoke `com.brindyblitz.artemis.ClientMain`. The first, titled `AEC - Fake`, should include the argument `--fake`. This will invoke the fake server (see `Fake Mode` above). The second, `AEC - Live LAN`, should have the IP address of your server as the argument, e.g. `10.0.0.4`. This will connect to the real server upon launch (see `Proxy Mode` above).
 
 #### IntelliJ IDEA
 These instructions assume you are using IntelliJ IDEA 14.1.4.
