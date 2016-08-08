@@ -14,6 +14,7 @@ import com.walkertribe.ian.iface.ThreadedArtemisNetworkInterface;
 import com.walkertribe.ian.protocol.ArtemisPacket;
 import com.walkertribe.ian.protocol.RawPacket;
 import com.walkertribe.ian.protocol.UnparsedPacket;
+import com.walkertribe.ian.util.TextUtil;
 
 public class RobustProxyListener implements Runnable {
 
@@ -111,7 +112,10 @@ public class RobustProxyListener implements Runnable {
 		ConnectionType type = pkt.getConnectionType();
 		ArtemisNetworkInterface dest = type == ConnectionType.SERVER ? client : server;
 		dest.send(pkt);
-		//        System.out.println(type + "> " + pkt.getType() + "-" + pkt);
+//		String packetType ="0x" +  TextUtil.intToHex(pkt.getType());
+//		if (!packetType.equals("0x80803df9")) {
+//			System.out.println(type + "> " + pkt);
+//		}
 	}
 
 	private class InternalDebugger extends BaseDebugger {

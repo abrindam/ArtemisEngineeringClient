@@ -3,12 +3,12 @@ package com.brindyblitz.artemis.protocol;
 import java.io.IOException;
 
 import com.brindyblitz.artemis.utils.EventEmitter;
-
 import com.walkertribe.ian.enums.Console;
 import com.walkertribe.ian.iface.ArtemisNetworkInterface;
 import com.walkertribe.ian.iface.ConnectionSuccessEvent;
 import com.walkertribe.ian.iface.Listener;
 import com.walkertribe.ian.iface.ThreadedArtemisNetworkInterface;
+import com.walkertribe.ian.protocol.core.TogglePerspectivePacket;
 import com.walkertribe.ian.protocol.core.setup.ReadyPacket;
 import com.walkertribe.ian.protocol.core.setup.ReadyPacket2;
 import com.walkertribe.ian.protocol.core.setup.SetConsolePacket;
@@ -39,6 +39,7 @@ public class WorldAwareRegularServer implements WorldAwareServer {
         server.send(new SetConsolePacket(Console.ENGINEERING, true));
         server.send(new ReadyPacket());
         server.send(new ReadyPacket2());
+        server.send(new TogglePerspectivePacket());
     }
 
 	@Override
