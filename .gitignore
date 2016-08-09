@@ -5,5 +5,5 @@
 .project
 bin/*
 out/*
-
+.settings/*
 /bin/
