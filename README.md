@@ -92,15 +92,15 @@ Dependencies should be checked in, so you shouldn't have to download anything ex
 
 #### Eclipse
 
-These instruction assume you are using Eclipse Mars (4.5.2).
+These instruction assume you are using Eclipse Neon (4.5.2).
 
 First, clone this repository into the root of your Eclipse workspace.
     
-Open Eclipse and choose `File -> New Java Project`. Enter the name of this repository exactly as the name of the project. You'll see text on the bottom of the window explaining that the wizard will automatically configure the JRE etc.  Make sure Java SE 8 or later is selected (we're currently using 1.8.0_51).  Click `Finish`.
+Open Eclipse and choose `File -> New -> Java Project`. Enter the name of this repository exactly as the name of the project. You'll see text on the bottom of the window explaining that the wizard will automatically configure the JRE etc.  Make sure Java SE 8 or later is selected (we're currently using 1.8.0_102).  Click `Finish`.
 
-Next, right click on the project and select `Build Path -> Configure Build Path`. If you don't see that option, right click on the project, select `Properties` and then the `Java Build Path` entry. Under the `Libraries` tab, click `Add JARs`. Add all of the `.jar` files in `lib` and the `Java3D-1.5.1` subdirectory (there should be 5 in total).
+Next, right click on the project and select `Build Path -> Configure Build Path`. If you don't see that option, right click on the project, select `Properties` and then the `Java Build Path` entry. Open the `Libraries` tab. If you see all of the `.jar` files which are present in the `lib` directory listed in addition to the `JRE System Library`, you can skip this step. If not, add all of the `.jar` files in `lib` and the `Java3D-1.5.1` subdirectory.
 
-Lastly, navigate to `Run Configurations` and create two new configurations. Both should invoke `com.brindyblitz.artemis.ClientMain`. The first, titled `AEC - Fake`, should include the argument `--fake`. This will invoke the fake server (see `Fake Mode` above). The second, `AEC - Live LAN`, should have the IP address of your server as the argument, e.g. `10.0.0.4`. This will connect to the real server upon launch (see `Proxy Mode` above).
+Lastly, navigate to `Run -> Run Configurations` and create two new `Java Application` configurations. Both should invoke `com.brindyblitz.artemis.ClientMain`. The first, titled `AEC - Fake`, should include the argument `--fake`. This will invoke the fake server (see `Fake Mode` above). The second, `AEC - Live LAN`, should have the IP address of your server as the argument, e.g. `10.0.0.4`. This will connect to the real server upon launch (see `Proxy Mode` above). For both, select the entry point by going to the `Main` tab and entering `com.brindyblitz.artemis.ClientMain` in the text field under `Main class`.
 
 #### IntelliJ IDEA
 These instructions assume you are using IntelliJ IDEA 14.1.4.
