@@ -17,7 +17,7 @@ public class AudioManager {
     private HashMap<String, File> soundBank = new HashMap<>();
     private SoundQueue soundQueue;
 
-    public AudioManager(String path) {
+    public AudioManager(String path) {    	
         loadAssetsInDirectory(path, "");
 
         soundQueue = new SoundQueue();
@@ -25,12 +25,15 @@ public class AudioManager {
     }
 
     private void loadAssetsInDirectory(String path, String prefix) {
+    	if (prefix.contains("/src/"))
+    		return;
+    	
         for (File f : new File(path).listFiles()) {
             if (f.isDirectory()) {
                 loadAssetsInDirectory(f.getPath(), new File(prefix, f.getName()).getPath());
             } else {
                 String name = new File(prefix, f.getName()).getPath().substring(1);
-                soundBank.put(name, f);
+                soundBank.put(name.replace('\\', '/'), f);
 
                 if (path.endsWith("/voice/on_order")) {
                     InternalTeam.ON_ORDER_RESPONSES.put(new Integer(InternalTeam.ON_ORDER_RESPONSES.size()), name);
@@ -42,6 +45,7 @@ public class AudioManager {
     private File lookupSound(String name) {
         File sound = soundBank.get(name);
         if (sound == null) {
+        	System.out.println(soundBank);
             throw new RuntimeException("Unable to locate sound effect '" + name + "'");
         }
         return sound;
