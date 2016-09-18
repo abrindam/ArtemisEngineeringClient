@@ -37,7 +37,7 @@ public class TransparentJPanel extends JPanel
 		
 		if (isOSX(name))
 		{
-			this.textHorizontalSpacer = -8;
+			this.textHorizontalSpacer = -2;
 			this.operatingSystem = OS.OS_OSX;
 		}
 
