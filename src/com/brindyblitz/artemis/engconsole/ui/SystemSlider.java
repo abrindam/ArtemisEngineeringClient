@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -178,13 +179,15 @@ public class SystemSlider extends TransparentJPanel implements MouseListener, Mo
 	}
 
 	private void drawLabel(Graphics2D g) {
-		g.rotate(-Math.PI / 2);
+		String s = this.label.toUpperCase();		
+		g.rotate(-Math.PI / 2f);
 		g.setColor(Color.WHITE);
 		g.setFont(LABEL_FONT);
+		StringDimensions dim = this.measureString(s, g);
 		g.drawString(this.label.toUpperCase(),
-                -SLIDER_BOTTOM + (SLIDER_HEIGHT / 2) - g.getFontMetrics().stringWidth(this.label.toUpperCase()) / 2,
-                SLIDER_WIDTH - 7);
-		g.rotate(Math.PI / 2);
+                -SLIDER_BOTTOM + (SLIDER_HEIGHT / 2f) - dim.getWidthFloat() / 2f,
+                SLIDER_WIDTH - 7f);
+		g.rotate(Math.PI / 2f);
 	}
 
 	private void drawShortcuts(Graphics2D g) {
@@ -192,15 +195,17 @@ public class SystemSlider extends TransparentJPanel implements MouseListener, Mo
 
 		g.setColor(INCREASE_FONT_COLOR);
 		String increase = (this.inputMapping.increaseKeyStr).toUpperCase().substring(0, Math.min(SHORTCUT_MAX_LENGTH, this.inputMapping.increaseKeyStr.length()));
+		StringDimensions increase_dim = this.measureString(increase, g);
 		g.drawString(increase,
-                SLIDER_WIDTH * 1.5f - g.getFontMetrics().stringWidth(increase) / 2f,
-                SHORTCUT_FONT.getSize() - 5);
+                SLIDER_WIDTH * 1.5f - increase_dim.getWidthFloat() / 2f,
+                SHORTCUT_FONT.getSize() - 5f);
 
 		g.setColor(DECREASE_FONT_COLOR);
         String decrease = (this.inputMapping.decreaseKeyStr).toUpperCase().substring(0, Math.min(SHORTCUT_MAX_LENGTH, this.inputMapping.decreaseKeyStr.length()));
+        StringDimensions decrease_dim = this.measureString(increase, g);
 		g.drawString(decrease,
-                SLIDER_WIDTH * 1.5f - g.getFontMetrics().stringWidth(decrease) / 2f,
-                SLIDER_BOTTOM + SHORTCUT_FONT.getSize() - 2);
+                SLIDER_WIDTH * 1.5f - decrease_dim.getWidthFloat() / 2f,
+                SLIDER_BOTTOM + SHORTCUT_FONT.getSize() - 2f);
 	}
 
 	private static void drawAndFillRect(Graphics2D g, int x, int y, int width, int height, Color fill, Color border) {

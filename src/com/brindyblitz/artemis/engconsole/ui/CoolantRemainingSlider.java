@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -56,14 +57,15 @@ public class CoolantRemainingSlider extends TransparentJPanel implements MouseLi
         drawLabel(gfx);
 	}
 
-	private void drawLabel(Graphics2D g) {
-		g.rotate(-Math.PI / 2);
+	private void drawLabel(Graphics2D g) {	
+		g.rotate(-Math.PI / 2f);
 		g.setColor(Color.WHITE);
 		g.setFont(LABEL_FONT);
+		StringDimensions dim = this.measureString(this.label, g);
 		g.drawString(label,
-                -(height / 2) - g.getFontMetrics().stringWidth(this.label) / 2,
-                bubbleX - 8);
-        g.rotate(Math.PI / 2);
+                -(height / 2f) - dim.getWidthFloat() / 2f,
+                bubbleX - 8f);
+        g.rotate(Math.PI / 2f);
 	}
 
 	private void drawSlider(Graphics2D g) {
