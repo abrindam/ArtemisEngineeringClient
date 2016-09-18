@@ -185,6 +185,12 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	private final SettableProperty<Map<OrdnanceType, Integer>> ordnanceCount = new SettableProperty<>(DEFAULT_ORDNANCE_COUNT);
 	
 	@Override
+	public Property<Boolean> getAutoDamcon() {
+		return autoDamcon;
+	}
+	private final SettableProperty<Boolean> autoDamcon = new SettableProperty<>(true);
+	
+	@Override
 	protected void updateSystemEnergyAllocated(ShipSystem system, int amount) {
 		Map<ShipSystem, Integer> energyAllocated = new HashMap<>(FakeEngineeringConsoleManager.this.systemEnergyAllocated.get());
 		energyAllocated.put(system, amount);
@@ -197,6 +203,11 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		coolantAllocated.put(system, amount);
 		systemCoolantAllocated.set(coolantAllocated);
 		
+	}
+	
+	@Override
+	public void setAutoDamcon(boolean autoDamcon) {
+		this.autoDamcon.set(autoDamcon);		
 	}
 	
 	@Override

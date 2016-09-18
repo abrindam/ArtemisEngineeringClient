@@ -20,6 +20,7 @@ import com.walkertribe.ian.enums.OrdnanceType;
 import com.walkertribe.ian.enums.ShipSystem;
 import com.walkertribe.ian.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
 import com.walkertribe.ian.protocol.core.eng.EngSendDamconPacket;
+import com.walkertribe.ian.protocol.core.eng.EngSetAutoDamconPacket;
 import com.walkertribe.ian.protocol.core.eng.EngSetCoolantPacket;
 import com.walkertribe.ian.protocol.core.eng.EngSetEnergyPacket;
 import com.walkertribe.ian.util.GridCoord;
@@ -55,8 +56,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		connectionStateChangeObservable.triggerChange();
 		this.worldAwareServer.onEvent(WorldAwareServer.Events.CONNECTION_STATE_CHANGE, () -> connectionStateChangeObservable.triggerChange());
 		this.worldAwareServer.getSystemManager().events.on(EnhancedSystemManager.Events.CHANGE, () -> systemManagerChangeObservable.triggerChange());
-		this.worldAwareServer.getSystemManager().setPermanantSystemGrid(getShipSystemGrid());
-		
+		this.worldAwareServer.getSystemManager().setPermanantSystemGrid(getShipSystemGrid());		
 	}
 	
 	public void disconnect() {
@@ -327,6 +327,18 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		return result;
 	}, systemManagerChangeObservable);
 	
+	@Override
+	public Property<Boolean> getAutoDamcon() {
+		return autoDamcon;
+	}
+	private final DerivedProperty<Boolean> autoDamcon = new DerivedProperty<>( () -> {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(1) == null) {
+			return true;
+		}
+		
+		return this.worldAwareServer.getSystemManager().getAutoDamcon();
+	}, systemManagerChangeObservable);
+	
 	
 	@Override
 	public void incrementSystemEnergyAllocated(ShipSystem system, int amount) {
@@ -357,5 +369,9 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	public void moveDamconTeam(int teamId, GridCoord coord) {
 		System.out.println("Moving DAMCON team " + teamId + " to grid " + coord);
 		this.worldAwareServer.getServer().send(new EngSendDamconPacket(teamId, coord));
+	}
+	
+	public void setAutoDamcon(boolean autoDamcon) {
+		this.worldAwareServer.getServer().send(new EngSetAutoDamconPacket(autoDamcon));
 	}
 }

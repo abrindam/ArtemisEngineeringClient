@@ -55,6 +55,8 @@ public interface EngineeringConsoleManager {
 	Property<Boolean> getShieldsActive();
 	
 	Property<Map<OrdnanceType, Integer>> getOrdnanceCount();
+	
+	Property<Boolean> getAutoDamcon();
 
 	void setSystemEnergyAllocated(ShipSystem system, int amount);
 
@@ -65,10 +67,13 @@ public interface EngineeringConsoleManager {
 	void incrementSystemCoolantAllocated(ShipSystem system, int amount);
 	
 	void moveDamconTeam(int teamId, GridCoord coord);
+	
+	void setAutoDamcon(boolean autoDamcon);
 
 	void resetEnergy();
 
 	void resetCoolant();
+	
 	
 	public enum GameState {
 		DISCONNECTED, PREGAME, INGAME, GAMEOVER

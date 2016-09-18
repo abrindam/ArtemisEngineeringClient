@@ -9,6 +9,7 @@ import com.brindyblitz.artemis.utils.EventEmitter;
 import com.brindyblitz.artemis.utils.EventSubscriber;
 import com.walkertribe.ian.iface.Listener;
 import com.walkertribe.ian.protocol.core.GameOverPacket;
+import com.walkertribe.ian.protocol.core.eng.EngAutoDamconUpdatePacket;
 import com.walkertribe.ian.protocol.core.eng.EngGridUpdatePacket;
 import com.walkertribe.ian.protocol.core.world.DestroyObjectPacket;
 import com.walkertribe.ian.protocol.core.world.IntelPacket;
@@ -24,6 +25,7 @@ public class EnhancedSystemManager extends SystemManager {
 	private boolean gameOverScreen;
 	private ScheduledFuture<?> objectUpdateTimeout = null;
 	private ShipSystemGrid permanantGrid;
+	private boolean autoDamcon = true;
 	
 	public EnhancedSystemManager() {
 		scheduler = Executors.newSingleThreadScheduledExecutor();		
@@ -58,6 +60,16 @@ public class EnhancedSystemManager extends SystemManager {
 		}
 		super.onPacket(pkt);
 		this.fireChange();
+	}
+	
+	@Listener
+	public void onAutoDamconUpdate(EngAutoDamconUpdatePacket pkt) {
+		this.autoDamcon = pkt.isOn();
+		this.fireChange();
+	}
+	
+	public boolean getAutoDamcon() {
+		return this.autoDamcon;
 	}
 	
 	@Listener
