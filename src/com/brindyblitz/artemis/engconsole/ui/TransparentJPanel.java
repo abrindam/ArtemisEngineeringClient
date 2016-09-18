@@ -13,8 +13,10 @@ public class TransparentJPanel extends JPanel
 {
 	private static final long serialVersionUID = 1L;
 	
+	// TODO: REFACTOR > this should be detected exactly once, not for every panel
 	private enum OS { OS_WINDOWS, OS_OSX, OS_OTHER }
 	private OS operatingSystem; 
+    protected int textHorizontalSpacer = 0;
 
 	public TransparentJPanel() {
 		super();
@@ -22,16 +24,24 @@ public class TransparentJPanel extends JPanel
 		this.setOpaque(false);
 		this.setBackground(new Color(0, 0, 0, 0));
 		
-		this.operatingSystem = determineOS();
+		determineOS();
 	}
 	
-	private static OS determineOS() {
+	private void determineOS() {
 		String name = System.getProperty("os.name");
 		if (isWindows(name))
-			return OS.OS_WINDOWS;
+		{
+			this.textHorizontalSpacer = 4;
+			this.operatingSystem = OS.OS_WINDOWS;
+		}
+		
 		if (isOSX(name))
-			return OS.OS_OSX;
-		return OS.OS_OTHER;
+		{
+			this.textHorizontalSpacer = -8;
+			this.operatingSystem = OS.OS_OSX;
+		}
+
+		this.operatingSystem = OS.OS_OTHER;
 	}
 	
 	private static boolean isWindows(String os_name) {
@@ -50,7 +60,6 @@ public class TransparentJPanel extends JPanel
 	 * @return Dimensions of string
 	 */
 	public StringDimensions measureString(String s, Graphics2D g) {
-		
 		switch(this.operatingSystem) {
 			case OS_WINDOWS:
 				// getPixelBounds() produces less width on Windows than OSX for some reason (look and feel or native font differences?)

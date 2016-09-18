@@ -5,13 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.font.FontRenderContext;
-import java.awt.font.GlyphVector;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-
-import javax.swing.JPanel;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 
@@ -103,8 +97,7 @@ public abstract class SystemStatusSlider extends TransparentJPanel {
 
         StringDimensions dim = this.measureString(status_pct_str, g);
 
-        // This should be dividing font height by 2f, not 4f, but for some reason everything is twice as tall as I expect.  SLIDER_HEIGHT is 20 but it's rendering as 40.  It makes no sense, but this works for now.
-        g.drawString(status_pct_str, sliderWidth - (int) dim.getWidth(), (int) (sliderHeight - sliderHeight / 2f + dim.getHeight() / 4f));
+        g.drawString(status_pct_str, sliderWidth - (int) dim.getWidth() - textHorizontalSpacer, (int) (sliderHeight - sliderHeight / 2f + dim.getHeight() / 4f));
     }
 
     private float getStatusScaleFactor() {
