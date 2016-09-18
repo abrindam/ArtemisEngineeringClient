@@ -8,6 +8,7 @@ public interface WorldAwareServer {
 	ArtemisNetworkInterface getServer();
 	boolean isConnected();
 	void onEvent(Events event, Runnable listener);
+	void disconnect();
 	
 	public enum Events {
 		CONNECTION_STATE_CHANGE

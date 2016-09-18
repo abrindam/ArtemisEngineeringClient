@@ -162,6 +162,11 @@ public class InGamePanel extends TransparentJPanel {
 				}
 			}
 		}
+		else if (kc == KeyEvent.VK_ESCAPE) {
+			if (e.isShiftDown()) {
+				this.engineeringConsoleManager.disconnect();
+			}
+		}
 		else if (kc == KeyEvent.VK_SPACE) {
 			this.engineeringConsoleManager.resetEnergy();
 			if (this.lastResetEnergy > System.currentTimeMillis() - 2000) {

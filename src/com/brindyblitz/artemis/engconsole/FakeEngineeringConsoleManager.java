@@ -63,6 +63,10 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		//intentionally do nothing
 	}
 	
+	@Override
+	public void disconnect() {
+		//intentionally do nothing
+	}
 	
 	
 	@Override

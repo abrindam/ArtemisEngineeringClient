@@ -59,6 +59,10 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		
 	}
 	
+	public void disconnect() {
+		this.worldAwareServer.disconnect();
+	}
+	
 	@Override
 	public Property<GameState> getGameState() {
 		return gameState;

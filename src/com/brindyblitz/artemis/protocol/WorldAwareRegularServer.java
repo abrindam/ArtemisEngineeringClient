@@ -31,6 +31,12 @@ public class WorldAwareRegularServer implements WorldAwareServer {
         server.start();
 	}
 	
+	public void disconnect() {
+		server.stop();
+		this.connected  = false;
+		eventEmitter.emit(Events.CONNECTION_STATE_CHANGE);
+	}
+	
 	@Listener
     public void onConnectSuccess(ConnectionSuccessEvent event) {
 		this.connected  = true;

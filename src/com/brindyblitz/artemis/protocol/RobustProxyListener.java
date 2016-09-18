@@ -31,6 +31,12 @@ public class RobustProxyListener implements Runnable {
 		this.proxyPort = proxyPort;
 		new Thread(this).start();
 	}
+	
+	public void disconnect() {
+		this.server.stop();
+		this.client.stop();
+		this.connected = true;
+	}
 
 	@Override
 	public void run() {

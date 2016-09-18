@@ -13,6 +13,12 @@ public class WorldAwareRobustProxyListener extends RobustProxyListener implement
 	}
 	
 	@Override
+	public void disconnect() {
+		super.disconnect();
+		eventEmitter.emit(Events.CONNECTION_STATE_CHANGE);
+	}
+	
+	@Override
 	protected void onBeforeClientServerStart() {		
 		this.getServer().addListener(this.systemManager);
 	}

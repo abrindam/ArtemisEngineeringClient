@@ -18,6 +18,8 @@ public interface EngineeringConsoleManager {
 	
 	void connect(String host, int port);
 	
+	void disconnect();
+	
 	Property<GameState> getGameState();
 	
 	Property<Integer> getTotalShipCoolant();
