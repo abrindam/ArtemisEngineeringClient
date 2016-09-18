@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.brindyblitz.artemis.utils.AudioManager;
 
-public class CoolantRemainingSlider extends JPanel implements MouseListener {
+public class CoolantRemainingSlider extends TransparentJPanel implements MouseListener {
 
 	private static final long serialVersionUID = 1L;
 

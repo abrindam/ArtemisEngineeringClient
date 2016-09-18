@@ -17,7 +17,7 @@ import javax.swing.border.LineBorder;
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.GameState;
 
-public class ConnectPanel extends JPanel {
+public class ConnectPanel extends TransparentJPanel {
 
 	private static final long serialVersionUID = 1L;
 	private static final Font LABEL_FONT = new Font("Courier New", Font.BOLD, 24);

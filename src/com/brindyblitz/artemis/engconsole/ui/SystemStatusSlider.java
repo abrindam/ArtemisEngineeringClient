@@ -16,7 +16,7 @@ import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 
 import com.walkertribe.ian.enums.ShipSystem;
 
-public abstract class SystemStatusSlider extends JPanel {
+public abstract class SystemStatusSlider extends TransparentJPanel {
     private static final long serialVersionUID = 1L;
 
     protected Point statusImageDimensions = new Point(16, 16);

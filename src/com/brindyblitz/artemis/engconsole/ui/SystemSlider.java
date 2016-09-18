@@ -23,7 +23,7 @@ import com.brindyblitz.artemis.utils.AudioManager;
 import com.walkertribe.ian.enums.ShipSystem;
 import com.walkertribe.ian.world.Artemis;
 
-public class SystemSlider extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
+public class SystemSlider extends TransparentJPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
 	private static final long serialVersionUID = 1L;
 	private EngineeringConsoleManager engineeringConsoleManager;
 	private SystemStatusRenderer systemStatusRenderer;

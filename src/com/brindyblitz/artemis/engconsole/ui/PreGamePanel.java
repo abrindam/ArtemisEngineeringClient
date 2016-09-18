@@ -7,7 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-public class PreGamePanel extends JPanel {
+public class PreGamePanel extends TransparentJPanel {
 
 	private static final long serialVersionUID = 1L;
 	private static final Font LABEL_FONT = new Font("Courier New", Font.BOLD, 36);

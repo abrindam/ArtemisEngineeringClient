@@ -28,7 +28,7 @@ import com.walkertribe.ian.enums.OrdnanceType;
 import com.walkertribe.ian.enums.ShipSystem;
 import com.walkertribe.ian.util.GridCoord;
 
-public class InGamePanel extends JPanel {
+public class InGamePanel extends TransparentJPanel {
 
 	private static final long serialVersionUID = 1L;
 	private EngineeringConsoleManager engineeringConsoleManager;

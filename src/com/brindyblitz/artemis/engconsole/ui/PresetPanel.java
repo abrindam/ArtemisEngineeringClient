@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 
 import com.brindyblitz.artemis.engconsole.config.EnergyCoolantPreset;
 
-public class PresetPanel extends JPanel {
+public class PresetPanel extends TransparentJPanel {
 
 	private static final long serialVersionUID = 1L;
 	private static final Font LABEL_FONT = new Font("Courier New", Font.BOLD, 14);
