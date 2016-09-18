@@ -128,6 +128,8 @@ public class InGamePanel extends TransparentJPanel {
 			System.out.println("Front Shields: " + this.engineeringConsoleManager.getSystemEnergyAllocated().get().get(FORE_SHIELDS) + "%");
 			System.out.println("Rear Shields: " + this.engineeringConsoleManager.getSystemEnergyAllocated().get().get(AFT_SHIELDS) + "%");
 			System.out.println("Auto Damcon: " + this.engineeringConsoleManager.getAutoDamcon().get());
+			System.out.println("Weapons Locked: " + this.engineeringConsoleManager.getWeaponsLocked().get());
+			System.out.println("Auto Beams: " + this.engineeringConsoleManager.getAutoBeams().get());
 
 			//			for (Entry<GridCoord, Float> entry : this.engineeringConsoleManager.getGridHealth().entrySet()) {
 			//				System.out.println(entry.getKey() + " = " + entry.getValue());

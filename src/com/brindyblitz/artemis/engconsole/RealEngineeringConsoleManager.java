@@ -18,6 +18,7 @@ import com.brindyblitz.artemis.utils.newton.Property;
 
 import com.walkertribe.ian.enums.OrdnanceType;
 import com.walkertribe.ian.enums.ShipSystem;
+import com.walkertribe.ian.enums.TargetingMode;
 import com.walkertribe.ian.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
 import com.walkertribe.ian.protocol.core.eng.EngSendDamconPacket;
 import com.walkertribe.ian.protocol.core.eng.EngSetAutoDamconPacket;
@@ -338,6 +339,31 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		
 		return this.worldAwareServer.getSystemManager().getAutoDamcon();
 	}, systemManagerChangeObservable);
+	
+	@Override
+	public Property<Boolean> getWeaponsLocked() {
+		return weaponsLocked;
+	}
+	private final DerivedProperty<Boolean> weaponsLocked = new DerivedProperty<>( () -> {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(1) == null) {
+			return false;
+		}
+		return this.worldAwareServer.getSystemManager().getPlayerShip(1).getWeaponsTarget() != 0;
+	}, systemManagerChangeObservable);
+	
+	@Override
+	public Property<Boolean> getAutoBeams() {
+		return autoBeams;
+	}
+	private final DerivedProperty<Boolean> autoBeams = new DerivedProperty<>( () -> {
+		if (this.worldAwareServer == null || this.worldAwareServer.getSystemManager().getPlayerShip(1) == null) {
+			return true;
+		}
+		//assume AUTO if null
+		//DRAGONS: current bug in IAN - AUTO and MANUAL are switched
+		return this.worldAwareServer.getSystemManager().getPlayerShip(1).getTargetingMode() != TargetingMode.AUTO;
+	}, systemManagerChangeObservable);
+	
 	
 	
 	@Override

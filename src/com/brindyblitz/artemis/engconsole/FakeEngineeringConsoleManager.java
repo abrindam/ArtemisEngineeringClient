@@ -190,6 +190,17 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	}
 	private final SettableProperty<Boolean> autoDamcon = new SettableProperty<>(true);
 	
+	public Property<Boolean> getWeaponsLocked() {
+		return weaponsLocked;
+	}
+	private final SettableProperty<Boolean> weaponsLocked = new SettableProperty<>(false);
+
+	@Override
+	public Property<Boolean> getAutoBeams() {
+		return autoBeams;
+	}
+	private final SettableProperty<Boolean> autoBeams = new SettableProperty<>(true);
+	
 	@Override
 	protected void updateSystemEnergyAllocated(ShipSystem system, int amount) {
 		Map<ShipSystem, Integer> energyAllocated = new HashMap<>(FakeEngineeringConsoleManager.this.systemEnergyAllocated.get());

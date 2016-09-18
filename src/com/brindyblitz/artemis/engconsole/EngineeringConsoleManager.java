@@ -57,6 +57,10 @@ public interface EngineeringConsoleManager {
 	Property<Map<OrdnanceType, Integer>> getOrdnanceCount();
 	
 	Property<Boolean> getAutoDamcon();
+	
+	Property<Boolean> getWeaponsLocked();
+	
+	Property<Boolean> getAutoBeams();
 
 	void setSystemEnergyAllocated(ShipSystem system, int amount);
 
