@@ -14,7 +14,6 @@ import com.walkertribe.ian.iface.ThreadedArtemisNetworkInterface;
 import com.walkertribe.ian.protocol.ArtemisPacket;
 import com.walkertribe.ian.protocol.RawPacket;
 import com.walkertribe.ian.protocol.UnparsedPacket;
-import com.walkertribe.ian.util.TextUtil;
 
 public class RobustProxyListener implements Runnable {
 
@@ -108,14 +107,14 @@ public class RobustProxyListener implements Runnable {
 	}
 
 
-	private void proxyPacket(ArtemisPacket pkt) {
+	private void proxyPacket(ArtemisPacket pkt, ArtemisPacket parsedPacket) {
 		ConnectionType type = pkt.getConnectionType();
 		ArtemisNetworkInterface dest = type == ConnectionType.SERVER ? client : server;
 		dest.send(pkt);
-//		String packetType ="0x" +  TextUtil.intToHex(pkt.getType());
-//		if (!packetType.equals("0x80803df9")) {
-//			System.out.println(type + "> " + pkt);
-//		}
+		ArtemisPacket debugPacket = parsedPacket == null ? pkt : parsedPacket;
+		if (! debugPacket.toString().equals("0x80803df9 00000000")) { // ignore empty ObjectUpdatePacket(s)
+			System.out.println(System.currentTimeMillis() + " " + type + "> " + debugPacket);
+		}
 	}
 
 	private class InternalDebugger extends BaseDebugger {
@@ -129,13 +128,13 @@ public class RobustProxyListener implements Runnable {
 
 		@Override
 		public void onRecvUnparsedPacket(RawPacket pkt) {
-			RobustProxyListener.this.proxyPacket(pkt);
+			RobustProxyListener.this.proxyPacket(pkt, null);
 		}
 
 		@Override
 		public void onRecvParsedPacket(ArtemisPacket pkt) {
 			if (RobustProxyListener.this.shouldProxyPacket(pkt)) {
-				RobustProxyListener.this.proxyPacket(pktToProxy.get());
+				RobustProxyListener.this.proxyPacket(pktToProxy.get(), pkt);
 			}
 		}
 	}

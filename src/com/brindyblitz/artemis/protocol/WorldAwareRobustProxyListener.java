@@ -4,12 +4,12 @@ import com.brindyblitz.artemis.utils.EventEmitter;
 
 public class WorldAwareRobustProxyListener extends RobustProxyListener implements WorldAwareServer {
 
-	private NotifyingSystemManager systemManager;
+	private EnhancedSystemManager systemManager;
 	private EventEmitter<Events> eventEmitter = new EventEmitter<>();
 
 	public WorldAwareRobustProxyListener(String serverAddr, int serverPort, int proxyPort) {
 		super(serverAddr, serverPort, proxyPort);
-		this.systemManager = new NotifyingSystemManager();
+		this.systemManager = new EnhancedSystemManager();
 	}
 	
 	@Override
@@ -17,7 +17,7 @@ public class WorldAwareRobustProxyListener extends RobustProxyListener implement
 		this.getServer().addListener(this.systemManager);
 	}
 	
-	public NotifyingSystemManager getSystemManager() {
+	public EnhancedSystemManager getSystemManager() {
 		return systemManager;
 	}
 	

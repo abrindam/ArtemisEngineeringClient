@@ -21,6 +21,7 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 	private ConnectPanel connectPanel;
 	private PreGamePanel preGamePanel;
 	private InGamePanel inGamePanel;
+	private GameOverPanel gameOverPanel;
 	
 	private static final int
             WINDOW_WIDTH = 1024,
@@ -75,6 +76,9 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 		else if (engineeringConsoleManager.getGameState().get() == GameState.INGAME) {
 			switchToInGamePanel();			
 		}
+		else if (engineeringConsoleManager.getGameState().get() == GameState.GAMEOVER) {
+			switchToGameOverPanel();			
+		}
 //		switchToConnectPanel();
 	}
 	
@@ -108,18 +112,33 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 		loading.setVisible(false);
 	}
 	
+	private void switchToGameOverPanel() {
+		System.out.println("Switch to GameOver");
+		removeExistingPanels();
+		loading.setVisible(true);
+		gameOverPanel = new GameOverPanel(WINDOW_WIDTH, WINDOW_HEIGHT);
+		this.getContentPane().add(gameOverPanel);
+		gameOverPanel.setVisible(true);
+		loading.setVisible(false);
+	}
+	
 	private void removeExistingPanels() {
 		if (connectPanel != null) {
 			this.getContentPane().remove(connectPanel);
 			this.connectPanel = null;
 		}
 		if (inGamePanel != null) {
+			inGamePanel.destroy();
 			this.getContentPane().remove(inGamePanel);
 			this.inGamePanel = null;
 		}
 		if (preGamePanel != null) {
 			this.getContentPane().remove(preGamePanel);
 			this.preGamePanel = null;
+		}
+		if (gameOverPanel != null) {
+			this.getContentPane().remove(gameOverPanel);
+			this.gameOverPanel = null;
 		}
 	}
 	

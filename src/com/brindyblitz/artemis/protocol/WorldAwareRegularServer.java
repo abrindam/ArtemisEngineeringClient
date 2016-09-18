@@ -16,7 +16,7 @@ import com.walkertribe.ian.protocol.core.setup.SetConsolePacket;
 public class WorldAwareRegularServer implements WorldAwareServer {
 
 	private ArtemisNetworkInterface server;
-	private NotifyingSystemManager systemManager;
+	private EnhancedSystemManager systemManager;
 	private boolean connected = false;
 	private EventEmitter<Events> eventEmitter = new EventEmitter<>();
 	
@@ -24,7 +24,7 @@ public class WorldAwareRegularServer implements WorldAwareServer {
 		
 		server = new ThreadedArtemisNetworkInterface(host, port, 5*1000);
 		
-		this.systemManager = new NotifyingSystemManager();
+		this.systemManager = new EnhancedSystemManager();
         
 		server.addListener(this);
 		server.addListener(this.systemManager);
@@ -43,7 +43,7 @@ public class WorldAwareRegularServer implements WorldAwareServer {
     }
 
 	@Override
-	public NotifyingSystemManager getSystemManager() {
+	public EnhancedSystemManager getSystemManager() {
 		return this.systemManager;
 	}
 

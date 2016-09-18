@@ -69,7 +69,7 @@ public interface EngineeringConsoleManager {
 	void resetCoolant();
 	
 	public enum GameState {
-		DISCONNECTED, PREGAME, INGAME
+		DISCONNECTED, PREGAME, INGAME, GAMEOVER
 	}
 	
 	public enum Events {

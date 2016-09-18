@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.brindyblitz.artemis.protocol.NotifyingSystemManager;
+import com.brindyblitz.artemis.protocol.EnhancedSystemManager;
 import com.brindyblitz.artemis.protocol.WorldAwareRegularServer;
 import com.brindyblitz.artemis.protocol.WorldAwareRobustProxyListener;
 import com.brindyblitz.artemis.protocol.WorldAwareServer;
@@ -54,8 +54,8 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		}
 		connectionStateChangeObservable.triggerChange();
 		this.worldAwareServer.onEvent(WorldAwareServer.Events.CONNECTION_STATE_CHANGE, () -> connectionStateChangeObservable.triggerChange());
-		this.worldAwareServer.getSystemManager().events.on(NotifyingSystemManager.Events.CHANGE, () -> systemManagerChangeObservable.triggerChange());
-		this.worldAwareServer.getSystemManager().setSystemGrid(getShipSystemGrid());
+		this.worldAwareServer.getSystemManager().events.on(EnhancedSystemManager.Events.CHANGE, () -> systemManagerChangeObservable.triggerChange());
+		this.worldAwareServer.getSystemManager().setPermanantSystemGrid(getShipSystemGrid());
 		
 	}
 	
@@ -66,6 +66,9 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	private final DerivedProperty<GameState> gameState = new DerivedProperty<>(() -> {
 		if (worldAwareServer == null || !worldAwareServer.isConnected()) {
 			return GameState.DISCONNECTED;
+		}
+		else if (this.worldAwareServer.getSystemManager().isGameOverScreen()) {
+			return GameState.GAMEOVER;
 		}
 		else if ( this.worldAwareServer.getSystemManager().getPlayerShip(1) != null) {
 			return GameState.INGAME;

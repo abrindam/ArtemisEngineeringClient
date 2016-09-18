@@ -189,4 +189,15 @@ public class InGamePanel extends TransparentJPanel {
 			}
 		}
 	}
+	
+	/**
+	 * Must be called before removing the panel from its parent.
+	 * 
+	 * Something about the JOGL canvas causes an exception inside Swing if
+	 * you don't do this.
+	 */
+	public void destroy() {
+		this.removeAll();
+		
+	}
 }

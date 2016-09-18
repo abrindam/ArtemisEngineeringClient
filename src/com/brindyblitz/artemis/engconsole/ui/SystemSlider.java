@@ -236,6 +236,7 @@ public class SystemSlider extends TransparentJPanel implements MouseListener, Mo
         } else {
             this.engineeringConsoleManager.incrementSystemEnergyAllocated(this.system, positive ? ENERGY_INCREMENT : -ENERGY_INCREMENT);
         }
+
         this.repaint();
     }
 
