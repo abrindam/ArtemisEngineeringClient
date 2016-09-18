@@ -22,7 +22,6 @@ public class TransparentJPanel extends JPanel
 		super();
 		
 		this.setOpaque(false);
-		this.setBackground(new Color(0, 0, 0, 0));
 		
 		determineOS();
 	}
@@ -105,6 +104,12 @@ public class TransparentJPanel extends JPanel
 		
 		public int getHeightInt() {
 			return (int)Math.ceil(this.height);
+		}
+		
+		@Override
+		public String toString()
+		{
+			return "" + this.getWidth() + "x" + this.getHeight();
 		}
 	}
 }

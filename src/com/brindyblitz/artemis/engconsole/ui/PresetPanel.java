@@ -20,9 +20,6 @@ public class PresetPanel extends TransparentJPanel {
 	public PresetPanel(PresetManager presetManager) {
 		this.presetManager = presetManager;
 		this.setSize(200, 300);
-		
-//		this.setBackground(Color.RED);
-		this.setBackground(new Color(0, 0, 0, 0));
 	}
 	
 	@Override

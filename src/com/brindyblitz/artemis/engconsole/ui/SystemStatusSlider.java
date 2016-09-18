@@ -35,7 +35,6 @@ public abstract class SystemStatusSlider extends TransparentJPanel {
         this.engineeringConsoleManager = engineeringConsoleManager;
 
         this.setSize(widget_width, widget_height);
-        this.setBackground(new Color(0, 0, 0, 0));
 
         loadIcons();
     }
@@ -97,7 +96,7 @@ public abstract class SystemStatusSlider extends TransparentJPanel {
 
         StringDimensions dim = this.measureString(status_pct_str, g);
 
-        g.drawString(status_pct_str, sliderWidth - (int) dim.getWidth() - textHorizontalSpacer, (int) (sliderHeight - sliderHeight / 2f + dim.getHeight() / 4f));
+        g.drawString(status_pct_str, sliderWidth - (int) dim.getWidth() - textHorizontalSpacer, (int) (sliderHeight / 2f + dim.getHeight() / 4f));
     }
 
     private float getStatusScaleFactor() {

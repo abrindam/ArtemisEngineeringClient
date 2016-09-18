@@ -59,7 +59,7 @@ public class InGamePanel extends TransparentJPanel {
 
 		this.setOpaque(true);
 		this.setBackground(Color.BLACK);
-		setLayout(null);
+		this.setLayout(null);
 		this.setSize(width, height);
 
 		audioManager = new AudioManager(new File(System.getProperty("user.dir"), "assets/sfx").getPath());
@@ -99,6 +99,13 @@ public class InGamePanel extends TransparentJPanel {
 
 		AftShieldSlider aft_shield_slider = new AftShieldSlider(engineeringConsoleManager);
 		this.add(aft_shield_slider).setLocation(400, 110);
+		
+		Button disconnect_button = new Button("Disconnect", new Runnable()
+		{
+			@Override
+			public void run() { engineeringConsoleManager.disconnect(); }
+		}, Color.BLACK, Color.RED, Color.WHITE, Color.WHITE, 80, 20);
+		this.add(disconnect_button).setLocation(this.getWidth() - disconnect_button.getWidth() - 10, 5);
 	}
 
 	private void addSlider(ShipSystem system, String label, InputMapping mapping) {
@@ -206,6 +213,5 @@ public class InGamePanel extends TransparentJPanel {
 	 */
 	public void destroy() {
 		this.removeAll();
-		
 	}
 }

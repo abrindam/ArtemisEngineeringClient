@@ -92,7 +92,6 @@ public class SystemSlider extends TransparentJPanel implements MouseListener, Mo
 		this.audioManager = audio_manager;
 
 		this.setSize(WIDGET_WIDTH, WIDGET_HEIGHT);
-		this.setBackground(new Color(0, 0, 0, 0));
 
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);

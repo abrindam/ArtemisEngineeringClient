@@ -40,8 +40,6 @@ public class CoolantRemainingSlider extends TransparentJPanel implements MouseLi
         this.setSize(this.width, this.height);
         this.bubbleX = this.width - (BUBBLE_DIMENSION + EMPTY_BUBBLE_THICKNESS);
 
-        this.setBackground(new Color(0, 0, 0, 0));
-
         this.engineeringConsoleManager.getTotalShipCoolant().onChange(() -> this.repaint());
         this.engineeringConsoleManager.getTotalCoolantRemaining().onChange(() -> this.repaint());
 
