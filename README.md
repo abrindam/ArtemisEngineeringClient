@@ -100,6 +100,8 @@ Open Eclipse and choose `File -> New -> Java Project`. Enter the name of this re
 
 Next, right click on the project and select `Build Path -> Configure Build Path`. If you don't see that option, right click on the project, select `Properties` and then the `Java Build Path` entry. Open the `Libraries` tab. If you see all of the `.jar` files which are present in the `lib` directory listed in addition to the `JRE System Library`, you can skip this step. If not, add all of the `.jar` files in `lib` and the `Java3D-1.5.1` subdirectory.
 
+With IAN v3.1.1 (and possibly later versions), source code attachment is required.  To do that, return to the `Java Build Path` options and expand the entry for `ian-3.1.1.jar` under the `Libraries` tab. Select `Source attatchment`, then `Edit`. Select `Browse` then navigate to `ArtemisEngineeringClient/lib` and select `ian-3.1.1-src.zip`. Click `OK` three times to finish.
+
 Lastly, navigate to `Run -> Run Configurations` and create two new `Java Application` configurations. Both should invoke `com.brindyblitz.artemis.ClientMain`. The first, titled `AEC - Fake`, should include the argument `--fake`. This will invoke the fake server (see `Fake Mode` above). The second, `AEC - Live LAN`, should have the IP address of your server as the argument, e.g. `10.0.0.4`. This will connect to the real server upon launch (see `Proxy Mode` above). For both, select the entry point by going to the `Main` tab and entering `com.brindyblitz.artemis.ClientMain` in the text field under `Main class`.
 
 #### IntelliJ IDEA
