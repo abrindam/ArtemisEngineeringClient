@@ -44,11 +44,11 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	
 	public void connect(String host, int port) {
 		if (proxy) {
-			this.worldAwareServer = new WorldAwareRobustProxyListener(host, port, port);
+			this.worldAwareServer = new WorldAwareRobustProxyListener(host, port, port, context);
 		}
 		else {
 			try {
-				this.worldAwareServer = new WorldAwareRegularServer(host, port);
+				this.worldAwareServer = new WorldAwareRegularServer(host, port, context);
 			} catch (IOException e) {
 				//abort without updating state
 				return;

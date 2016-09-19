@@ -10,11 +10,12 @@ import java.util.Map;
 import com.brindyblitz.artemis.protocol.NonShittyShipSystemGrid;
 import com.brindyblitz.artemis.utils.newton.DerivedProperty;
 import com.brindyblitz.artemis.utils.newton.Property;
-
+import com.walkertribe.ian.Context;
 import com.walkertribe.ian.enums.ShipSystem;
 import com.walkertribe.ian.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
 import com.walkertribe.ian.util.GridCoord;
 import com.walkertribe.ian.util.ShipSystemGrid;
+import com.walkertribe.ian.vesseldata.FilePathResolver;
 import com.walkertribe.ian.vesseldata.Vessel;
 import com.walkertribe.ian.vesseldata.VesselData;
 import com.walkertribe.ian.vesseldata.VesselNode;
@@ -27,16 +28,17 @@ public abstract class BaseEngineeringConsoleManager implements EngineeringConsol
 	private List<VesselNode> grid;
 	private Map<GridCoord, VesselNode> gridIndex;
 	private List<VesselNodeConnection> gridConnections;
+	protected final Context context;
 	
 	
 	public BaseEngineeringConsoleManager() {
 		
-		VesselData.setArtemisInstallPath(new File(System.getProperty("user.dir"), "artemisData"));
+		context = new Context(new FilePathResolver(new File(System.getProperty("user.dir"), "artemisData")));
 		
 		NonShittyShipSystemGrid shipSystemGrid = new NonShittyShipSystemGrid();
 		this.grid = new ArrayList<>();
 		this.gridIndex = new HashMap<>();
-		Vessel vessel = VesselData.get().getVessel(0);
+		Vessel vessel = VesselData.load(context).getVessel(0);
 		Iterator<VesselNode> nodeIterator = vessel.getInternals().nodeIterator();
 		while (nodeIterator.hasNext()) {
 			VesselNode node = nodeIterator.next();

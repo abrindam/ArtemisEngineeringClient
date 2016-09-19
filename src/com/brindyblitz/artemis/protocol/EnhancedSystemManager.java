@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.brindyblitz.artemis.utils.EventEmitter;
 import com.brindyblitz.artemis.utils.EventSubscriber;
+import com.walkertribe.ian.Context;
 import com.walkertribe.ian.iface.Listener;
 import com.walkertribe.ian.protocol.core.GameOverPacket;
 import com.walkertribe.ian.protocol.core.eng.EngAutoDamconUpdatePacket;
@@ -27,7 +28,8 @@ public class EnhancedSystemManager extends SystemManager {
 	private ShipSystemGrid permanantGrid;
 	private boolean autoDamcon = true;
 	
-	public EnhancedSystemManager() {
+	public EnhancedSystemManager(Context context) {
+		super(context);
 		scheduler = Executors.newSingleThreadScheduledExecutor();		
 	}
 	

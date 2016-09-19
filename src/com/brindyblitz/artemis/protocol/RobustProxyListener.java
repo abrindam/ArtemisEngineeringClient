@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import com.walkertribe.ian.Context;
 import com.walkertribe.ian.enums.ConnectionType;
 import com.walkertribe.ian.iface.ArtemisNetworkInterface;
 import com.walkertribe.ian.iface.BaseDebugger;
@@ -24,11 +25,14 @@ public class RobustProxyListener implements Runnable {
 
 	private ArtemisNetworkInterface server;
 	private ArtemisNetworkInterface client;
+	
+	private Context context;
 
-	public RobustProxyListener(String serverAddr, int serverPort, int proxyPort) {
+	public RobustProxyListener(String serverAddr, int serverPort, int proxyPort, Context context) {
 		this.serverAddr = serverAddr;
 		this.serverPort = serverPort;
 		this.proxyPort = proxyPort;
+		this.context = context;
 		new Thread(this).start();
 	}
 	
@@ -50,10 +54,10 @@ public class RobustProxyListener implements Runnable {
 			Socket skt = listener.accept();
 
 			System.out.println("Received connection from " + skt.getRemoteSocketAddress().toString().substring(1) + ".");
-			this.client = new ThreadedArtemisNetworkInterface(skt, ConnectionType.CLIENT);
+			this.client = new ThreadedArtemisNetworkInterface(skt, ConnectionType.CLIENT, context);
 
 			System.out.print("Connecting to server at " + serverAddr + ":" + serverPort + "...");
-			this.server = new ThreadedArtemisNetworkInterface(serverAddr, serverPort);
+			this.server = new ThreadedArtemisNetworkInterface(serverAddr, serverPort, context);
 
 
 			this.server.attachDebugger(new InternalDebugger());

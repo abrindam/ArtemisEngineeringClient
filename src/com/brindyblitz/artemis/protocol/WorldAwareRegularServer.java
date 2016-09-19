@@ -3,6 +3,7 @@ package com.brindyblitz.artemis.protocol;
 import java.io.IOException;
 
 import com.brindyblitz.artemis.utils.EventEmitter;
+import com.walkertribe.ian.Context;
 import com.walkertribe.ian.enums.Console;
 import com.walkertribe.ian.iface.ArtemisNetworkInterface;
 import com.walkertribe.ian.iface.ConnectionSuccessEvent;
@@ -21,11 +22,11 @@ public class WorldAwareRegularServer implements WorldAwareServer {
 	private boolean connected = false;
 	private EventEmitter<Events> eventEmitter = new EventEmitter<>();
 	
-	public WorldAwareRegularServer(String host, int port) throws IOException {
+	public WorldAwareRegularServer(String host, int port, Context context) throws IOException {
 		
-		server = new ThreadedArtemisNetworkInterface(host, port, 5*1000);
+		server = new ThreadedArtemisNetworkInterface(host, port, 5*1000, context);
 		
-		this.systemManager = new EnhancedSystemManager();
+		this.systemManager = new EnhancedSystemManager(context);
         
 		server.addListener(this);
 		server.addListener(this.systemManager);

@@ -1,15 +1,16 @@
 package com.brindyblitz.artemis.protocol;
 
 import com.brindyblitz.artemis.utils.EventEmitter;
+import com.walkertribe.ian.Context;
 
 public class WorldAwareRobustProxyListener extends RobustProxyListener implements WorldAwareServer {
 
 	private EnhancedSystemManager systemManager;
 	private EventEmitter<Events> eventEmitter = new EventEmitter<>();
 
-	public WorldAwareRobustProxyListener(String serverAddr, int serverPort, int proxyPort) {
-		super(serverAddr, serverPort, proxyPort);
-		this.systemManager = new EnhancedSystemManager();
+	public WorldAwareRobustProxyListener(String serverAddr, int serverPort, int proxyPort, Context context) {
+		super(serverAddr, serverPort, proxyPort, context);
+		this.systemManager = new EnhancedSystemManager(context);
 	}
 	
 	@Override
