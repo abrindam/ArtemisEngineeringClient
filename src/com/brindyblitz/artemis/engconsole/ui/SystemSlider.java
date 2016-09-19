@@ -179,13 +179,17 @@ public class SystemSlider extends TransparentJPanel implements MouseListener, Mo
 
 	private void drawLabel(Graphics2D g) {
 		String s = this.label.toUpperCase();		
-		g.rotate(-Math.PI / 2f);
 		g.setColor(Color.WHITE);
 		g.setFont(LABEL_FONT);
 		StringDimensions dim = this.measureString(s, g);
-		g.drawString(this.label.toUpperCase(),
-                -SLIDER_BOTTOM + (SLIDER_HEIGHT / 2f) - dim.getWidthFloat() / 2f,
-                SLIDER_WIDTH - 7f);
+		g.rotate(-Math.PI / 2f);
+		{
+			// Render at uniform first letter alignment height:
+			// g.drawString(this.label.toUpperCase(), -SLIDER_BOTTOM + (SLIDER_HEIGHT / 2f) - dim.getWidthFloat() / 2f, SLIDER_WIDTH - 7f);
+			
+			// Render centered at middle
+			g.drawString(this.label.toUpperCase(), -SLIDER_BOTTOM + (SLIDER_HEIGHT / 2f) - dim.getWidthFloat() / 2f, SLIDER_WIDTH - 7f);
+		}
 		g.rotate(Math.PI / 2f);
 	}
 
