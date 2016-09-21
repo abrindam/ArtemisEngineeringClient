@@ -100,6 +100,9 @@ public class InGamePanel extends TransparentJPanel {
 		AftShieldSlider aft_shield_slider = new AftShieldSlider(engineeringConsoleManager);
 		this.add(aft_shield_slider).setLocation(400, 110);
 		
+		MagazineStatus magazine_status = new MagazineStatus(engineeringConsoleManager);
+		this.add(magazine_status).setLocation(600, 150);
+		
 		Button disconnect_button = new Button("Disconnect", new Runnable()
 		{
 			@Override
