@@ -101,7 +101,12 @@ public class InGamePanel extends TransparentJPanel {
 		this.add(aft_shield_slider).setLocation(400, 110);
 		
 		MagazineStatus magazine_status = new MagazineStatus(engineeringConsoleManager);
-		this.add(magazine_status).setLocation(600, 150);
+		this.add(magazine_status).setLocation(600, 140);
+		
+		WeaponsStatus weapons_status = new WeaponsStatus(engineeringConsoleManager);
+		this.add(weapons_status).setLocation(600, magazine_status.getY() + magazine_status.getHeight() + 5);
+		
+		// TODO: REFACTOR > relative layout
 		
 		Button disconnect_button = new Button("Disconnect", new Runnable()
 		{

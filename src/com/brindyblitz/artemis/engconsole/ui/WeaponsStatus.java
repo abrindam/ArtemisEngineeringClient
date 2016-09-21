@@ -14,54 +14,61 @@ import javax.swing.JLabel;
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.walkertribe.ian.enums.OrdnanceType;
 
-public class MagazineStatus extends TransparentJPanel
+public class WeaponsStatus extends TransparentJPanel
 {
 	private static final long serialVersionUID = 1L;
 
 	private EngineeringConsoleManager engineeringConsoleManager;
 	
-	private Map<OrdnanceType, JLabel> labels = new HashMap<OrdnanceType, JLabel>();
+	private JLabel lockStatusLabel, autoBeamsLabel;
 	
 	private static final Font FONT = new Font("Courier New", Font.PLAIN, 14), TITLE_FONT = new Font("Courier New", Font.PLAIN, 14);
 	private static final Color FONT_COLOR = Color.WHITE, BACKGROUND_COLOR = Color.BLACK, BORDER_COLOR = Color.WHITE;
 	
-	public MagazineStatus(EngineeringConsoleManager engineeringConsoleManager)
+	public WeaponsStatus(EngineeringConsoleManager engineeringConsoleManager)
 	{
 		this.engineeringConsoleManager = engineeringConsoleManager;
 		
-		this.engineeringConsoleManager.getOrdnanceCount().onChange(() -> this.updateOrdnanceCounts());
+		this.engineeringConsoleManager.getWeaponsLocked().onChange(() -> new Runnable()
+		{
+			@Override
+			public void run() {
+				lockStatusLabel.setText("    Target: " + (engineeringConsoleManager.getWeaponsLocked().get() ? "Locked" : "-"));
+			}
+		});
+		
+		this.engineeringConsoleManager.getAutoBeams().onChange(() -> new Runnable()
+		{
+			@Override
+			public void run() {
+				autoBeamsLabel.setText("    Beams Mode: " + (engineeringConsoleManager.getAutoBeams().get() ? "Auto" : "Manual"));
+			}
+		});
 		
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
 		@SuppressWarnings("unchecked")
 		Map<TextAttribute, Integer> attributes = (Map<TextAttribute, Integer>)TITLE_FONT.getAttributes();
 		attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-		JLabel title = new JLabel(" Magazine ");
+		JLabel title = new JLabel(" Weapons ");
 		title.setBackground(BACKGROUND_COLOR);
 		title.setForeground(FONT_COLOR);
 		title.setFont(TITLE_FONT.deriveFont(attributes));
 		this.add(title);
 		
-		for (OrdnanceType ot : OrdnanceType.values()) {
-			JLabel label = new JLabel("0x " + ot);
-			label.setBackground(BACKGROUND_COLOR);
-			label.setForeground(FONT_COLOR);
-			label.setFont(FONT);
-			this.labels.put(ot, label);
-			this.add(label);
-		}
+		this.lockStatusLabel = new JLabel("    Target: -");
+		lockStatusLabel.setBackground(BACKGROUND_COLOR);
+		lockStatusLabel.setForeground(FONT_COLOR);
+		lockStatusLabel.setFont(FONT);
+		this.add(lockStatusLabel);
 		
-		this.setSize(new Dimension(200, 105));
+		this.autoBeamsLabel = new JLabel("    Beams Mode: Auto");
+		autoBeamsLabel.setBackground(BACKGROUND_COLOR);
+		autoBeamsLabel.setForeground(FONT_COLOR);
+		autoBeamsLabel.setFont(FONT);
+		this.add(autoBeamsLabel);
+		
+		this.setSize(new Dimension(200, 55));
 		this.setBorder(BorderFactory.createLineBorder(BORDER_COLOR));
-		
-		updateOrdnanceCounts();
-	}
-	
-	private void updateOrdnanceCounts() {
-		Map<OrdnanceType, Integer> magazine = this.engineeringConsoleManager.getOrdnanceCount().get();
-		for (OrdnanceType ot : this.labels.keySet()) {
-			JLabel label = this.labels.get(ot);
-			label.setText("    " + magazine.get(ot) + "x " + ot);
-		}
 	}
 }
