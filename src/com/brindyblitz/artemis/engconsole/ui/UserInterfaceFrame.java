@@ -2,9 +2,11 @@ package com.brindyblitz.artemis.engconsole.ui;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -66,7 +68,8 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 		updateCurrentPanel();
 		
 		engineeringConsoleManager.getGameState().onChange(() -> this.updateCurrentPanel());
-		
+
+		this.setIconImage(new ImageIcon("assets/art/aec_thumbnail.png").getImage());
 	}
 	
 	private void updateCurrentPanel() {
