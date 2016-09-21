@@ -74,11 +74,11 @@ public class ClientMain {
 			}
 		}
 		
-		buildUIFrame(engineeringConsoleManager);		
+		buildUIFrame(engineeringConsoleManager, host);		
 	}
 
-	private static UserInterfaceFrame buildUIFrame(EngineeringConsoleManager engineeringConsoleManager) {
-		UserInterfaceFrame userInterfaceFrame = new UserInterfaceFrame(engineeringConsoleManager);
+	private static UserInterfaceFrame buildUIFrame(EngineeringConsoleManager engineeringConsoleManager, String host) {
+		UserInterfaceFrame userInterfaceFrame = new UserInterfaceFrame(engineeringConsoleManager, host);
 		userInterfaceFrame.setVisible(true);
 		return userInterfaceFrame;
 	}

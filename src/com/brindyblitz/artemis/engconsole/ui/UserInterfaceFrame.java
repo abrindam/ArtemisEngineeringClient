@@ -22,6 +22,8 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 	private PreGamePanel preGamePanel;
 	private InGamePanel inGamePanel;
 	private GameOverPanel gameOverPanel;
+
+	private String host;
 	
 	private static final int
             WINDOW_WIDTH = 1024,
@@ -30,8 +32,9 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 	private JLabel loading;
             
 
-	public UserInterfaceFrame(EngineeringConsoleManager engineeringConsoleManager) {
+	public UserInterfaceFrame(EngineeringConsoleManager engineeringConsoleManager, String host) {
 		this.engineeringConsoleManager = engineeringConsoleManager;
+		this.host = host;
 		
 		try {
 			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -86,7 +89,7 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 		System.out.println("Switch to Connect");
 		removeExistingPanels();
 		loading.setVisible(true);
-		connectPanel = new ConnectPanel(engineeringConsoleManager, WINDOW_WIDTH, WINDOW_HEIGHT);
+		connectPanel = new ConnectPanel(engineeringConsoleManager, WINDOW_WIDTH, WINDOW_HEIGHT, host);
 		this.getContentPane().add(connectPanel);
 		connectPanel.setVisible(true);
 		loading.setVisible(false);

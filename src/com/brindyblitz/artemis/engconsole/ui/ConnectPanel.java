@@ -29,8 +29,9 @@ public class ConnectPanel extends TransparentJPanel {
 	private JLabel error;
 	private ExecutorService executor;
 	
+	private static String lastHost = "";
 
-	public ConnectPanel(EngineeringConsoleManager engineeringConsoleManager, int width, int height) {
+	public ConnectPanel(EngineeringConsoleManager engineeringConsoleManager, int width, int height, String host) {
 		executor = Executors.newSingleThreadExecutor();
 		this.setVisible(false);
 		this.setBounds(0, 0, width, height);
@@ -44,7 +45,7 @@ public class ConnectPanel extends TransparentJPanel {
 		prompt.setBounds(0, height/2 - 80, width, 50);
 		this.add(prompt);
 		
-		this.input = new JTextField();
+		this.input = new JTextField(host == null ? ConnectPanel.lastHost : host);
 		input.setBounds(width/2 - 180/2, height/2 - 20, 180, 30);
 		input.setHorizontalAlignment(SwingConstants.CENTER);
 		this.add(input);
@@ -73,6 +74,7 @@ public class ConnectPanel extends TransparentJPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				error.setVisible(false);
+				ConnectPanel.lastHost = input.getText();
 				executor.submit(() -> {
 					engineeringConsoleManager.connect(input.getText());
 					if (engineeringConsoleManager.getGameState().get() == GameState.DISCONNECTED) {
