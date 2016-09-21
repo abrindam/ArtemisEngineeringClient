@@ -4,12 +4,15 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
@@ -30,6 +33,8 @@ public class ConnectPanel extends TransparentJPanel {
 	private ExecutorService executor;
 	
 	private static String lastHost = "";
+	
+	private EngineeringConsoleManager engineeringConsoleManager;
 
 	public ConnectPanel(EngineeringConsoleManager engineeringConsoleManager, int width, int height, String host) {
 		executor = Executors.newSingleThreadExecutor();
@@ -37,6 +42,8 @@ public class ConnectPanel extends TransparentJPanel {
 		this.setBounds(0, 0, width, height);
 		this.setLayout(null);
 		this.setBackground(Color.BLACK);
+		
+		this.engineeringConsoleManager = engineeringConsoleManager;
 		
 		this.prompt = new JLabel("Enter Server Address");
 		prompt.setForeground(Color.WHITE);
@@ -46,6 +53,7 @@ public class ConnectPanel extends TransparentJPanel {
 		this.add(prompt);
 		
 		this.input = new JTextField(host == null ? ConnectPanel.lastHost : host);
+		input.selectAll();
 		input.setBounds(width/2 - 180/2, height/2 - 20, 180, 30);
 		input.setHorizontalAlignment(SwingConstants.CENTER);
 		this.add(input);
@@ -67,22 +75,52 @@ public class ConnectPanel extends TransparentJPanel {
 		error.setVisible(false);
 		this.add(error);
 		
-		
-		
 		submit.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				error.setVisible(false);
-				ConnectPanel.lastHost = input.getText();
-				executor.submit(() -> {
-					engineeringConsoleManager.connect(input.getText());
-					if (engineeringConsoleManager.getGameState().get() == GameState.DISCONNECTED) {
-						error.setVisible(true);
-					}
-				});
+				submit();
 			}
 		});
+		
 		this.add(submit);
+		
+		Action on_submit = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+		    public void actionPerformed(ActionEvent e) {
+		        submit();
+		    }
+		};		
+		this.input.addActionListener(on_submit);
+		
+		this.addComponentListener(new ComponentListener()
+		{
+			@Override
+			public void componentShown(ComponentEvent e) {
+				input.requestFocus();
+			}
+
+			@Override
+			public void componentHidden(ComponentEvent e) {}
+
+			@Override
+			public void componentMoved(ComponentEvent e) {}
+
+			@Override
+			public void componentResized(ComponentEvent e) {}
+		});
+	}
+	
+	private void submit() {
+		this.error.setVisible(false);
+		ConnectPanel.lastHost = input.getText();
+		executor.submit(() -> {
+			this.engineeringConsoleManager.connect(input.getText());
+			if (this.engineeringConsoleManager.getGameState().get() == GameState.DISCONNECTED) {
+				this.error.setVisible(true);
+			}
+		});
 	}
 }
