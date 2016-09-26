@@ -102,7 +102,7 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 		System.out.println("Switch to PreGame");
 		removeExistingPanels();
 		loading.setVisible(true);
-		preGamePanel = new PreGamePanel(WINDOW_WIDTH, WINDOW_HEIGHT);
+		preGamePanel = new PreGamePanel(this.engineeringConsoleManager, WINDOW_WIDTH, WINDOW_HEIGHT);
 		this.getContentPane().add(preGamePanel);
 		preGamePanel.setVisible(true);
 		loading.setVisible(false);
@@ -112,7 +112,7 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 		System.out.println("Switch to InGame");
 		removeExistingPanels();
 		loading.setVisible(true);
-		inGamePanel = new InGamePanel(engineeringConsoleManager, WINDOW_WIDTH, WINDOW_HEIGHT);
+		inGamePanel = new InGamePanel(this.engineeringConsoleManager, WINDOW_WIDTH, WINDOW_HEIGHT);
 		this.getContentPane().add(inGamePanel);
 		inGamePanel.setVisible(true);
 		loading.setVisible(false);
@@ -122,7 +122,7 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 		System.out.println("Switch to GameOver");
 		removeExistingPanels();
 		loading.setVisible(true);
-		gameOverPanel = new GameOverPanel(WINDOW_WIDTH, WINDOW_HEIGHT);
+		gameOverPanel = new GameOverPanel(this.engineeringConsoleManager, WINDOW_WIDTH, WINDOW_HEIGHT);
 		this.getContentPane().add(gameOverPanel);
 		gameOverPanel.setVisible(true);
 		loading.setVisible(false);

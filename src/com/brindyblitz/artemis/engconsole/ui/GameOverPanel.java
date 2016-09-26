@@ -7,13 +7,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
+
 public class GameOverPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private static final Font LABEL_FONT = new Font("Courier New", Font.BOLD, 36);
 	private JLabel waiting;
 
-	public GameOverPanel(int width, int height) {
+	public GameOverPanel(EngineeringConsoleManager engineeringConsoleManager, int width, int height) {
 		this.setVisible(false);
 		this.setBounds(0, 0, width, height);
 		this.setLayout(null);
@@ -25,5 +27,12 @@ public class GameOverPanel extends JPanel {
 		waiting.setHorizontalAlignment(SwingConstants.CENTER);
 		waiting.setBounds(0, height/2 - 40, width, 50);
 		this.add(waiting);
+		
+		Button disconnect_button = new Button("Disconnect", new Runnable()
+		{
+			@Override
+			public void run() { engineeringConsoleManager.disconnect(); }
+		}, Color.BLACK, Color.RED, Color.WHITE, Color.WHITE, 80, 20);
+		this.add(disconnect_button).setLocation(this.getWidth() - disconnect_button.getWidth() - 10, 5);
 	}
 }
