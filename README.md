@@ -119,15 +119,24 @@ These instructions assume you are using IntelliJ IDEA 14.1.4.
 	
 
 ### 3D DAMCON Models
-WIP...
+To import 3D models from the Artemis directory for use as wireframes in this project:
 
-#### Creating OBJ models JOGL will like
-1. Open the relevant model files up in DelEd (free old game model editing tool)
-1. Export them as OBJ files.
-1. Open in Blender.
-1. Export as OBJ (again).
-1. Copy OBJ and MTL file to `art/models` directory.
-1. ...
+- Open [DelEd 3D Editor](http://www.delgine.com/)
+- File -> Open
+- Navigate to Artemis directory then to `dat`, e.g. `C:\Program Files (x86)\Steam\steamapps\common\Artemis\dat`
+- Select the `DXS` file corresponding to the model you want to export, e.g. `artemis.dxs`
+- Select Open
+- Click OK to ignore warnings about missing textures
+- Select Plugins -> Wavefront OBJ Exporter (you may need to [download](http://www.delgine.com/plugins/viewPlugin.php?catid=40&catdesc=Exporters&contentid=17) and install this first)
+- Select a locate to save the file, e.g. `C:\artemis_from_deled.obj`
+- Set `Scale` to 1, `Triangulate` and `Normals` to None, and uncheck both checkboxes
+- Click OK to export the OBJ file
+- Open Blender and delete any objects that happen to be in your default scene
+- File -> Import -> Wavefront (.obj)
+- Locate the file you exported from DelEd and select Import
+- File -> Export -> Wavefront (.obj)
+- In the `Export OBJ` panel, set `Forward` to `-Z`, `Up` to `Y Up`, `Scale` to 1.0, `Path Mode` to `Auto`, and ensure that the following boxes (and no others) are checked: `Apply Modifiers`, `Include Edges`, and `Write Normals` (I'm not sure that these exact settings are needed but changing some of them got this process to work)
+- Copy resulting `OBJ` file to the models folder (`<project root>/assets/art/models`)
 
 #### Misc.
 - http://www.java-gaming.org/index.php?topic=27429.0
