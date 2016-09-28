@@ -19,10 +19,15 @@ public class SystemHeatSlider extends SystemStatusSlider {
             SLIDER_HEIGHT = WIDGET_HEIGHT;
 
     private static BufferedImage statusImageWithColor = null, statusImageWhite = null;
+    private int OVERHEAT_TOLERANCE_PCT = 25, CRITICAL_TOLERANCE_PCT = 75;
+    
+    private enum OverheatState { None, Overheated, Critical }
+    private OverheatState overheatState = OverheatState.None;
 
     public SystemHeatSlider(ShipSystem system, EngineeringConsoleManager engineeringConsoleManager) {
         super(system, engineeringConsoleManager, WIDGET_WIDTH, WIDGET_HEIGHT, SLIDER_WIDTH, SLIDER_HEIGHT);
         this.engineeringConsoleManager.getSystemHeat().onChange(() -> this.repaint());
+        this.engineeringConsoleManager.getSystemHeat().onChange(() -> this.onSystemHeatChange());
     }
 
     @Override
@@ -62,5 +67,35 @@ public class SystemHeatSlider extends SystemStatusSlider {
     @Override
     protected float getEmptyHue() {
         return 60f / 360f;
+    }
+    
+    private void onSystemHeatChange() {
+    	if (this.engineeringConsoleManager.getSystemHealth().get().get(this.system) == 0)
+    		return;
+    	
+    	int heat_pct = this.getStatusPctInt();
+    	
+    	switch (overheatState) {
+    		case None:
+    			if (heat_pct >= OVERHEAT_TOLERANCE_PCT) {
+    				overheatState = OverheatState.Overheated;
+    				this.engineeringConsoleManager.getAudioManager().playSound("alerts/overheat.wav");	
+    			}
+    			break;
+    			
+    		case Overheated:
+    			if (heat_pct < OVERHEAT_TOLERANCE_PCT)
+    				overheatState = OverheatState.None;
+    			if (heat_pct >= CRITICAL_TOLERANCE_PCT) {
+    				overheatState = OverheatState.Critical;
+    				this.engineeringConsoleManager.getAudioManager().playSound("alerts/overheat_critical.wav");
+    			}
+    			break;
+    			
+    		case Critical:
+    			if (heat_pct < CRITICAL_TOLERANCE_PCT)
+    				overheatState = OverheatState.Overheated;
+    			break;
+    	}
     }
 }

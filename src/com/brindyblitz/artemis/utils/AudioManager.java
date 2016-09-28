@@ -51,6 +51,11 @@ public class AudioManager {
         return sound;
     }
 
+    /**
+     * Play a sound
+     * 
+     * @param name Sound name including path, e.g. "beep.wav" or "voice/on_select/3.wav"; the root is <project root>/assets/sfx
+     */
     public void playSound(String name) {
         try
         {
@@ -72,6 +77,11 @@ public class AudioManager {
         }
     }
 
+    /**
+     * Queue a sound to be played
+     * 
+     * @param name Sound name including path, e.g. "beep.wav" or "voice/on_select/3.wav"; the root is <project root>/assets/sfx
+     */
     public void queueSound(String name) {
         this.soundQueue.queueSound(name);
     }

@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import com.brindyblitz.artemis.engconsole.ui.SystemStatusRenderer;
+import com.brindyblitz.artemis.utils.AudioManager;
 import com.brindyblitz.artemis.utils.newton.DerivedProperty;
 import com.brindyblitz.artemis.utils.newton.Property;
 import com.brindyblitz.artemis.utils.newton.SettableProperty;
@@ -24,6 +25,8 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	private static final Map<ShipSystem, Integer> DEFAULT_COOLANT_ALLOCATED = new HashMap<>();
 	private static final Map<ShipSystem, Integer> DEFAULT_HEAT = new HashMap<>();
 	private static final Map<OrdnanceType, Integer> DEFAULT_ORDNANCE_COUNT = new HashMap<>();
+	
+	private AudioManager audioManager;
 	
 	static {
 		for (ShipSystem system: ShipSystem.values()) {
@@ -256,5 +259,18 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 			FakeEngineeringConsoleManager.this.systemHeat.set(heat);
 			FakeEngineeringConsoleManager.this.gridHealth.set(gridHealth);
 		}
+	}
+
+	@Override
+	public AudioManager getAudioManager()
+	{
+		return this.audioManager;
+	}
+
+
+	@Override
+	public void setAudioManager(AudioManager audioManager)
+	{
+		this.audioManager = audioManager;
 	}
 }

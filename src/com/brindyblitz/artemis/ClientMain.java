@@ -1,5 +1,6 @@
 package com.brindyblitz.artemis;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,6 +10,7 @@ import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.FakeEngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.RealEngineeringConsoleManager;
 import com.brindyblitz.artemis.engconsole.ui.UserInterfaceFrame;
+import com.brindyblitz.artemis.utils.AudioManager;
 
 public class ClientMain {
 	
@@ -74,6 +76,7 @@ public class ClientMain {
 			}
 		}
 		
+		engineeringConsoleManager.setAudioManager(new AudioManager(new File(System.getProperty("user.dir"), "assets/sfx").getPath()));
 		buildUIFrame(engineeringConsoleManager, host);		
 	}
 

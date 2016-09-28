@@ -34,8 +34,6 @@ public class SystemSlider extends TransparentJPanel implements MouseListener, Mo
 
     private long lastScrollTime = System.currentTimeMillis();
 
-	private AudioManager audioManager;
-
 	private static final Color
             SLIDER_BACKGROUND = Color.BLACK,
             DIVIDER = Color.LIGHT_GRAY,
@@ -82,14 +80,12 @@ public class SystemSlider extends TransparentJPanel implements MouseListener, Mo
 	private static final Color[] NOTCH_COLORS = new Color[]{Color.GREEN, new Color(255, 180, 0), Color.RED};
 
 	public SystemSlider(ShipSystem system, String label, InputMapping input_mapping,
-						EngineeringConsoleManager engineeringConsoleManager,
-						AudioManager audio_manager) {
+						EngineeringConsoleManager engineeringConsoleManager) {
 		this.system = system;
 		this.label = label;
 		this.inputMapping = input_mapping;
 		this.engineeringConsoleManager = engineeringConsoleManager;
 		this.systemStatusRenderer = new SystemStatusRenderer(engineeringConsoleManager);
-		this.audioManager = audio_manager;
 
 		this.setSize(WIDGET_WIDTH, WIDGET_HEIGHT);
 
@@ -237,7 +233,7 @@ public class SystemSlider extends TransparentJPanel implements MouseListener, Mo
 	///////////
 
     private void handleInput(boolean positive, boolean shift_down) {
-		audioManager.playSound("beep.wav");
+    	this.engineeringConsoleManager.getAudioManager().playSound("beep.wav");
 
         if (shift_down) {
             this.engineeringConsoleManager.incrementSystemCoolantAllocated(this.system, positive ? COOLANT_INCREMENT : -COOLANT_INCREMENT);
@@ -283,6 +279,7 @@ public class SystemSlider extends TransparentJPanel implements MouseListener, Mo
 		if (x < POWER_WIDTH) {				// Set power directly...
 			int power = SLIDER_HEIGHT - y;	// Note: this relies on keeping the height of this widget equal to Artemis.MAX_ENERGY_ALLOCATION_PERCENT
 			this.engineeringConsoleManager.setSystemEnergyAllocated(this.system, power);
+			this.engineeringConsoleManager.getAudioManager().playSound("beep.wav");
 		} else {							// Set coolant...
 			int coolant_relative_y = percentToY(1f) - e.getY();			// get y coordinate of mouse relative to bottom of 1-coolant block
 			int current_coolant_allocated = this.engineeringConsoleManager.getSystemCoolantAllocated().get().get(this.system);
@@ -290,7 +287,7 @@ public class SystemSlider extends TransparentJPanel implements MouseListener, Mo
 			if (coolant_relative_y < 0) {								// click under 1-coolant block: set coolant to 0
 				if (current_coolant_allocated != 0) {
 					this.engineeringConsoleManager.setSystemCoolantAllocated(this.system, 0);
-					audioManager.playSound("beep.wav");
+					this.engineeringConsoleManager.getAudioManager().playSound("beep.wav");
 				}
 			} else {
 				for (int i = Artemis.MAX_COOLANT_PER_SYSTEM; i > 0; i--) {	// from the max-coolant block, find which block's bottom is below the mouse
@@ -309,13 +306,13 @@ public class SystemSlider extends TransparentJPanel implements MouseListener, Mo
 								} else  if (clamped_coolant > 0) {
 									// set coolant to remaining + amount currently allocated to this system
 									this.engineeringConsoleManager.setSystemCoolantAllocated(this.system, current_total_coolant_remaining + current_coolant_allocated);
-									audioManager.playSound("beep.wav");
+									this.engineeringConsoleManager.getAudioManager().playSound("beep.wav");
 								} else {
 									// TODO: AUDIO > play error sound here (coolant depleted)
 								}
 							} else {
 								this.engineeringConsoleManager.setSystemCoolantAllocated(this.system, i);		// set to requested coolant level
-								audioManager.playSound("beep.wav");
+								this.engineeringConsoleManager.getAudioManager().playSound("beep.wav");
 							}
 						} else {
 							// TODO: AUDIO > play error sound here (coolant value not changing)

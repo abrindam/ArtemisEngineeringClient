@@ -19,8 +19,8 @@ public class InternalConnection extends Internal {
 	private static final Color3f LINE_COLOR = new Color3f(0f, 1f, 0f);
 	private static final float ALPHA_STANDARD = 0.7f;
 
-	public InternalConnection(VesselNodeConnection vessel_node_connection, AudioManager audio_manager) {
-		super(audio_manager);
+	public InternalConnection(VesselNodeConnection vessel_node_connection) {
+		super();
 
 		this.vesselNodeConnection = vessel_node_connection;
 

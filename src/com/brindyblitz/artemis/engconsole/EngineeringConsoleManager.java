@@ -3,6 +3,7 @@ package com.brindyblitz.artemis.engconsole;
 import java.util.List;
 import java.util.Map;
 
+import com.brindyblitz.artemis.utils.AudioManager;
 import com.brindyblitz.artemis.utils.newton.Property;
 
 import com.walkertribe.ian.enums.OrdnanceType;
@@ -13,72 +14,59 @@ import com.walkertribe.ian.vesseldata.VesselNode;
 import com.walkertribe.ian.vesseldata.VesselNodeConnection;
 
 public interface EngineeringConsoleManager {
-	
+	//////////////////
+	// Connectivity //
+	//////////////////
 	void connect(String host);
-	
 	void connect(String host, int port);
-	
 	void disconnect();
 	
+	/////////
+	// Get //
+	/////////
 	Property<GameState> getGameState();
-	
 	Property<Integer> getTotalShipCoolant();
-
 	Property<Map<ShipSystem, Integer>> getSystemEnergyAllocated();
-
 	Property<Map<ShipSystem, Integer>> getSystemCoolantAllocated();
-	
 	Property<Map<ShipSystem, Integer>> getSystemHeat();
-	
 	Property<Map<ShipSystem, Integer>> getSystemHealth();
-
 	Property<Integer> getTotalCoolantRemaining();
-	
 	Property<Float> getTotalEnergyRemaining(); 
-	
 	Property<Map<GridCoord, Float>> getGridHealth();
-
 	List<VesselNode> getGrid();
-	
 	List<VesselNodeConnection> getGridConnections();
-	
 	Property<List<EnhancedDamconStatus>> getDamconTeams();
-	
 	Property<Integer> getFrontShieldStrength();
-
 	Property<Integer> getRearShieldStrength();
-	
 	Property<Integer> getFrontShieldMaxStrength();
-
 	Property<Integer> getRearShieldMaxStrength();
-	
 	Property<Boolean> getShieldsActive();
-	
 	Property<Map<OrdnanceType, Integer>> getOrdnanceCount();
-	
 	Property<Boolean> getAutoDamcon();
-	
 	Property<Boolean> getWeaponsLocked();
-	
 	Property<Boolean> getAutoBeams();
-
 	void setSystemEnergyAllocated(ShipSystem system, int amount);
-
 	void setSystemCoolantAllocated(ShipSystem system, int amount);
 	
+	/////////
+	// Set //
+	/////////
 	void incrementSystemEnergyAllocated(ShipSystem system, int amount);
-
 	void incrementSystemCoolantAllocated(ShipSystem system, int amount);
-	
 	void moveDamconTeam(int teamId, GridCoord coord);
-	
 	void setAutoDamcon(boolean autoDamcon);
-
 	void resetEnergy();
-
 	void resetCoolant();
 	
+	//////////
+	// Misc //
+	//////////
+	public void setAudioManager(AudioManager audioManager);
+	public AudioManager getAudioManager();
 	
+	///////////
+	// Enums //
+	///////////
 	public enum GameState {
 		DISCONNECTED, PREGAME, INGAME, GAMEOVER
 	}
@@ -87,6 +75,9 @@ public interface EngineeringConsoleManager {
 		CHANGE, GAME_STATE_CHANGE
 	}
 	
+	//////////////////////////
+	// EnhancedDamconStatus //
+	//////////////////////////
 	public class EnhancedDamconStatus {
 		private DamconStatus damconStatus;
 		private float x;

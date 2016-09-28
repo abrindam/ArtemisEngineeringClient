@@ -1,7 +1,5 @@
 package com.brindyblitz.artemis.engconsole.ui.damcon;
 
-
-import com.brindyblitz.artemis.utils.AudioManager;
 import com.walkertribe.ian.vesseldata.VesselNode;
 
 import javax.media.j3d.Shape3D;
@@ -12,11 +10,7 @@ public abstract class Internal {
 
     protected Shape3D shape;
 
-    protected AudioManager audioManager;
-
-    public Internal(AudioManager audio_manager) {
-        this.audioManager = audio_manager;
-    }
+    public Internal() { }
 
     protected static Point3f internalPositionToWorldSpace(float x, float y, float z) {
         Point3f p = new Point3f(-x, y, z);

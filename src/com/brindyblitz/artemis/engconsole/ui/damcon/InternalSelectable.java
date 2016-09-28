@@ -57,14 +57,13 @@ public abstract class InternalSelectable extends Internal {
 	private static Map<String, Texture[]> nodeTypeToStandardColorizedTextures = new HashMap<>(), nodeTypeToHoveredColorizedTextures = new HashMap<>();
 	private String selectableType;
 
-	private Damcon damcon;
+	protected Damcon damcon;
 
 	public InternalSelectable(String selectable_type,
 			String relative_texture_path, Color color,
 			int standard_alpha, int hovered_alpha, float icon_dimension,
-			Damcon damcon,
-			AudioManager audio_manager) {
-		super(audio_manager);
+			Damcon damcon) {
+		super();
 
 		this.selectableType = selectable_type;
 		this.standardAlpha = standard_alpha;

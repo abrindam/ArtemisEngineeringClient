@@ -94,11 +94,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 	private BranchGroup damconBranchGroup;
 	private InternalTeam selected = null;
 
-	private AudioManager audioManager;
-
-	public Damcon(EngineeringConsoleManager engineeringConsoleManager, AudioManager audio_manager) {
+	public Damcon(EngineeringConsoleManager engineeringConsoleManager) {
 		this.engineeringConsoleManager = engineeringConsoleManager;
-		this.audioManager = audio_manager;
 
 		loadAndWireframeifyModel();
 		createUniverseAndScene();
@@ -143,7 +140,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 		node_branchgroup.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
 
 		for (VesselNode vn : this.engineeringConsoleManager.getGrid()) {
-			InternalNode in = new InternalNode(vn, InternalNode.isSystemNode(vn), this, audioManager);
+			InternalNode in = new InternalNode(vn, InternalNode.isSystemNode(vn), this);
 			internalNodes.put(vn.getGridCoord(), in);
 			nodesToSelectables.put(in.getShape(), in);
 			node_branchgroup.addChild(in.getBranchGroup());
@@ -179,7 +176,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 			InternalTeam it = internalTeams.get(damconStatus.getTeamNumber());
 
 			if (it == null) {
-				it = new InternalTeam(damconStatus, this, audioManager);
+				it = new InternalTeam(damconStatus, this);
 				internalTeams.put(damconStatus.getTeamNumber(), it);
 				nodesToSelectables.put(it.getShape(), it);
 				damconBranchGroup.addChild(it.getBranchGroup());
@@ -199,7 +196,7 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 		BranchGroup corridor_bg = new BranchGroup();
 
 		for (VesselNodeConnection vnc : this.engineeringConsoleManager.getGridConnections()) {
-			InternalConnection ih = new InternalConnection(vnc, audioManager);
+			InternalConnection ih = new InternalConnection(vnc);
 			internalConnections.add(ih);
 			Node node = ih.getShape();
 			corridor_bg.addChild(node);
@@ -364,7 +361,8 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 				if (selected != null) {
 					// Move DAMCON team and clear selection
 					this.engineeringConsoleManager.moveDamconTeam(selected.getTeamID(), ((InternalNode) internal).getGridCoords());
-					audioManager.queueSound(InternalTeam.ON_ORDER_RESPONSES.get(new Integer(random.nextInt(InternalTeam.ON_ORDER_RESPONSES.size()))));
+					this.engineeringConsoleManager.getAudioManager().queueSound(
+							InternalTeam.ON_ORDER_RESPONSES.get(new Integer(random.nextInt(InternalTeam.ON_ORDER_RESPONSES.size()))));
 					selected.setSelected(false);
 					selected = null;
 				}
@@ -586,5 +584,9 @@ public class Damcon implements MouseListener, MouseMotionListener, MouseWheelLis
 				setRandomNodeTransparency();
 			}
 		}
+	}
+	
+	public AudioManager getAudioManager() {
+		return this.engineeringConsoleManager.getAudioManager();
 	}
 }

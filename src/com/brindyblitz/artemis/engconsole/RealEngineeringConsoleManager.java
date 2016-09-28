@@ -12,6 +12,7 @@ import com.brindyblitz.artemis.protocol.EnhancedSystemManager;
 import com.brindyblitz.artemis.protocol.WorldAwareRegularServer;
 import com.brindyblitz.artemis.protocol.WorldAwareRobustProxyListener;
 import com.brindyblitz.artemis.protocol.WorldAwareServer;
+import com.brindyblitz.artemis.utils.AudioManager;
 import com.brindyblitz.artemis.utils.newton.DerivedProperty;
 import com.brindyblitz.artemis.utils.newton.ObservableAdapter;
 import com.brindyblitz.artemis.utils.newton.Property;
@@ -33,6 +34,8 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	private boolean proxy;
 	private ObservableAdapter connectionStateChangeObservable = new ObservableAdapter();
 	private ObservableAdapter systemManagerChangeObservable = new ObservableAdapter();
+	
+	private AudioManager audioManager;
 
 	public RealEngineeringConsoleManager(boolean proxy) {
 		this.proxy = proxy;		
@@ -399,5 +402,17 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	
 	public void setAutoDamcon(boolean autoDamcon) {
 		this.worldAwareServer.getServer().send(new EngSetAutoDamconPacket(autoDamcon));
+	}
+
+	@Override
+	public AudioManager getAudioManager()
+	{
+		return this.audioManager;
+	}
+
+	@Override
+	public void setAudioManager(AudioManager audioManager)
+	{
+		this.audioManager = audioManager;
 	}
 }

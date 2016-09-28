@@ -51,8 +51,6 @@ public class InGamePanel extends TransparentJPanel {
 
 	private static HashMap<ShipSystem, String> SYSTEM_NAME_MAP = new HashMap<ShipSystem, String>();
 
-	public AudioManager audioManager;
-
 	public InGamePanel(EngineeringConsoleManager engineeringConsoleManager, int width, int height) {
 		this.setVisible(false);
 		this.engineeringConsoleManager = engineeringConsoleManager;
@@ -61,8 +59,6 @@ public class InGamePanel extends TransparentJPanel {
 		this.setBackground(Color.BLACK);
 		this.setLayout(null);
 		this.setSize(width, height);
-
-		audioManager = new AudioManager(new File(System.getProperty("user.dir"), "assets/sfx").getPath());
 
 		SYSTEM_NAME_MAP.put(BEAMS, "Primary Beam");
 		SYSTEM_NAME_MAP.put(TORPEDOES, "Torpedoes");
@@ -82,13 +78,13 @@ public class InGamePanel extends TransparentJPanel {
 		}
 
 		SystemSlider last_slider = sliders.get(sliders.size() - 1);
-		this.add(new CoolantRemainingSlider(last_slider.getWidth(), last_slider.getHeight(), engineeringConsoleManager, audioManager)).setLocation(
+		this.add(new CoolantRemainingSlider(last_slider.getWidth(), last_slider.getHeight(), engineeringConsoleManager)).setLocation(
 				this.numSliders * SLIDER_OFFSET_MULTIPLIER + SLIDER_OFFSET_ADDITIONAL, MAIN_SLIDER_Y);
 
 		PresetPanel presetPanel = new PresetPanel(this.presetManager);
 		this.add(presetPanel).setLocation(this.getWidth() - presetPanel.getWidth(), PRESET_Y);
 
-		this.damcon = new Damcon(engineeringConsoleManager, this.audioManager);
+		this.damcon = new Damcon(engineeringConsoleManager);
 		this.add(damcon.getCanvas()).setLocation(10, DAMCON_Y);
 
 		EnergySlider energy_slider = new EnergySlider(engineeringConsoleManager);
@@ -117,7 +113,7 @@ public class InGamePanel extends TransparentJPanel {
 	}
 
 	private void addSlider(ShipSystem system, String label, InputMapping mapping) {
-		SystemSlider slider = new SystemSlider(system, label, mapping, this.engineeringConsoleManager, this.audioManager);
+		SystemSlider slider = new SystemSlider(system, label, mapping, this.engineeringConsoleManager);
 		this.add(slider).setLocation(this.numSliders * SLIDER_OFFSET_MULTIPLIER + SLIDER_OFFSET_ADDITIONAL, MAIN_SLIDER_Y);
 
 		SystemHeatSlider systemHeatSlider = new SystemHeatSlider(system, this.engineeringConsoleManager);

@@ -21,15 +21,14 @@ public class InternalNode extends InternalSelectable {
 	private static final float ICON_DIM_SYSTEM_NODE = 0.05f,
 			ICON_DIM_NON_SYSTEM_NODE = 0.03f;
 
-	public InternalNode(VesselNode vessel_node, boolean is_system_node, Damcon damcon, AudioManager audio_manager) {
+	public InternalNode(VesselNode vessel_node, boolean is_system_node, Damcon damcon) {
 		super(is_system_node ? "System Node" : "Non-System Node",
 				HUD_ICON,
 				is_system_node ? SYSTEM_NODE_COLOR : NON_SYSTEM_NODE_COLOR,
-						is_system_node ? SYSTEM_NODE_STANDARD_ALPHA : NON_SYSTEM_NODE_STANDARD_ALPHA,
-								is_system_node ? SYSTEM_NODE_HOVERED_ALPHA : NON_SYSTEM_NODE_HOVERED_ALPHA,
-										is_system_node ? ICON_DIM_SYSTEM_NODE : ICON_DIM_NON_SYSTEM_NODE,
-				damcon,
-												audio_manager);
+				is_system_node ? SYSTEM_NODE_STANDARD_ALPHA : NON_SYSTEM_NODE_STANDARD_ALPHA,
+				is_system_node ? SYSTEM_NODE_HOVERED_ALPHA : NON_SYSTEM_NODE_HOVERED_ALPHA,
+				is_system_node ? ICON_DIM_SYSTEM_NODE : ICON_DIM_NON_SYSTEM_NODE,
+				damcon);
 
 		this.vesselNode = vessel_node;
 		this.isSystemNode = is_system_node;

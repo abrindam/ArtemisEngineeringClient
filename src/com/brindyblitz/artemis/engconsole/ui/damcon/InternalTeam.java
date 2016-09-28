@@ -30,8 +30,8 @@ public class InternalTeam extends InternalSelectable {
 
 	public static Map<Integer, String> ON_ORDER_RESPONSES = new HashMap<>();
 
-	public InternalTeam(EngineeringConsoleManager.EnhancedDamconStatus damcon_status, Damcon damcon, AudioManager audio_manager) {
-		super("DAMCON Team", HUD_ICON, DAMCON_COLOR, STANDARD_ALPHA, HOVERED_ALPHA, ICON_DIM, damcon, audio_manager);
+	public InternalTeam(EngineeringConsoleManager.EnhancedDamconStatus damcon_status, Damcon damcon) {
+		super("DAMCON Team", HUD_ICON, DAMCON_COLOR, STANDARD_ALPHA, HOVERED_ALPHA, ICON_DIM, damcon);
 
 		this.status = damcon_status;
 
@@ -54,7 +54,7 @@ public class InternalTeam extends InternalSelectable {
 	public void setSelected(boolean selected) {
 		if (selected) {
 			System.out.println("Selecting " + this);
-			audioManager.queueSound("voice/on_select/" + (this.getTeamID() + 1) + ".wav");
+			this.damcon.getAudioManager().queueSound("voice/on_select/" + (this.getTeamID() + 1) + ".wav");
 
 			// Use this if you want to hear all of the responses at random
 			// int random = 1 + (int)(Math.random() * 9d);

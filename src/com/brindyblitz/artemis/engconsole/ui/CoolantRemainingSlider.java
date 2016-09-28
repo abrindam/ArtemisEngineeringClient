@@ -29,11 +29,8 @@ public class CoolantRemainingSlider extends TransparentJPanel implements MouseLi
 
     private EngineeringConsoleManager engineeringConsoleManager;
 
-    private AudioManager audioManager;
-
-	public CoolantRemainingSlider(int width, int height, EngineeringConsoleManager engineeringConsoleManager, AudioManager audioManager) {
+	public CoolantRemainingSlider(int width, int height, EngineeringConsoleManager engineeringConsoleManager) {
 		this.engineeringConsoleManager = engineeringConsoleManager;
-		this.audioManager = audioManager;
         this.width = width;
         this.height = height;
 
@@ -89,7 +86,7 @@ public class CoolantRemainingSlider extends TransparentJPanel implements MouseLi
 	@Override
 	public void mousePressed(MouseEvent e) {
 		this.engineeringConsoleManager.resetCoolant();
-		audioManager.playSound("beep.wav");
+		this.engineeringConsoleManager.getAudioManager().playSound("beep.wav");
 	}
 
 	@Override
