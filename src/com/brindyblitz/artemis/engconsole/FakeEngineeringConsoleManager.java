@@ -214,6 +214,14 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	private final SettableProperty<Boolean> autoBeams = new SettableProperty<>(true);
 	
 	@Override
+	public Property<Ship[]> getAllShips() {
+		return allShips;
+	}
+	
+	private static final Ship[] ALL_SHIPS = {new Ship("USS Foo", ShipType.TSN_Light_Cruiser, 1), new Ship("USS Bar", ShipType.TSN_Battleship, 2)};
+	private final SettableProperty<Ship[]> allShips = new SettableProperty<>(ALL_SHIPS);
+	
+	@Override
 	protected void updateSystemEnergyAllocated(ShipSystem system, int amount) {
 		Map<ShipSystem, Integer> energyAllocated = new HashMap<>(FakeEngineeringConsoleManager.this.systemEnergyAllocated.get());
 		energyAllocated.put(system, amount);

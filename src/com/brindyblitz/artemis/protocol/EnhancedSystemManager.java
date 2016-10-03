@@ -12,10 +12,12 @@ import com.walkertribe.ian.iface.Listener;
 import com.walkertribe.ian.protocol.core.GameOverPacket;
 import com.walkertribe.ian.protocol.core.eng.EngAutoDamconUpdatePacket;
 import com.walkertribe.ian.protocol.core.eng.EngGridUpdatePacket;
+import com.walkertribe.ian.protocol.core.setup.AllShipSettingsPacket;
 import com.walkertribe.ian.protocol.core.world.DestroyObjectPacket;
 import com.walkertribe.ian.protocol.core.world.IntelPacket;
 import com.walkertribe.ian.protocol.core.world.ObjectUpdatePacket;
 import com.walkertribe.ian.util.ShipSystemGrid;
+import com.walkertribe.ian.world.Artemis;
 import com.walkertribe.ian.world.SystemManager;
 
 public class EnhancedSystemManager extends SystemManager {
@@ -27,6 +29,7 @@ public class EnhancedSystemManager extends SystemManager {
 	private ScheduledFuture<?> objectUpdateTimeout = null;
 	private ShipSystemGrid permanantGrid;
 	private boolean autoDamcon = true;
+	private final AllShipSettingsPacket.Ship[] ships = new AllShipSettingsPacket.Ship[Artemis.SHIP_COUNT];
 	
 	public EnhancedSystemManager(Context context) {
 		super(context);
@@ -89,6 +92,18 @@ public class EnhancedSystemManager extends SystemManager {
 	
 	public boolean isGameOverScreen() {
 		return gameOverScreen;
+	}
+	
+	@Listener
+	public void onShipListUpdate(AllShipSettingsPacket pkt) {
+		for (int i = 1; i<= Artemis.SHIP_COUNT; i++) {
+			ships[i -1] = pkt.getShip(i);
+		}
+		this.fireChange();
+	}
+	
+	public AllShipSettingsPacket.Ship[] getShips() {
+		return ships;
 	}
 	
 	public void setPermanantSystemGrid(ShipSystemGrid permanantGrid) {

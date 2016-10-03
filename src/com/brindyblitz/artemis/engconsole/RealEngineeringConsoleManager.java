@@ -403,6 +403,24 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		return this.getCurrentShip().getTargetingMode() != TargetingMode.AUTO;
 	}, systemManagerChangeObservable);
 	
+	@Override
+	public Property<Ship[]> getAllShips() {
+		return allShips;
+	}
+	
+	private final DerivedProperty<Ship[]> allShips = new DerivedProperty<>( () -> {
+		if (this.gameState.get() == GameState.DISCONNECTED) {
+			return new Ship[Artemis.SHIP_COUNT];
+		}
+		
+		Ship[] ships = new Ship[Artemis.SHIP_COUNT];
+		int i = 0;
+		for (com.walkertribe.ian.protocol.core.setup.AllShipSettingsPacket.Ship ship: this.worldAwareServer.getSystemManager().getShips()) {
+			ships[i] = new Ship(ship.getName(), ShipType.byId(ship.getShipType()), i + 1);
+			i++;
+		}
+		return ships;
+	}, systemManagerChangeObservable);
 	
 	private ArtemisPlayer getCurrentShip() {
 		return this.worldAwareServer.getSystemManager().getPlayerShip(shipNumber);

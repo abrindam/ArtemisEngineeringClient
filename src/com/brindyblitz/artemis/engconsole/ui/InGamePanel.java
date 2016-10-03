@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 import javax.swing.JPanel;
 
 import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager;
+import com.brindyblitz.artemis.engconsole.EngineeringConsoleManager.Ship;
 import com.brindyblitz.artemis.engconsole.config.InputMapping;
 import com.brindyblitz.artemis.engconsole.ui.damcon.Damcon;
 import com.brindyblitz.artemis.utils.AudioManager;
@@ -159,6 +160,11 @@ public class InGamePanel extends TransparentJPanel {
 			Map<OrdnanceType, Integer> ordnanceCount = this.engineeringConsoleManager.getOrdnanceCount().get();
 			for (Entry<OrdnanceType, Integer> entry : ordnanceCount.entrySet()) {
 				System.out.println(entry.getKey() + ": " + entry.getValue());
+			}
+			
+			System.out.println("--Available Ships--");
+			for (Ship ship : this.engineeringConsoleManager.getAllShips().get()) {
+				System.out.println(ship);
 			}
 
 			System.out.println("\n\n\n");

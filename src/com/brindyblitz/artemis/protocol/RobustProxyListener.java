@@ -122,7 +122,7 @@ public class RobustProxyListener implements Runnable {
 		ArtemisNetworkInterface dest = type == ConnectionType.SERVER ? client : server;
 		dest.send(pkt);
 		ArtemisPacket debugPacket = parsedPacket == null ? pkt : parsedPacket;
-		if (! debugPacket.toString().equals("0x80803df9 00000000")) { // ignore empty ObjectUpdatePacket(s)
+		if (! pkt.toString().equals("0x80803df9 00000000") && !debugPacket.toString().contains("ObjectUpdatePacket")) { // ignore empty ObjectUpdatePacket(s)
 			System.out.println(System.currentTimeMillis() + " " + type + "> " + debugPacket);
 		}
 	}

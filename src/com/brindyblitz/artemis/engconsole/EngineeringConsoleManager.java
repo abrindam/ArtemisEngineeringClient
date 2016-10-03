@@ -1,11 +1,11 @@
 package com.brindyblitz.artemis.engconsole;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.brindyblitz.artemis.utils.AudioManager;
 import com.brindyblitz.artemis.utils.newton.Property;
-
 import com.walkertribe.ian.enums.OrdnanceType;
 import com.walkertribe.ian.enums.ShipSystem;
 import com.walkertribe.ian.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
@@ -48,6 +48,7 @@ public interface EngineeringConsoleManager {
 	Property<Boolean> getAutoBeams();
 	void setSystemEnergyAllocated(ShipSystem system, int amount);
 	void setSystemCoolantAllocated(ShipSystem system, int amount);
+	Property<Ship[]> getAllShips();
 	
 	/////////
 	// Set //
@@ -118,6 +119,67 @@ public interface EngineeringConsoleManager {
 		public String toString() {
 			return "Team #" + getTeamNumber() + " (" + getMembers() + " members) @ " +
 					"(" + this.x + "," + this.y + "," + this.z + ")";
+		}
+	}
+	
+	public class Ship {
+		private String name;
+		private ShipType type;
+		private int shipNumber;
+
+		public Ship(String name, ShipType type, int shipNumber) {
+			this.name = name;
+			this.type = type;
+			this.shipNumber = shipNumber;
+		}
+		
+		@Override
+		public String toString() {
+			return "Ship #" + shipNumber + ": " + name + " (" + type.getDescription() + ")";
+		}		
+	}
+	
+	public enum ShipType {		
+		TSN_Light_Cruiser(0, "Light Cruiser"),
+		TSN_Scout(1, "Scout"),
+		TSN_Battleship(2, "Battleship"),
+		TSN_Missile_Cruiser(3, "Missile Cruiser"),
+		TSN_Dreadnought(4, "Dreadnought"),
+		TSN_Carrier(5, "Carrier"),
+		TSN_Mine_Layer(6, "Mine Layer"),
+		TSN_Juggernaut(7, "Juggernaut"),
+		Ximni_Light_Cruiser(8, "Ximni Light Cruiser"),
+		Ximni_Scout(9, "Ximni Scout"),
+		Ximni_MissileCruiser(10, "Ximni Missile Cruiser"),
+		Ximni_Battleship(11, "Ximni Battleship"),
+		Ximni_Carrier(12, "Ximni Carrier"),
+		Ximni_Dreadnought(13, "Ximni Dreadnought");
+		
+		private static Map<Integer, ShipType> idMap = new HashMap<>();
+		private int id;
+		private String description;
+
+		private ShipType(int id, String description) {
+			this.id = id;
+			this.description = description;
+		}
+		
+		static {
+			for (ShipType shipType : values()) {
+				idMap.put(shipType.id, shipType);
+			}
+		}
+		
+		public int getId() {
+			return id;
+		}
+		
+		public String getDescription() {
+			return description;
+		}
+		
+		public static ShipType byId(int id) {
+			return idMap.get(id);
 		}
 	}
 }
