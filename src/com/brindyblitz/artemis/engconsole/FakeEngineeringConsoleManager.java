@@ -50,9 +50,13 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		this.gridHealth.set(gridHealth);
 		
 		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new HeatAndDamageGenerator(), 0, 1, TimeUnit.SECONDS);
+		
+		//TODO remove once UI to invoke ready is done
 		Executors.newSingleThreadScheduledExecutor().schedule(() -> {
 			this.gameState.set(GameState.INGAME);
 		}, 2, TimeUnit.SECONDS);
+		
+		afterChildConstructor();
 	}
 	
 	
@@ -71,6 +75,11 @@ public class FakeEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		//intentionally do nothing
 	}
 	
+	@Override
+	public void ready() {
+		super.ready();
+		this.gameState.set(GameState.INGAME);
+	}
 	
 	@Override
 	public Property<GameState> getGameState() {

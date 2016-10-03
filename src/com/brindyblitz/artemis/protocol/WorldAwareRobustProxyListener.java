@@ -14,6 +14,11 @@ public class WorldAwareRobustProxyListener extends RobustProxyListener implement
 	}
 	
 	@Override
+	public void ready() {
+		// Do nothing, proxied client will send ready		
+	}
+	
+	@Override
 	public void disconnect() {
 		super.disconnect();
 		eventEmitter.emit(Events.CONNECTION_STATE_CHANGE);

@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import com.brindyblitz.artemis.utils.EventEmitter;
 import com.walkertribe.ian.Context;
-import com.walkertribe.ian.enums.Console;
 import com.walkertribe.ian.iface.ArtemisNetworkInterface;
 import com.walkertribe.ian.iface.ConnectionSuccessEvent;
 import com.walkertribe.ian.iface.Listener;
@@ -13,7 +12,6 @@ import com.walkertribe.ian.protocol.core.TogglePerspectivePacket;
 import com.walkertribe.ian.protocol.core.eng.EngSetAutoDamconPacket;
 import com.walkertribe.ian.protocol.core.setup.ReadyPacket;
 import com.walkertribe.ian.protocol.core.setup.ReadyPacket2;
-import com.walkertribe.ian.protocol.core.setup.SetConsolePacket;
 
 public class WorldAwareRegularServer implements WorldAwareServer {
 
@@ -32,6 +30,15 @@ public class WorldAwareRegularServer implements WorldAwareServer {
 		server.addListener(this.systemManager);
         server.start();
 	}
+
+	
+	@Override
+	public void ready() {
+		server.send(new ReadyPacket());
+        server.send(new ReadyPacket2());
+        server.send(new TogglePerspectivePacket());
+        server.send(new EngSetAutoDamconPacket(true));		
+	}
 	
 	public void disconnect() {
 		server.stop();
@@ -44,11 +51,6 @@ public class WorldAwareRegularServer implements WorldAwareServer {
 		this.connected  = true;
 		System.out.println("Connected!");
 		eventEmitter.emit(Events.CONNECTION_STATE_CHANGE);
-        server.send(new SetConsolePacket(Console.ENGINEERING, true));
-        server.send(new ReadyPacket());
-        server.send(new ReadyPacket2());
-        server.send(new TogglePerspectivePacket());
-        server.send(new EngSetAutoDamconPacket(true));
     }
 
 	@Override

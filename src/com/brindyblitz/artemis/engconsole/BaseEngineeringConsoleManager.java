@@ -10,6 +10,7 @@ import java.util.Map;
 import com.brindyblitz.artemis.protocol.NonShittyShipSystemGrid;
 import com.brindyblitz.artemis.utils.newton.DerivedProperty;
 import com.brindyblitz.artemis.utils.newton.Property;
+import com.brindyblitz.artemis.utils.newton.SettableProperty;
 import com.walkertribe.ian.Context;
 import com.walkertribe.ian.enums.ShipSystem;
 import com.walkertribe.ian.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
@@ -29,6 +30,8 @@ public abstract class BaseEngineeringConsoleManager implements EngineeringConsol
 	private Map<GridCoord, VesselNode> gridIndex;
 	private List<VesselNodeConnection> gridConnections;
 	protected final Context context;
+	protected int shipNumber = 1;
+	private boolean needsResetForNewGame = false;
 	
 	
 	public BaseEngineeringConsoleManager() {
@@ -56,7 +59,33 @@ public abstract class BaseEngineeringConsoleManager implements EngineeringConsol
 		}
 		
 		this.shipSystemGrid = shipSystemGrid;
+	
 	}
+	
+	protected void afterChildConstructor() {
+		this.getGameState().onChange(() -> {
+			if (this.getGameState().get() == GameState.PREGAME) {
+				if (needsResetForNewGame) {
+					needsResetForNewGame = false;
+					resetForNewGame();
+				}
+			}
+			else if (this.getGameState().get() == GameState.INGAME) {
+				needsResetForNewGame = true;
+			}
+		});
+	}
+	
+	public void resetForNewGame() {
+		System.out.println("Resetting for new game");
+		playerReady.set(false);
+	}
+	
+	@Override
+	public Property<Boolean> getPlayerReady() {
+		return playerReady;
+	}
+	private final SettableProperty<Boolean> playerReady = new SettableProperty<>(true);
 
 	
 	@Override
@@ -109,6 +138,16 @@ public abstract class BaseEngineeringConsoleManager implements EngineeringConsol
 	
 	protected ShipSystemGrid getShipSystemGrid() {
 		return shipSystemGrid;
+	}
+	
+	@Override
+	public void selectShip(int shipNumber) {
+		this.shipNumber = shipNumber;		
+	}
+	
+	@Override
+	public void ready() {
+		this.playerReady.set(true);
 	}
 	
 	protected abstract void updateSystemEnergyAllocated(ShipSystem system, int amount);

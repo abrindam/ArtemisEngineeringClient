@@ -24,6 +24,7 @@ public interface EngineeringConsoleManager {
 	/////////
 	// Get //
 	/////////
+	Property<Boolean> getPlayerReady();
 	Property<GameState> getGameState();
 	Property<Integer> getTotalShipCoolant();
 	Property<Map<ShipSystem, Integer>> getSystemEnergyAllocated();
@@ -51,6 +52,8 @@ public interface EngineeringConsoleManager {
 	/////////
 	// Set //
 	/////////
+	void selectShip(int shipNumber);
+	void ready();
 	void incrementSystemEnergyAllocated(ShipSystem system, int amount);
 	void incrementSystemCoolantAllocated(ShipSystem system, int amount);
 	void moveDamconTeam(int teamId, GridCoord coord);

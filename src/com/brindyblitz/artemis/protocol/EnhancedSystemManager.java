@@ -77,6 +77,9 @@ public class EnhancedSystemManager extends SystemManager {
 	@Listener
 	public void onCompletelyGameOver(GameOverPacket pkt) {
 		this.gameOverScreen = false;
+		if (objectUpdateTimeout != null) {
+			objectUpdateTimeout.cancel(true);
+		}
 		this.clear();
 		if (permanantGrid != null) {
 			setSystemGrid(permanantGrid);
