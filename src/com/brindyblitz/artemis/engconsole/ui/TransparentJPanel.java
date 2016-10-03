@@ -23,6 +23,8 @@ public class TransparentJPanel extends JPanel
 		
 		this.setOpaque(false);
 		
+		this.setLayout(null);
+		
 		determineOS();
 	}
 	

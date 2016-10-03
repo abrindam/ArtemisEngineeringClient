@@ -66,10 +66,10 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 			connectionStateChangeObservable.triggerChange();
 			if (!connectProcessed) {
 				sendShipAndConsoleChoice();
-				
-				// TODO hack so you can get into the game - remove once UI for marking ready is done
-				System.out.println("Temporarily marking ready");
-				ready();
+
+				// TODO: ! hack so you can get into the game - remove once UI for marking ready is done
+				// System.out.println("Temporarily marking ready");
+				// ready();
 			}
 		});
 				
@@ -80,14 +80,18 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	@Override
 	public void selectShip(int shipNumber) {
 		super.selectShip(shipNumber);
+		// TODO: !! sleep here?
 		sendShipAndConsoleChoice();
 	}
 	
 	@Override
 	public void ready() {
 		super.ready();
+		
 		if (worldAwareServer != null && this.worldAwareServer.isConnected()) {
+			// TODO: ! DBG
 			System.out.println("Sending ready");
+			
 			this.worldAwareServer.ready();
 		}
 	}
@@ -96,6 +100,8 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 		if (worldAwareServer != null && this.worldAwareServer.isConnected()) {
 			this.worldAwareServer.getServer().send(new SetShipPacket(shipNumber));
 			this.worldAwareServer.getServer().send(new SetConsolePacket(Console.ENGINEERING, true));
+			
+			System.out.println("Selecting engineering console on ship number " + this.shipNumber);
 		}
 	}
 	
@@ -107,14 +113,15 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	public Property<GameState> getGameState() {
 		return gameState;
 	}
-	private final DerivedProperty<GameState> gameState = new DerivedProperty<>(() -> {
+	private final DerivedProperty<GameState> gameState = new DerivedProperty<>(() -> {	
 		if (worldAwareServer == null || !worldAwareServer.isConnected()) {
 			return GameState.DISCONNECTED;
 		}
-		else if (this.worldAwareServer.getSystemManager().isGameOverScreen()) {
+		
+		if (this.worldAwareServer.getSystemManager().isGameOverScreen()) {
 			return GameState.GAMEOVER;
 		}
-		else if ( this.getCurrentShip() != null && getPlayerReady().get()) {
+		else if (this.getCurrentShip() != null && getPlayerReady().get()) {
 			return GameState.INGAME;
 		}
 		else {
@@ -127,7 +134,7 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	public Property<Map<ShipSystem, Integer>> getSystemEnergyAllocated() {
 		return systemEnergyAllocated;
 	}
-	private final DerivedProperty<Map<ShipSystem, Integer>> systemEnergyAllocated = new DerivedProperty<>( () -> {
+	private final DerivedProperty<Map<ShipSystem, Integer>> systemEnergyAllocated = new DerivedProperty<>(() -> {
 		
 		Map<ShipSystem, Integer> result = new HashMap<>();
 		for(ShipSystem system: ShipSystem.values()) {
@@ -423,7 +430,10 @@ public class RealEngineeringConsoleManager extends BaseEngineeringConsoleManager
 	}, systemManagerChangeObservable);
 	
 	private ArtemisPlayer getCurrentShip() {
-		return this.worldAwareServer.getSystemManager().getPlayerShip(shipNumber);
+		// System.out.println("Getting current ship with number " + shipNumber);
+		// System.out.println("ship null? " + (this.worldAwareServer.getSystemManager().getPlayerShip(1) == null));
+		// TODO: ! dbg
+		return this.worldAwareServer.getSystemManager().getPlayerShip(1); // shipNumber);
 	}
 	
 	

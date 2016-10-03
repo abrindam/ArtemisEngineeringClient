@@ -1,7 +1,6 @@
 package com.brindyblitz.artemis.engconsole.ui;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -15,7 +14,7 @@ public class Button extends TransparentJPanel implements MouseListener, MouseMot
 	
 	private String label;
 	private Color backgroundColor, backgroundColorHover, labelColor, borderColor; // TODO: ENHANCEMENT > on hover and on click colors, SFX
-	private Font labelFont = new Font("Courier New", Font.BOLD, 12);
+	protected Font labelFont = new Font("Courier New", Font.BOLD, 12);
 	private int width, height;
 	private Runnable onClickHandler;
 	
@@ -30,6 +29,7 @@ public class Button extends TransparentJPanel implements MouseListener, MouseMot
 		this.label = label;
 		this.onClickHandler = onClickHandler;
 		this.backgroundColor = backgroundColor;
+		this.backgroundColorHover = backgroundColorHover;
 		this.labelColor = labelColor;
 		this.borderColor = borderColor;
 		this.width = minWidth;
@@ -82,6 +82,11 @@ public class Button extends TransparentJPanel implements MouseListener, MouseMot
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
+		if (this.onClickHandler == null) {
+			System.err.println("No click handler defined for Button " + this.label);
+			throw new RuntimeException();
+		}
+		
 		this.onClickHandler.run();
 	}
 

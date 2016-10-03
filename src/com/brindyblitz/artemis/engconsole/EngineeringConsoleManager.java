@@ -136,7 +136,20 @@ public interface EngineeringConsoleManager {
 		@Override
 		public String toString() {
 			return "Ship #" + shipNumber + ": " + name + " (" + type.getDescription() + ")";
-		}		
+		}
+
+		public String getName() {
+			return this.name;
+		}
+		
+		public ShipType getType() {
+			return this.type;
+		}
+		
+		public int getShipNumber()
+		{
+			return this.shipNumber;
+		}
 	}
 	
 	public enum ShipType {		

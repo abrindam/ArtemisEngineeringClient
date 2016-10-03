@@ -21,9 +21,9 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 	private static final long serialVersionUID = 1L;
 	private EngineeringConsoleManager engineeringConsoleManager;
 	private ConnectPanel connectPanel;
-	private PreGamePanel preGamePanel;
 	private InGamePanel inGamePanel;
 	private GameOverPanel gameOverPanel;
+	private ShipSelectionPanel shipSelectionPanel;
 
 	private String host;
 	
@@ -73,19 +73,23 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 	}
 	
 	private void updateCurrentPanel() {
-		if (engineeringConsoleManager.getGameState().get() == GameState.DISCONNECTED) {
-			switchToConnectPanel();
+		switch (engineeringConsoleManager.getGameState().get()) {
+			case DISCONNECTED:
+				switchToConnectPanel();
+				break;
+			
+			case PREGAME:
+				switchToShipSelectionPanel();
+				break;
+				
+			case INGAME:
+				switchToInGamePanel();	
+				break;
+				
+			case GAMEOVER:
+				switchToGameOverPanel();
+				break;
 		}
-		else if (engineeringConsoleManager.getGameState().get() == GameState.PREGAME) {
-			switchToPreGamePanel();
-		}
-		else if (engineeringConsoleManager.getGameState().get() == GameState.INGAME) {
-			switchToInGamePanel();			
-		}
-		else if (engineeringConsoleManager.getGameState().get() == GameState.GAMEOVER) {
-			switchToGameOverPanel();			
-		}
-//		switchToConnectPanel();
 	}
 	
 	private void switchToConnectPanel() {
@@ -95,16 +99,6 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 		connectPanel = new ConnectPanel(engineeringConsoleManager, WINDOW_WIDTH, WINDOW_HEIGHT, host);
 		this.getContentPane().add(connectPanel);
 		connectPanel.setVisible(true);
-		loading.setVisible(false);
-	}
-	
-	private void switchToPreGamePanel() {
-		System.out.println("Switch to PreGame");
-		removeExistingPanels();
-		loading.setVisible(true);
-		preGamePanel = new PreGamePanel(this.engineeringConsoleManager, WINDOW_WIDTH, WINDOW_HEIGHT);
-		this.getContentPane().add(preGamePanel);
-		preGamePanel.setVisible(true);
 		loading.setVisible(false);
 	}
 	
@@ -128,6 +122,16 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 		loading.setVisible(false);
 	}
 	
+	private void switchToShipSelectionPanel() {
+		System.out.println("Switch to ShipSelection");
+		removeExistingPanels();
+		loading.setVisible(true);
+		shipSelectionPanel = new ShipSelectionPanel(this.engineeringConsoleManager, WINDOW_WIDTH, WINDOW_HEIGHT);
+		this.getContentPane().add(shipSelectionPanel);
+		shipSelectionPanel.setVisible(true);
+		loading.setVisible(false);
+	}
+	
 	private void removeExistingPanels() {
 		if (connectPanel != null) {
 			this.getContentPane().remove(connectPanel);
@@ -138,9 +142,9 @@ public class UserInterfaceFrame extends JFrame implements KeyListener {
 			this.getContentPane().remove(inGamePanel);
 			this.inGamePanel = null;
 		}
-		if (preGamePanel != null) {
-			this.getContentPane().remove(preGamePanel);
-			this.preGamePanel = null;
+		if (shipSelectionPanel != null) {
+			this.getContentPane().remove(shipSelectionPanel);
+			this.shipSelectionPanel = null;
 		}
 		if (gameOverPanel != null) {
 			this.getContentPane().remove(gameOverPanel);

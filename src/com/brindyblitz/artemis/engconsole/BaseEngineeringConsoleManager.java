@@ -59,7 +59,6 @@ public abstract class BaseEngineeringConsoleManager implements EngineeringConsol
 		}
 		
 		this.shipSystemGrid = shipSystemGrid;
-	
 	}
 	
 	protected void afterChildConstructor() {
@@ -85,7 +84,7 @@ public abstract class BaseEngineeringConsoleManager implements EngineeringConsol
 	public Property<Boolean> getPlayerReady() {
 		return playerReady;
 	}
-	private final SettableProperty<Boolean> playerReady = new SettableProperty<>(true);
+	private final SettableProperty<Boolean> playerReady = new SettableProperty<>(false);
 
 	
 	@Override
